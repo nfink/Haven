@@ -1,0 +1,8 @@
+﻿<div style="float:left;width:800px;">
+    <svg width="800" height="800">
+        @Each.Spaces
+        <rect width="@Current.Width" height="@Current.Height" x="@Current.X" y="@Current.Y"
+              stroke="@Current.BorderColor" fill="@Current.BackgroundColor" stroke-width="5" rx="10" ry="10" />
+        @EndEach
+    </svg>
+</div>
