@@ -1,173 +1,275 @@
-﻿/// <reference path="https://code.createjs.com/easeljs-0.8.1.min.js" />
-/// <reference path="https://code.createjs.com/tweenjs-0.6.1.min.js" />
-/// <reference path="https://code.jquery.com/jquery-1.11.3.min.js" />
-/// <reference path="Content/Space.js" />
-/// <reference path="Content/Action.js" />
-/// <reference path="Content/Player.js" />
+﻿/// <reference path="https://code.jquery.com/jquery-1.11.3.min.js" />
 
-var stage;
-var game;
-var spaces;
-var players;
-var actionsPanel;
+var GameId;
 
-
-function init() {
-    canvasInit();
-    boardInit();  
-}
-
-function canvasInit() {
-    var canvas = document.getElementById('canvasElementId').getContext("2d");
-    canvas.canvas.width = window.innerWidth;
-    canvas.canvas.height = window.innerHeight;
-}
-
-function boardInit() {
-    stage = new createjs.Stage("canvasElementId");
-    
-    $(window).bind('resize', function () {
-        stage.update();
-    });
-
-    //var background = new createjs.Bitmap("Content/white_marble.jpg");
-    //stage.addChild(background);
-
+function Init() {
     // create a new game
-    $.get("NewGame", function (data) {
+    $.get("NewGame",
+        {
+            BoardId: 1,
+            NumberOfPlayers: 2,
+        },
+        function (data) {
         game = JSON.parse(data);
-        spaces = loadSpaces(game);
-        players = loadPlayers(game);
-        loadActions(game.Players);
-        createjs.Ticker.setFPS(60);
-        createjs.Ticker.addEventListener("tick", stage);
-        //alert($.grep(game.Board.Spaces, function (space) { return space.Id == 4 })[0].BibleVerseId);
+
+        GameId = game.Id;
+        // $("#spaces").empty();
+        // $("#pieces").empty();
+        // $("#actions").empty();
+
+        // load spaces
+        for (i = 0; i < game.Board.Spaces.length; ++i) {
+            var space = game.Board.Spaces[i];
+
+            //<div class="tile">
+            //    <div class="tile-content slide-up2">
+            //        <div class="slide">
+            //            ... Main slide content ...
+            //        </div>
+            //        <div class="slide-over">
+            //            ... Over slide content here ...
+            //        </div>
+            //    </div>
+            //</div>
+
+            // tile containers
+            var box = $("<div/>", {
+                class: "space tile-small bg-taupe fg-white",
+                spaceId: space.Id,
+                nextSpaceId: game.Board.Spaces[(i + 1) % (game.Board.Spaces.length - 1)].Id,
+                previousSpaceId: i > 0 ? game.Board.Spaces[(i - 1) % (game.Board.Spaces.length - 1)].Id : game.Board.Spaces[game.Board.Spaces.length - 1].Id,
+            })
+                .css({
+                    position: "absolute",
+                    //width: space.Width,
+                    //height: space.Height,
+                    //left: (space.X - 1) * 80 + 10,
+                    //top: (space.Y - 1) * 80 + 10,
+                    //backgroundColor: space.BackgroundColor,
+                    //borderColor: space.BorderColor,
+                    //lineHeight: space.Height + "px",
+                    //lineHeight: "70px",
+                    //textAlign: "center",
+                });
+            box.css("left", 10 + (space.X - 1) * box.width() * 1.1);
+            box.css("top", 10 + (space.Y - 1) * box.height() * 1.1);
+
+            var tile = $("<div/>", {
+                class: "tile-content slide-up-2",
+            });
+
+            // main content
+            var label = $("<div/>", {
+                class: "slide spaceLabel" + space.Type,
+            })
+                .text(space.Name)
+                .css({
+                    textAlign: "center",
+                    display: "inline-block",
+                    verticalAlign: "middle",
+                    lineHeight: "70px",
+                    //lineHeight: "normal",
+                });
+
+            tile.append(label);
+
+            if ((space.Type == 1) || (space.Type == 2) || (space.Type == 6)) {
+                // slide over
+                var slideOver = $("<div/>", {
+                    class: "slide-over bg-orange text-small",
+                })
+                    .text(space.Type == 6 ? space.SafeHavenCard.Details : "test");
+
+                tile.append(slideOver);
+            }
+
+            box.append(tile);
+            $("#spaces").append(box);
+        }
+
+        // add styling for spaces with icons instead of text
+        $(".spaceLabel1").addClass("mif-books mif-2x");
+        $(".spaceLabel1").empty();
+        $(".spaceLabel3").addClass("mif-loop2 mif-2x");
+        $(".spaceLabel3").empty();
+        $(".spaceLabel4").addClass("mif-undo mif-2x");
+        $(".spaceLabel4").text("?");
+        $(".spaceLabel5").addClass("mif-dice mif-2x");
+        $(".spaceLabel5").empty();
+        $(".spaceLabel7").addClass("mif-undo mif-2x");
+        $(".spaceLabel7").empty();
+        $(".spaceLabel8").addClass("mif-fire mif-2x");
+        $(".spaceLabel8").empty();
+
+        // load players
+        for (i = 0; i < game.Players.length; ++i) {
+            var player = game.Players[i];
+            var piece = $("<div/>", {
+                class: "piece",
+                playerId: player.Id,
+                spaceId: player.SpaceId,
+            })
+                .css({
+                    position: "absolute",
+                    width: "20px",
+                    height: "20px",
+                    borderRadius: "50%",
+                    backgroundColor: "blue",
+                    transform: "translate(-5px,-5px)",
+                });
+            $("#pieces").append(piece);
+
+            //players[player.Player.Id] = player;
+            //var startingLocation = spaces[player.Player.SpaceId].getCenter();
+            //player.x = startingLocation.x;
+            //player.y = startingLocation.y;
+        }
+
+        LoadActions(game.Players);
+        UpdatePieces(game.Players);
     });
 }
 
-function performAction(actionId, input) {
-    $.post("PerformAction/" + actionId, input, function (data) {
+function PerformAction(actionForm) {
+    $.post("PerformAction", $(actionForm).serialize(), function (data) {
         alert(data);
-        // update entire game state?
-        $.get("Game/" + game.Id + "/Players", function (data) {
-            //alert(data);
-            var playerData = JSON.parse(data);
-            updateActions(playerData);
-            updatePlayers(playerData);
-        })
+        // update players and actions
+        $.get("Game/" + GameId + "/Players", function (data) {
+            var players = JSON.parse(data);
+            UpdatePieces(players);
+            // update actions after pieces have moved
+            $(".piece").promise().done(function () {
+                $("#actions").empty();
+                LoadActions(players);
+            });
+        });
     });
+
+    return false;
 }
 
-function loadSpaces(game) {
-    var spaces = [];
-    for (i = 0; i < game.Board.Spaces.length; ++i) {
-        var space = new Space(game.Board.Spaces[i]);
-        spaces[space.Space.Id] = space;
-        stage.addChild(space);
-    }
-    return spaces;
-}
-
-function loadPlayers(game) {
-    var players = [];
-    for (i = 0; i < game.Players.length; ++i) {
-        var player = new Player(game.Players[i]);
-        players[player.Player.Id] = player;
-        var startingLocation = spaces[player.Player.SpaceId].getCenter();
-        player.x = startingLocation.x;
-        player.y = startingLocation.y;
-        stage.addChild(player);
-        //moveToSpace(player, spaces[player.Player.SpaceId]);
-    }
-    return players;
-}
-
-function loadActions(players) {
-    actionsPanel = new createjs.Container();
-    var xValues = $.map(spaces, function (space) { return (space === undefined ? 0 : space.x + space.getBounds().width); });
-    var yValues = $.map(spaces, function (space) { return (space === undefined ? 9999 : space.y); });
-    actionsPanel.x = Math.max.apply(Math, xValues) + 10;
-    actionsPanel.y = Math.min.apply(Math, yValues);
-
+function LoadActions(players)
+{
     for (i = 0; i < players.length; ++i) {
+        var name = players[i].Name;
+
+        var div = $("<div/>", {
+            class: "bg-lightOlive padding5",
+        });
+
+        //    <span class="mif-icon_name"></span>
+
+        var nameLabel = $("<span/>", {
+            class: "mif-user padding10 header",
+        })
+            .css("min-width", "200px")
+            .text(name == null ? "New Player" : name);
+
+        div.append(nameLabel);
+
         for (j = 0; j < players[i].Actions.length; ++j) {
-            var action = new Action(players[i].Actions[j]);
-            addActionToPanel(action);
+            var action = players[i].Actions[j];
+
+            var form = $("<form/>", {
+                action: "PerformAction",
+                method: "post",
+                onsubmit: "return PerformAction(this);",
+            });
+                //.css({
+                //    width: "100px",
+                //});
+
+            var id = $("<input/>", {
+                name: "Id",
+                value: action.Id,
+                type: "hidden",
+            });
+
+            var input = $("<input/>", {
+                name: "Input",
+                type: action.RequiresInput ? "text" : "hidden",
+            });
+
+            var button = $("<button/>", {
+                type: "submit",
+                class: "action button bg-lightBlue bd-lightBlue bg-active-blue fg-white " + action.Name,
+            })
+                .text(action.Name);
+
+            form.append(id)
+
+            if (action.RequiresInput) {
+                input.attr("placeholder", action.Name);
+                button.empty();
+
+                var inputDiv = $("<div/>", {
+                    class: "input-control text",
+                    "data-role": "input",
+                })
+                    .css("width", "100%");
+
+                var icon = $("<span/>", {
+                    class: "mif-play",
+                })
+
+                inputDiv.append(input);
+                button.append(icon);
+                inputDiv.append(button);
+                form.append(inputDiv);
+                form.append($("<br/>"));
+            }
+            else {
+                button.css("width", "100%");
+                form.append(input);
+                form.append(button);
+            }
+
+            div.append($("<div/>").append(form));
+        }
+
+        $("#actions").append(div);
+        $("#actions").append($("<div/>", {class: "padding10"}));
+    }
+}
+
+function UpdatePieces(players) {
+    for (i = 0; i < players.length; ++i) {
+        var player = players[i];
+        var piece = $(".piece[playerId=" + player.Id + "]");
+
+        if (piece.attr("spaceId") !== player.SpaceId) {
+            var piece = $(".piece[playerId=" + player.Id + "]");
+            piece.attr("destinationSpaceId", player.SpaceId);
+            piece.attr("direction", player.MovementDirection);
+            piece.MovePiece = MovePiece;
+            piece.MovePiece();
         }
     }
-
-    stage.addChild(actionsPanel);
 }
 
-function test() {
-    circle = new createjs.Shape();
-    circle.graphics.beginFill("blue").drawCircle(0, 0, 20);
-    circle.x = 50;
-    circle.y = 100
-    stage.addChild(circle);
-
-    //space1 = newSpace(100, 100, "green", "Abraham");
-    //space2 = newSpace(100, 100, "green", "Babebraham");
-    //space3 = newSpace(100, 100, "green", "Lincoln");
-    //space1.x = 50;
-    //space1.y = 100;
-    //space2.x = 200;
-    //space2.y = 100;
-    //space3.x = 350;
-    //space3.y = 100;
-    //stage.addChild(space1);
-    //stage.addChild(space2);
-    //stage.addChild(space3);
-    //stage.addChild(circle);
-    //stage.update();
-
-    //createjs.Tween.get(circle)
-    //.to({ x: 400 }, 1000, createjs.Ease.getPowInOut(4))
-    //.to({ alpha: 0, y: 175 }, 500, createjs.Ease.getPowInOut(2))
-    //.to({ alpha: 0, y: 225 }, 100)
-    //.to({ alpha: 1, y: 200 }, 500, createjs.Ease.getPowInOut(2))
-    //.to({ x: 100 }, 800, createjs.Ease.getPowInOut(2));
-
-    //moveToSpace(circle, space3);
-    
-    createjs.Ticker.setFPS(60);
-    createjs.Ticker.addEventListener("tick", stage);
-}
-
-function updatePlayers(playerList) {
-    for (i = 0; i < playerList.length; ++i) {
-        var player = playerList[i];
-        var playerContainer = players[player.Id];
-        if (playerContainer.Player.SpaceId !== player.SpaceId) {
-            playerContainer.moveToSpace(spaces[player.SpaceId]);
+function MovePiece()
+{
+    var piece = $(this);
+    var currentSpaceId = piece.attr("spaceId");
+    var destinationSpaceId = piece.attr("destinationSpaceId");
+    if (destinationSpaceId !== currentSpaceId) {
+        var currentSpace = $(".space[spaceId=" + currentSpaceId + "]");
+        var direction = piece.attr("direction");
+        var nextSpaceId;
+        if (direction == "true") {
+            nextSpaceId = currentSpace.attr("nextSpaceId");
         }
-        playerContainer.Player = player;
-    }
-}
-
-function addActionToPanel(action) {
-    action.x = 0;
-    action.y = (action.getBounds().height) * actionsPanel.children.length;
-    actionsPanel.addChild(action);
-}
-
-function clearActionsPanel() {
-    for (i = 0; i < actionsPanel.children.length; ++i) {
-        actionsPanel.children[i].removeAllEventListeners();
-    }
-    actionsPanel.removeAllChildren();
-}
-
-function updateActions(playerList) {
-    clearActionsPanel();
-    for (i = 0; i < playerList.length; ++i) {
-        for (j = 0; j < playerList[i].Actions.length; ++j) {
-            var action = new Action(playerList[i].Actions[j]);
-            addActionToPanel(action);
+        else {
+            nextSpaceId = currentSpace.attr("previousSpaceId");
         }
+        var nextSpace = $(".space[spaceId=" + nextSpaceId + "]");
+        var nextSpacePosition = nextSpace.offset();
+        piece.attr("spaceId", nextSpaceId);
+        // adjust position for other pieces
+        $(".piece[spaceId=" + nextSpaceId + "]").each(function (index) {
+            var translation = -1 * (5 * (index + 1));
+            $(this).css({ transform: "translate(" + translation + "px," + translation + "px)" });
+        });
+        piece.animate({ left: nextSpacePosition.left + (nextSpace.width() / 2), top: nextSpacePosition.top + (nextSpace.height() / 2) }, 250, MovePiece);
     }
-}
-
-function handleSpaceClick(event) {
-    moveToSpace(circle, this);
 }

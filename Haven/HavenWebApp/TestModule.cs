@@ -8,6 +8,7 @@ using Haven.Data;
 using Nancy.Session;
 using Nancy.ModelBinding;
 using Newtonsoft.Json;
+using Nancy.Conventions;
 
 namespace HavenWebApp
 {
@@ -18,6 +19,16 @@ namespace HavenWebApp
     //        CookieBasedSessions.Enable(pipelines);
     //    }
     //}
+
+    public class ApplicationBootstrapper : DefaultNancyBootstrapper
+    {
+        protected override void ConfigureConventions(NancyConventions nancyConventions)
+        {
+            nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("Fonts", @"Fonts"));
+            nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("Scripts", @"Scripts"));
+            base.ConfigureConventions(nancyConventions);
+        }
+    }
 
     public class TestModule : NancyModule
     {
@@ -31,17 +42,12 @@ namespace HavenWebApp
                 DataLoad.LoadTables();
             }
 
-            Get["/"] = parameters => View["Home.html", null];
-
-            Get["/Space"] = parameters =>
-            {
-                return Persistence.Connection.Table<Space>();
-            };
+            Get["/"] = parameters => View["Game.html", null];
 
             Get["/NewGame"] = parameters =>
             {
-                var game = Game.NewGame(1, 2);
-                return game;// JsonConvert.SerializeObject(game);
+                var game = Game.NewGame((int)this.Request.Query.BoardId, (int)this.Request.Query.NumberOfPlayers);
+                return JsonConvert.SerializeObject(game);
             };
 
             Get["/Game/{id}"] = parameters =>
@@ -57,11 +63,10 @@ namespace HavenWebApp
                 return JsonConvert.SerializeObject(players);
             };
 
-            Post["/PerformAction/{id}"] = parameters =>
+            Post["/PerformAction"] = parameters =>
             {
-                var actionId = (int)parameters.id;
-                var action = Persistence.Connection.Get<Haven.Action>(actionId);
-                var message = action.PerformAction(this.Request.Body.ToString());
+                var action = Persistence.Connection.Get<Haven.Action>((int)this.Request.Form.Id);
+                var message = action.PerformAction((string)this.Request.Form.Input);
                 return JsonConvert.SerializeObject(message);
             };
         }

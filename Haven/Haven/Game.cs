@@ -49,7 +49,6 @@ namespace Haven
             for (int i = 0; i < numberOfPlayers; i++)
             {
                 var player = new Player();
-                player.Name = "Player";
                 player.GameId = game.Id;
                 Persistence.Connection.Insert(player);
 

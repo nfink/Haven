@@ -1,0 +1,7 @@
+﻿@Each
+    <div class="player" playerId="Current.Id">
+        <input name="SpaceId" type="hidden" value="Current.SpaceId" />
+        <input name="Name" type="hidden" value="Current.Name" />
+        @Partial['Piece.html', Current]
+    </div>
+@EndEach

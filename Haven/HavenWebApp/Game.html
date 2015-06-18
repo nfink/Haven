@@ -1,19 +1,27 @@
 ﻿<!DOCTYPE html>
 <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-
+<script type="text/javascript" src="Content/Game.js"></script>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+    <!--<link rel="stylesheet" type="text/css" href="Content/Game.css">-->
+    <link href="Content/metro.css" rel="stylesheet">
+    <link href="Content/metro-icons.css" rel="stylesheet">
+    <script src="Scripts/metro.js"></script>
     <title>Safe Haven</title>
+    <script>
+        $(document).ready(function () {
+            Init();
+        });
+    </script>
 </head>
-<body>
-    @Partial['Board.html', Model.Board];
-
-    <div style="float:left">
-        @Each.Players
-        <div>@Current.Name</div>
-        @Partial['Actions.html', Current.Actions]
-        @EndEach
+<body class="bg-grayLighter">
+    <div id="board" style="width:720px;">
+        <div>
+            <div id="spaces" class="padding5"></div>
+        </div>
+        <div id="pieces"></div>
     </div>
+    <div id="actions" class="padding5" style="position:absolute;left: 760px;"></div>
 </body>
 </html>
 

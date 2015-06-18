@@ -71,13 +71,24 @@
     <Content Include="aGame.html" />
     <Content Include="Board.html" />
     <Content Include="Content\Action.js" />
-    <Content Include="Content\Game.js" />
+    <Content Include="Content\aGame.js" />
     <Content Include="Content\Game.css" />
+    <Content Include="Content\Game.js" />
     <Content Include="Content\Haven.css" />
+    <Content Include="Content\metro-icons.css" />
+    <Content Include="Content\metro-icons.min.css" />
+    <Content Include="Content\metro.css" />
+    <Content Include="Content\metro.min.css" />
     <Content Include="Content\Player.js" />
     <Content Include="Content\Space.js" />
     <Content Include="Content\white_marble.jpg" />
+    <Content Include="Fonts\metro.svg" />
     <Content Include="Game.html" />
+    <Content Include="Piece.html" />
+    <Content Include="Players.html" />
+    <Content Include="PlayerActions.html" />
+    <Content Include="Scripts\metro.js" />
+    <Content Include="Scripts\metro.min.js" />
     <Content Include="Space.html" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -88,6 +99,10 @@
   <ItemGroup>
     <Content Include="packages.config" />
     <Content Include="Home.html" />
+    <Content Include="Fonts\selection.json" />
+    <Content Include="Fonts\metro.woff" />
+    <Content Include="Fonts\metro.ttf" />
+    <Content Include="Fonts\metro.eot" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

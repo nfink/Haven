@@ -18,6 +18,14 @@ namespace Haven
 
         public int SpaceId { get; set; }
 
+        public Space Space
+        {
+            get
+            {
+                return Persistence.Connection.Get<Space>(this.SpaceId);
+            }
+        }
+
         public int GameId { get; set; }
 
         // true = clockwise

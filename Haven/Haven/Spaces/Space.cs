@@ -32,7 +32,27 @@ namespace Haven
         {
             get
             {
-                return this.Type.ToString();
+                switch (this.Type)
+                {
+                    case SpaceType.BibleVerse:
+                        return this.BibleVerse.ToString();
+                    case SpaceType.Challenge:
+                        return this.NameCard.Name;
+                    case SpaceType.ExchangePlaces:
+                        return "Exchange Places";
+                    case SpaceType.OptionalTurnAround:
+                        return "Turn Around?";
+                    case SpaceType.RollToGo:
+                        return "Roll Again";
+                    case SpaceType.SafeHaven:
+                        return this.SafeHavenCard.Name;
+                    case SpaceType.TurnAround:
+                        return "Turn Around";
+                    case SpaceType.War:
+                        return "War!";
+                    default:
+                        return this.Type.ToString();
+                }
             }
         }
 

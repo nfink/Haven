@@ -1,8 +1,10 @@
-﻿<div style="float:left;width:800px;">
-    <svg width="800" height="800">
-        @Each.Spaces
-        <rect width="@Current.Width" height="@Current.Height" x="@Current.X" y="@Current.Y"
-              stroke="@Current.BorderColor" fill="@Current.BackgroundColor" stroke-width="5" rx="10" ry="10" />
-        @EndEach
-    </svg>
+﻿@Each.Spaces
+<div class="space" spaceId="@Current.Id" style="position: absolute;
+    width: @Current.Width;px;height: @Current.Height;px;
+    left: @Current.X;px;top: @Current.Y;px;
+    background-color: @Current.BackgroundColor;;
+    border: thick solid @Current.BorderColor;;border-radius: 20%;">
+    <div style="text-align: center;vertical-align: middle;
+        line-height: @Current.Height;px;color: @Current.TextColor;;">@Current.Name</div>
 </div>
+@EndEach

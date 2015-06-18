@@ -129,10 +129,10 @@ namespace Haven.Data
         public void LoadSafeHavenCard()
         {
             this.Connection.CreateTable<SafeHavenCard>();
-            this.Connection.Insert(new SafeHavenCard() { Id = 1, Name = "God" });
-            this.Connection.Insert(new SafeHavenCard() { Id = 2, Name = "Abraham" });
-            this.Connection.Insert(new SafeHavenCard() { Id = 3, Name = "Isaac" });
-            this.Connection.Insert(new SafeHavenCard() { Id = 4, Name = "Jacob" });
+            this.Connection.Insert(new SafeHavenCard() { Id = 1, Name = "God", Details = "" });
+            this.Connection.Insert(new SafeHavenCard() { Id = 2, Name = "Abraham", Details = "The founding father of the Jewish nation of Israel, he was a man of great faith and obedience to the will of God." });
+            this.Connection.Insert(new SafeHavenCard() { Id = 3, Name = "Isaac", Details = "" });
+            this.Connection.Insert(new SafeHavenCard() { Id = 4, Name = "Jacob", Details = "" });
         }
 
         public void LoadSpace()
@@ -178,7 +178,8 @@ namespace Haven.Data
             this.Connection.Insert(new Space() { BoardId = 1, Order = 23, Type = SpaceType.War, Width = 100, Height = 100, X = 150, Y = 850, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
             this.Connection.Insert(new Space() { BoardId = 1, Order = 31, Type = SpaceType.War, Width = 100, Height = 100, X = 50, Y = 150, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
 
-            this.Connection.Execute("update Space set Width=75, Height=75, X=(X - (X / 4)), Y=(Y - (Y / 4))");
+            //this.Connection.Execute("update Space set Width=70, Height=70, X=(X - (X / 4)), Y=(Y - (Y / 4))");
+            this.Connection.Execute("update Space set X=(((X - 50) / 100) + 1), Y=(((Y - 50) / 100) + 1)");
         }
     }
 }
