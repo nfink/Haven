@@ -1,0 +1,18 @@
+﻿@Each
+<div class="tile fg-white bg-black" data-role="tile" onclick="NewGame(@Current.Id);">
+    <div class="tile-content slide-down">
+        <div class="slide">
+            <div style="width: 100%;" class="image-container image-format-square">
+                <div class="frame">
+                    <div style="width: 100%; height: 150px; background-image: url(&quot;@Current.Icon&quot;); background-size: cover; background-repeat: no-repeat; border-radius: 0px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slide-over op-cyan text-small padding10">
+            @Current.Description
+        </div>
+        <div class="tile-label">@Current.Name</div>
+    </div>
+</div>
+@EndEach

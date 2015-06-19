@@ -16,6 +16,14 @@ namespace Haven
 
         public int PieceId { get; set; }
 
+        public Piece Piece
+        {
+            get
+            {
+                return this.PieceId == 0 ? null : Persistence.Connection.Get<Piece>(this.PieceId);
+            }
+        }
+
         public int SpaceId { get; set; }
 
         public Space Space

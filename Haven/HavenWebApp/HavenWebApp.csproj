@@ -70,10 +70,17 @@
     <Content Include="Actions.html" />
     <Content Include="aGame.html" />
     <Content Include="Board.html" />
+    <Content Include="Boards.html" />
     <Content Include="Content\Action.js" />
     <Content Include="Content\aGame.js" />
+    <Content Include="Content\board_continue.jpg" />
+    <Content Include="Content\board_continue_square.jpg" />
+    <Content Include="Content\board_new.jpg" />
+    <Content Include="Content\board_new_square.jpg" />
     <Content Include="Content\Game.css" />
-    <Content Include="Content\Game.js" />
+    <Content Include="Content\Rembrandt_Harmensz_square.jpg" />
+    <Content Include="Games.html" />
+    <Content Include="Scripts\Game.js" />
     <Content Include="Content\Haven.css" />
     <Content Include="Content\metro-icons.css" />
     <Content Include="Content\metro-icons.min.css" />
@@ -87,6 +94,7 @@
     <Content Include="Piece.html" />
     <Content Include="Players.html" />
     <Content Include="PlayerActions.html" />
+    <Content Include="Scripts\Menu.js" />
     <Content Include="Scripts\metro.js" />
     <Content Include="Scripts\metro.min.js" />
     <Content Include="Space.html" />

@@ -61,6 +61,46 @@ namespace Haven
             }
         }
 
+        public ChallengeAnswer Answer
+        {
+            get
+            {
+                return this.AnswerId == 0 ? null : Persistence.Connection.Get<ChallengeAnswer>(this.AnswerId);
+            }
+        }
+
+        public BibleVerse BibleVerse
+        {
+            get
+            {
+                return this.BibleVerseId == 0 ? null : Persistence.Connection.Get<BibleVerse>(this.BibleVerseId);
+            }
+        }
+
+        public NameCard NameCard
+        {
+            get
+            {
+                return this.NameCardId == 0 ? null : Persistence.Connection.Get<NameCard>(this.NameCardId);
+            }
+        }
+
+        public Piece Piece
+        {
+            get
+            {
+                return this.PieceId == 0 ? null : Persistence.Connection.Get<Piece>(this.PieceId);
+            }
+        }
+
+        public Player Player
+        {
+            get
+            {
+                return this.PlayerId == 0 ? null : Persistence.Connection.Get<Player>(this.PlayerId);
+            }
+        }
+
         public Message PerformAction(Object input)
         {
             switch (this.Type)

@@ -42,17 +42,29 @@ namespace HavenWebApp
                 DataLoad.LoadTables();
             }
 
-            Get["/"] = parameters => View["Game.html", null];
+            Get["/"] = parameters => View["Home.html", null];
+
+            Get["/Boards"] = parameters =>
+            {
+                return View["Boards.html", Persistence.Connection.Table<Board>()];
+            };
+
+            Get["/Games"] = parameters =>
+            {
+                return View["Games.html", Persistence.Connection.Table<Game>()];
+            };
 
             Get["/NewGame"] = parameters =>
             {
                 var game = Game.NewGame((int)this.Request.Query.BoardId, (int)this.Request.Query.NumberOfPlayers);
+                game.Name = (string)this.Request.Query.Name;
+                Persistence.Connection.Update(game);
                 return JsonConvert.SerializeObject(game);
             };
 
             Get["/Game/{id}"] = parameters =>
             {
-                var game = Persistence.Connection.Get<Game>(parameters.id);
+                var game = Persistence.Connection.Get<Game>((int)parameters.id);
                 return JsonConvert.SerializeObject(game);
             };
 

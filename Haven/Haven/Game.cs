@@ -12,6 +12,8 @@ namespace Haven
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
+        public string Name { get; set; }
+
         public IEnumerable<Player> Players
         {
             get

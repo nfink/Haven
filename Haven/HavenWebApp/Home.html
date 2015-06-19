@@ -1,23 +1,76 @@
 ﻿<!DOCTYPE html>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js" charset="utf-8"></script>
+<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="Scripts/Game.js"></script>
+<script type="text/javascript" src="Scripts/Menu.js"></script>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <link rel="stylesheet" type="text/css" href="Content/Haven.css">
+    <link href="Content/Game.css" rel="stylesheet">
+    <link href="Content/metro.css" rel="stylesheet">
+    <link href="Content/metro-icons.css" rel="stylesheet">
+    <script src="Scripts/metro.js"></script>
     <title>Safe Haven</title>
+    <script>
+        $(document).ready(function () {
+            Init();
+        });
+    </script>
 </head>
-<body>
-
-<!--<script>
-    d3.json("NewGame", function(error, game) {
-        if (error) throw error;
-        alert(game);
-    });
-
-</script>-->
-
-<a href="/NewGame">New Game</a>
-    <div class="space">
-        test
+<body class="bg-grayLighter">
+    <!--Back Button-->
+    <div id="backButton" class="padding10" style="float: left;display: none;">
+        <button onclick="Back();" class="button mif-arrow-left mif-2x bd-gray bg-transparent bg-active-gray bg-hover-grayLight fg-gray fg-active-grayLighter fg-hover-gray" style="border-width: medium;border-radius: 50%;width: 56px;height: 56px;border-style: solid;"></button>
     </div>
+
+    <!--Main Menu-->
+    <div id="mainMenu" class="tile-container padding10" style="width: 680px; margin: auto;">
+        <div class="tile-large" data-role="tile" onclick="ShowBoardMenu();">
+            <div class="tile-content">
+                <div class="image-container">
+                    <div class="frame">
+                        <img src="Content/board_new_square.jpg">
+                    </div>
+                    <div class="image-overlay op-lightOlive">
+                        <h2>Start a new game</h2>
+                        <p></p>
+                    </div>
+                </div>
+                <div class="tile-label header fg-white">New Game</div>
+            </div>
+        </div>
+        <div class="tile-large" data-role="tile" onclick="ShowContinueMenu();">
+            <div class="tile-content">
+                <div class="image-container">
+                    <div class="frame">
+                        <img src="Content//board_continue_square.jpg">
+                    </div>
+                    <div class="image-overlay op-lightOlive">
+                        <h2>Continue an unfinished game</h2>
+                        <p></p>
+                    </div>
+                </div>
+                <div class="tile-label header fg-white">Continue Game</div>
+            </div>
+        </div>
+    </div>
+
+    <!--Board Menu-->
+    <div id="boardMenu" class="tile-container padding10" style="width: 680px; margin: auto; display: none;">
+
+    </div>
+
+    <!--Continue Game Menu-->
+    <div id="continueMenu" class="tile-container padding10" style="width: 680px; margin: auto; display: none;">
+
+    </div>
+
+    <!--Game-->
+    <div id="board" style="position:absolute;left: 80px;width: 720px;display: none;">
+        <div>
+            <div id="spaces" class="padding5"></div>
+        </div>
+        <div id="pieces"></div>
+    </div>
+    <div id="actions" class="padding5" style="position:absolute;left: 840px;display: none;"></div>
+
 </body>
 </html>

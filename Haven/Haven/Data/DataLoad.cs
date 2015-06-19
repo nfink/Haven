@@ -57,7 +57,7 @@ namespace Haven.Data
         public void LoadBoard()
         {
             this.Connection.CreateTable<Board>();
-            this.Connection.Insert(new Board() { Id = 1, Name = "Genesis" });
+            this.Connection.Insert(new Board() { Id = 1, Name = "Genesis", Description = "Covers the book of Genesis", Icon = "Content/Rembrandt_Harmensz_square.jpg" });
         }
 
         public void LoadChallenge()
@@ -115,10 +115,10 @@ namespace Haven.Data
         public void LoadPiece()
         {
             this.Connection.CreateTable<Piece>();
-            this.Connection.Insert(new Piece() { Name = "Square", BoardId = 1 });
-            this.Connection.Insert(new Piece() { Name = "Circle", BoardId = 1 });
-            this.Connection.Insert(new Piece() { Name = "Triangle", BoardId = 1 });
-            this.Connection.Insert(new Piece() { Name = "Pentagon", BoardId = 1 });
+            this.Connection.Insert(new Piece() { Name = "Square", BoardId = 1, Image = "bug", Color = "cobalt" });
+            this.Connection.Insert(new Piece() { Name = "Circle", BoardId = 1, Image = "rocket", Color = "amber" });
+            this.Connection.Insert(new Piece() { Name = "Triangle", BoardId = 1, Image = "truck", Color = "magenta" });
+            this.Connection.Insert(new Piece() { Name = "Pentagon", BoardId = 1, Image = "local-airport", Color = "emerald" });
         }
 
         public void LoadPlayer()
@@ -129,10 +129,10 @@ namespace Haven.Data
         public void LoadSafeHavenCard()
         {
             this.Connection.CreateTable<SafeHavenCard>();
-            this.Connection.Insert(new SafeHavenCard() { Id = 1, Name = "God", Details = "" });
+            this.Connection.Insert(new SafeHavenCard() { Id = 1, Name = "God", Details = "The Father, creator of the universe." });
             this.Connection.Insert(new SafeHavenCard() { Id = 2, Name = "Abraham", Details = "The founding father of the Jewish nation of Israel, he was a man of great faith and obedience to the will of God." });
-            this.Connection.Insert(new SafeHavenCard() { Id = 3, Name = "Isaac", Details = "" });
-            this.Connection.Insert(new SafeHavenCard() { Id = 4, Name = "Jacob", Details = "" });
+            this.Connection.Insert(new SafeHavenCard() { Id = 3, Name = "Isaac", Details = "Only child of Abraham and Sarah. Miraculously born after Sarah healed of being barren." });
+            this.Connection.Insert(new SafeHavenCard() { Id = 4, Name = "Jacob", Details = "Son of Isaac, father of the twelve sons who form the tribes of Israel." });
         }
 
         public void LoadSpace()
