@@ -15,10 +15,5 @@ namespace Haven
         public int PlayerId { get; set; }
 
         public string Text { get; set; }
-
-        public Message(string text)
-        {
-            this.Text = text;
-        }
     }
 }

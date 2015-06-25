@@ -1,0 +1,18 @@
+﻿@using Haven;
+
+@foreach (Player player in @Model)
+{
+    if (player.PieceId != 0)
+    {
+        <div class="piece"
+             direction="@player.MovementDirection"
+             spaceid="@player.SpaceId"
+             playerid="@player.Id"
+             style="position: absolute;
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    background-color: blue;
+                    transform: translate(-10px, -10px);"></div>
+    }
+}

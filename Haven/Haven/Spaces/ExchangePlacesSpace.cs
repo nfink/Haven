@@ -8,7 +8,7 @@ namespace Haven
 {
     public partial class Space
     {
-        private Message OnLandExchangePlaces(Player player)
+        private void OnLandExchangePlaces(Player player)
         {
             // add an exchange places action for each other player
             var game = Persistence.Connection.Get<Game>(player.GameId);
@@ -17,7 +17,7 @@ namespace Haven
                 Persistence.Connection.Insert(new Action() { Type = ActionType.ExchangePlaces, OwnerId = player.Id, PlayerId = p.Id });
             }
 
-            return new Message("Select a player to exchange places with.");
+            Persistence.Connection.Insert(new Message() { PlayerId = player.Id, Text = "Select a player to exchange places with." });
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SQLite;
+using System.Security.Cryptography;
 
 namespace Haven
 {
@@ -14,25 +15,13 @@ namespace Haven
 
         public string Name { get; set; }
 
+        public string Password { get; set; }
+
+        public string Salt { get; set; }
+
         public int PieceId { get; set; }
 
-        public Piece Piece
-        {
-            get
-            {
-                return this.PieceId == 0 ? null : Persistence.Connection.Get<Piece>(this.PieceId);
-            }
-        }
-
         public int SpaceId { get; set; }
-
-        public Space Space
-        {
-            get
-            {
-                return Persistence.Connection.Get<Space>(this.SpaceId);
-            }
-        }
 
         public int GameId { get; set; }
 
@@ -42,11 +31,51 @@ namespace Haven
 
         public int NextPlayerId { get; set; }
 
+        public Piece Piece
+        {
+            get
+            {
+                return this.PieceId == 0 ? null : Persistence.Connection.Get<Piece>(this.PieceId);
+            }
+        }
+
+        public Space Space
+        {
+            get
+            {
+                return Persistence.Connection.Get<Space>(this.SpaceId);
+            }
+        }
+
         public IEnumerable<Action> Actions
         {
             get
             {
                 return Persistence.Connection.Table<Action>().Where(x => x.OwnerId == this.Id);
+            }
+        }
+
+        public IEnumerable<Message> Messages
+        {
+            get
+            {
+                return Persistence.Connection.Table<Message>().Where(x => x.PlayerId == this.Id);
+            }
+        }
+
+        public IEnumerable<NameCard> NameCards
+        {
+            get
+            {
+                return Persistence.Connection.Query<NameCard>("select NameCard.* from NameCard join PlayerNameCard on NameCard.Id=PlayerNameCard.NameCardId join Player on PlayerNameCard.PlayerId=Player.Id where Player.Id=?", this.Id);
+            }
+        }
+
+        public IEnumerable<SafeHavenCard> SafeHavenCards
+        {
+            get
+            {
+                return Persistence.Connection.Query<SafeHavenCard>("select SafeHavenCard.* from SafeHavenCard join PlayerSafeHavenCard on SafeHavenCard.Id=PlayerSafeHavenCard.SafeHavenCardId join Player on PlayerSafeHavenCard.PlayerId=Player.Id where Player.Id=?", this.Id);
             }
         }
 
@@ -58,6 +87,38 @@ namespace Haven
         public static IEnumerable<Action> GetAvailableAction(int playerId)
         {
             return Persistence.Connection.Table<Action>().Where(x => x.OwnerId == playerId);
+        }
+
+        public void SetPassword(string password)
+        {
+            // from http://stackoverflow.com/questions/4181198/how-to-hash-a-password
+            byte[] salt;
+            new RNGCryptoServiceProvider().GetBytes(salt = new byte[16]);
+            var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 1000);
+            byte[] hash = pbkdf2.GetBytes(20);
+            byte[] hashBytes = new byte[36];
+            Array.Copy(salt, 0, hashBytes, 0, 16);
+            Array.Copy(hash, 0, hashBytes, 16, 20);
+            string savedPasswordHash = Convert.ToBase64String(hashBytes);
+            this.Salt = Convert.ToBase64String(salt);
+            this.Password = savedPasswordHash;
+            Persistence.Connection.Update(this);
+        }
+
+        public bool VerifyPassword(string password)
+        {
+            // from http://stackoverflow.com/questions/4181198/how-to-hash-a-password
+            byte[] hashBytes = Convert.FromBase64String(this.Password);
+            byte[] salt = Convert.FromBase64String(this.Salt);
+            Array.Copy(hashBytes, 0, salt, 0, 16);
+            var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 1000);
+            byte[] hash = pbkdf2.GetBytes(20);
+            return hash.Where((x, i) => x != hashBytes[i + 16]).Any();
+        }
+
+        public IEnumerable<Message> RecentMessages(int number)
+        {
+            return Persistence.Connection.Table<Message>().Where(x => x.PlayerId == this.Id).OrderByDescending(x => x.Id).Take(number).OrderBy(x => x.Id);
         }
     }
 }

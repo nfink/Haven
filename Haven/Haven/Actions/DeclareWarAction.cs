@@ -8,7 +8,7 @@ namespace Haven
 {
     public partial class Action
     {
-        private Message DeclareWarAction(Object input)
+        private void DeclareWarAction(Object input)
         {
             // remove all war actions
             Persistence.Connection.Execute("delete from Action where (Type=? or Type=?) and OwnerId=?", ActionType.DeclareWar, ActionType.DeclineWar, this.OwnerId);
@@ -22,7 +22,7 @@ namespace Haven
             }
 
             var challengedPlayer = Persistence.Connection.Get<Player>(this.PlayerId);
-            return new Message(string.Format("Declared war against {0}!", challengedPlayer.Name));
+            Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = string.Format("Declared war against {0}!", challengedPlayer.Name) });
         }
     }
 }

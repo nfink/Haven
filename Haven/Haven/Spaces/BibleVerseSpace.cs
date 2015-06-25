@@ -8,14 +8,15 @@ namespace Haven
 {
     public partial class Space
     {
-        private Message OnLandBibleVerse(Player player)
+        private void OnLandBibleVerse(Player player)
         {
             // player can either read the verse or recite it
             Persistence.Connection.Insert(new Action() { Type = ActionType.ReadBibleVerse, OwnerId = player.Id, BibleVerseId = this.BibleVerseId });
             Persistence.Connection.Insert(new Action() { Type = ActionType.ReciteBibleVerse, OwnerId = player.Id, BibleVerseId = this.BibleVerseId });
 
             var verse = Persistence.Connection.Get<BibleVerse>(this.BibleVerseId);
-            return new Message(verse.ToString());
+
+            Persistence.Connection.Insert(new Message() { PlayerId = player.Id, Text = verse.ToString() });
         }
     }
 }

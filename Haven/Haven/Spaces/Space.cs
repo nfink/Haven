@@ -102,26 +102,34 @@ namespace Haven
 
         public string TextColor { get; set; }
 
-        public Message OnLand(Player player)
+        public void OnLand(Player player)
         {
             switch (this.Type)
             {
                 case (SpaceType.BibleVerse):
-                    return OnLandBibleVerse(player);
+                    OnLandBibleVerse(player);
+                    break;
                 case (SpaceType.Challenge):
-                    return OnLandChallege(player);
+                    OnLandChallege(player);
+                    break;
                 case (SpaceType.ExchangePlaces):
-                    return OnLandExchangePlaces(player);
+                    OnLandExchangePlaces(player);
+                    break;
                 case (SpaceType.OptionalTurnAround):
-                    return OnLandOptionalTurnAround(player);
+                    OnLandOptionalTurnAround(player);
+                    break;
                 case (SpaceType.RollToGo):
-                    return OnLandRollToGo(player);
+                    OnLandRollToGo(player);
+                    break;
                 case (SpaceType.SafeHaven):
-                    return OnLandSafeHaven(player);
+                    OnLandSafeHaven(player);
+                    break;
                 case (SpaceType.TurnAround):
-                    return OnLandTurnAround(player);
+                    OnLandTurnAround(player);
+                    break;
                 case (SpaceType.War):
-                    return OnLandWar(player);
+                    OnLandWar(player);
+                    break;
                 default:
                     throw new Exception("Space has no Type");
             }

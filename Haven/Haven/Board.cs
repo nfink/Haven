@@ -18,11 +18,27 @@ namespace Haven
 
         public string Icon { get; set; }
 
+        public int MessageAreaWidth { get; set; }
+
+        public int MessageAreaHeight { get; set; }
+
+        public int MessageAreaX { get; set; }
+
+        public int MessageAreaY { get; set; }
+
+        public int StatusAreaWidth { get; set; }
+
+        public int StatusAreaHeight { get; set; }
+
+        public int StatusAreaX { get; set; }
+
+        public int StatusAreaY { get; set; }
+
         public IEnumerable<Space> Spaces
         {
             get
             {
-                return Persistence.Connection.Table<Space>().Where(x => x.BoardId == this.Id).OrderBy(x => x.Order);
+                return Persistence.Connection.Table<Space>().Where(x => x.BoardId == this.Id).OrderBy(x => x.Order).ToList();
             }
         }
 
@@ -60,12 +76,12 @@ namespace Haven
             return spaces[endLocation];
         }
 
-        public Message MovePlayer(Game game, Player player, int spaceId)
+        public void MovePlayer(Game game, Player player, int spaceId)
         {
             player.SpaceId = spaceId;
             Persistence.Connection.Update(player);
             var space = Persistence.Connection.Get<Space>(player.SpaceId);
-            return space.OnLand(player);
+            space.OnLand(player);
         }
     }
 }

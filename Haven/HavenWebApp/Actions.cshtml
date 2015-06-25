@@ -1,0 +1,131 @@
+﻿@using Haven;
+
+@foreach (Player player in @Model)
+{
+    var playerName = player.Name == null ? " New Player" : " " + player.Name;
+    var playerIcon = "mif-" + (player.Piece == null ? "user" : player.Piece.Image);
+    var iconColor = "bg-" + (player.Piece == null ? "lightOlive" : player.Piece.Color);
+    
+    <div class="actionContainer tile bg-olive padding5"
+         playerid="@player.Id"
+         onclick="SelectPlayer(this);"
+         style="width: auto;
+                height: auto;">
+        <div class="padding5">
+            <div class="icon header padding5 @playerIcon @iconColor"
+                 style="display: table-cell;
+                        min-width: 56px;
+                        text-align: center;"></div>
+            <div class="padding10 header bg-olive"
+                 style="min-width: 200px;
+                        display: table-cell;">@playerName</div>
+        </div>
+        @foreach (Haven.Action action in player.Actions)
+        {
+            <div class="action padding5">
+                <form onsubmit="return PerformAction(this);"
+                      method="post"
+                      action="PerformAction">
+                    <input name="Id"
+                           value="@action.Id"
+                           type="hidden">
+                    
+                    @{ var buttonClass = "button bg-mauve bd-mauve bg-active-steel fg-white";
+                        if (action.RequiresInput)
+                        {
+                            var text = action.Name;
+                            var type = "text";
+                            switch (action.Type)
+                            {
+                                case ActionType.ReciteBibleVerse:
+                                    text = "Enter bible verse";
+                                    break;
+                                case ActionType.EnterName:
+                                    text = "Your name";
+                                    break;
+                                case ActionType.EnterPassword:
+                                    text = "Your password";
+                                    type = "password";
+                                    break;
+                                default:
+                                    break;
+                            } 
+                            
+                            <div style="width: 100%;" data-role="input" class="input-control text">
+                                <input style="padding-right: 62px;" placeholder="@text" name="Input" type="@type">
+                                <button class="@buttonClass" type="submit">
+                                    <span class="mif-play"></span>
+                                </button>
+                            </div><br>
+                        }
+                        else
+                        {
+                            var icon = "question";
+                            var color = "mauve";
+                            var text = action.Name;
+                            switch (action.Type)
+                            {
+                                case ActionType.AnswerChallenge:
+                                    icon = "question";
+                                    text = action.Answer.Answer;
+                                    break;
+                                case ActionType.AnswerWarChallenge:
+                                    icon = "question";
+                                    text = action.Answer.Answer;
+                                    break;
+                                case ActionType.DeclareWar:
+                                    icon = action.Player.Piece.Image;
+                                    color = action.Player.Piece.Color;
+                                    text = "Declare War";
+                                    break;
+                                case ActionType.DeclineWar:
+                                    icon = "florist";
+                                    text = "No War";
+                                    break;
+                                case ActionType.EndTurn:
+                                    icon = "blocked";
+                                    text = "End Turn";
+                                    break;
+                                case ActionType.ExchangePlaces:
+                                    icon = action.Player.Piece.Image;
+                                    color = action.Player.Piece.Color;
+                                    break;
+                                case ActionType.ReadBibleVerse:
+                                    icon = "books";
+                                    text = "Read";
+                                    break;
+                                case ActionType.Roll:
+                                    icon = "dice";
+                                    text = "Roll";
+                                    break;
+                                case ActionType.RollToGo:
+                                    icon = "dice";
+                                    text = "Roll To Go";
+                                    break;
+                                case ActionType.SelectPiece:
+                                    icon = action.Piece.Image;
+                                    color = action.Piece.Color;
+                                    text = "Select Piece";
+                                    break;
+                                case ActionType.TurnAround:
+                                    icon = "undo";
+                                    text = "Turn Around";
+                                    break;
+                                default:
+                                    break;
+                            }
+                            
+                            <input name="Input"
+                                   type="hidden">
+                            <button type="submit"
+                                    class="@buttonClass image-button"
+                                    style="width: 100%;">@text
+                                    <span class="icon mif-@icon bg-@color"></span>
+                            </button>
+                        }
+                    }
+                </form>
+            </div>
+        }
+    </div>
+}

@@ -1,0 +1,16 @@
+﻿@using Haven;
+
+@foreach (Player player in @Model)
+{
+    <div playerid="@player.Id">
+        @foreach (SafeHavenCard safeHavenCard in player.SafeHavenCards)
+        {
+            <div class="tile-small safehavencard">@safeHavenCard.Name</div>
+        }
+
+        @foreach (NameCard nameCard in player.NameCards)
+        {
+            <div class="tile-small namecard">@nameCard.Name</div>
+        }
+    </div>
+}

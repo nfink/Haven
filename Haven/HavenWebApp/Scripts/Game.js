@@ -1,12 +1,122 @@
 ﻿/// <reference path="https://code.jquery.com/jquery-1.11.3.min.js" />
 
-var GameId;
+function SetupGame(game) {
+    $("#game").append(game);
 
-function Init() {
+    // adjust position of board elements
+    $(".space, #messagearea, #statusarea").offset(function (index) {
+        var left = $(this).css("left");
+        left = left.replace("px", "");
+        var top = $(this).css("top");
+        top = top.replace("px", "");
+        var newLeft = 10 + (left - 1) * $(this).width() * 1.1;
+        var newTop = 10 + (top - 1) * $(this).height() * 1.1;
+        return { left: newLeft, top: newTop };
+    });
 
+    // adjust size of status and message areas
+    $("#messagearea, #statusarea").width(function (index, width) {
+        return (($(this).attr("width") - 1) * ((width * 1.1) + 1)) + width;
+    });
+    $("#messagearea, #statusarea").height(function (index, height) {
+        return (($(this).attr("height") - 1) * ((height * 1.1) + 1)) + height;
+    });
 }
 
-function SetupGame(game) {
+function PerformAction(actionForm) {
+    // hide actions so the player can't try to perform multiple actions
+    $(".action").hide();
+
+    $.post("PerformAction", $(actionForm).serialize(), function (data) {
+        var elements = $(data);
+
+        UpdatePieces(elements.filter("#pieces").children());
+
+        // update after pieces have moved
+        $(".piece").promise().done(function () {
+            // current player selection
+            var selectedPlayerId = $(".actionContainer.element-selected").attr("playerid");
+
+            // update messages
+            $("#messages").empty();
+            $("#messages").append(elements.filter("#messages").children());
+
+            // update cards
+            $("#cards").empty();
+            $("#cards").append(elements.filter("#cards").children());
+
+            // update actions
+            $("#actions").empty();
+            $("#actions").append(elements.filter("#actions").children());
+
+            // retain player selection
+            $(".actionContainer[playerid=" + selectedPlayerId + "]").trigger("click");
+        });
+    });
+
+    return false;
+}
+
+function UpdatePieces(pieces) {
+    $.each(pieces, function (index, value) {
+        var playerId = $(value).attr("playerid");
+        if ($(".piece[playerid=" + playerId + "]").length < 1) {
+            $("#pieces").append(value);
+        }
+        else {
+            var spaceId = $(value).attr("spaceid")
+            var piece = $(".piece[playerId=" + playerId + "]");
+            if (piece.attr("spaceId") !== spaceId) {
+                piece.attr("destinationSpaceId", spaceId);
+                piece.attr("direction", piece.attr("direction"));
+                piece.MovePiece = MovePiece;
+                piece.MovePiece();
+            }
+        }
+    });
+}
+
+function MovePiece() {
+    var piece = $(this);
+    var currentSpaceId = piece.attr("spaceId");
+    var destinationSpaceId = piece.attr("destinationSpaceId");
+    if (destinationSpaceId !== currentSpaceId) {
+        var currentSpace = $(".space[spaceId=" + currentSpaceId + "]");
+        var direction = piece.attr("direction");
+        var nextSpaceId;
+        if (direction == "True") {
+            nextSpaceId = currentSpace.attr("nextSpaceId");
+        }
+        else {
+            nextSpaceId = currentSpace.attr("previousSpaceId");
+        }
+        var nextSpace = $(".space[spaceId=" + nextSpaceId + "]");
+        var nextSpacePosition = nextSpace.offset();
+        piece.attr("spaceId", nextSpaceId);
+        // adjust position for other pieces
+        $(".piece[spaceId=" + nextSpaceId + "]").each(function (index) {
+            var translation = -1 * (10 * (index + 1));
+            $(this).css({ transform: "translate(" + translation + "px," + translation + "px)" });
+        });
+        piece.animate({ left: nextSpacePosition.left + (nextSpace.width() / 2), top: nextSpacePosition.top + (nextSpace.height() / 2) }, 250, MovePiece);
+    }
+}
+
+function SelectPlayer(actionsDiv) {
+    // mark as selected
+    $(".actionContainer").removeClass("element-selected");
+    $(actionsDiv).addClass("element-selected");
+
+    // show cards and messages
+    var playerId = $(actionsDiv).attr("playerid");
+    $("#messagearea").empty();
+    $("#messagearea").append($("#messages").find("[playerid=" + playerId + "]").clone());
+    $("#statusarea").empty();
+    $("#statusarea").append($("#cards").find("[playerid=" + playerId + "]").clone());
+}
+
+
+function SetupGame2(game) {
     GameId = game.Id;
     // $("#spaces").empty();
     // $("#pieces").empty();
@@ -38,6 +148,8 @@ function SetupGame(game) {
                 position: "absolute",
                 //width: space.Width,
                 //height: space.Height,
+                left: space.X,
+                top: space.Y,
                 //left: (space.X - 1) * 80 + 10,
                 //top: (space.Y - 1) * 80 + 10,
                 //backgroundColor: space.BackgroundColor,
@@ -46,8 +158,8 @@ function SetupGame(game) {
                 //lineHeight: "70px",
                 //textAlign: "center",
             });
-        box.css("left", 10 + (space.X - 1) * box.width() * 1.1);
-        box.css("top", 10 + (space.Y - 1) * box.height() * 1.1);
+        //box.css("left", 10 + (space.X - 1) * box.width() * 1.1);
+        //box.css("top", 10 + (space.Y - 1) * box.height() * 1.1);
 
         var tile = $("<div/>", {
             class: "tile-content slide-up-2",
@@ -96,6 +208,17 @@ function SetupGame(game) {
     $(".spaceLabel8").addClass("mif-fire mif-2x");
     $(".spaceLabel8").empty();
 
+    // adjust position of spaces
+    $(".space").offset(function (index) {
+        var left = $(this).css("left");
+        left = left.replace("px", "");
+        var top = $(this).css("top");
+        top = top.replace("px", "");
+        var newLeft = 10 + (left - 1) * $(this).width() * 1.1;
+        var newTop = 10 + (top - 1) * $(this).height() * 1.1;
+        return { left: newLeft, top: newTop };
+    });
+
     // load players
     for (i = 0; i < game.Players.length; ++i) {
         var player = game.Players[i];
@@ -122,24 +245,6 @@ function SetupGame(game) {
 
     LoadActions(game.Players);
     UpdatePieces(game.Players);
-}
-
-function PerformAction(actionForm) {
-    $.post("PerformAction", $(actionForm).serialize(), function (data) {
-        alert(data);
-        // update players and actions
-        $.get("Game/" + GameId + "/Players", function (data) {
-            var players = JSON.parse(data);
-            UpdatePieces(players);
-            // update actions after pieces have moved
-            $(".piece").promise().done(function () {
-                $("#actions").empty();
-                LoadActions(players);
-            });
-        });
-    });
-
-    return false;
 }
 
 function LoadActions(players)
@@ -208,7 +313,7 @@ function LoadActions(players)
                 .text(action.Name);
 
             if (action.Type == 12) {
-                button.attr("class", button.attr("class") + " image-button");
+                button.addClass("image-button");
                 var buttonIcon = $("<span/>", {
                     class: "icon mif-" + action.Piece.Image + " bg-" + action.Piece.Color,
                 });
@@ -251,7 +356,7 @@ function LoadActions(players)
     }
 }
 
-function UpdatePieces(players) {
+function UpdatePieces2(players) {
     for (i = 0; i < players.length; ++i) {
         var player = players[i];
         var piece = $(".piece[playerId=" + player.Id + "]");
@@ -263,32 +368,5 @@ function UpdatePieces(players) {
             piece.MovePiece = MovePiece;
             piece.MovePiece();
         }
-    }
-}
-
-function MovePiece()
-{
-    var piece = $(this);
-    var currentSpaceId = piece.attr("spaceId");
-    var destinationSpaceId = piece.attr("destinationSpaceId");
-    if (destinationSpaceId !== currentSpaceId) {
-        var currentSpace = $(".space[spaceId=" + currentSpaceId + "]");
-        var direction = piece.attr("direction");
-        var nextSpaceId;
-        if (direction == "true") {
-            nextSpaceId = currentSpace.attr("nextSpaceId");
-        }
-        else {
-            nextSpaceId = currentSpace.attr("previousSpaceId");
-        }
-        var nextSpace = $(".space[spaceId=" + nextSpaceId + "]");
-        var nextSpacePosition = nextSpace.offset();
-        piece.attr("spaceId", nextSpaceId);
-        // adjust position for other pieces
-        $(".piece[spaceId=" + nextSpaceId + "]").each(function (index) {
-            var translation = -1 * (10 * (index + 1));
-            $(this).css({ transform: "translate(" + translation + "px," + translation + "px)" });
-        });
-        piece.animate({ left: nextSpacePosition.left + (nextSpace.width() / 2), top: nextSpacePosition.top + (nextSpace.height() / 2) }, 250, MovePiece);
     }
 }

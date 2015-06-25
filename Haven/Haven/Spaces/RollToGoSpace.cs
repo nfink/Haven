@@ -8,10 +8,10 @@ namespace Haven
 {
     public partial class Space
     {
-        private Message OnLandRollToGo(Player player)
+        private void OnLandRollToGo(Player player)
         {
             Persistence.Connection.Insert(new Action() { Type = ActionType.RollToGo, OwnerId = player.Id });
-            return new Message("Roll again. If even, go forward, if odd, go backward.");
+            Persistence.Connection.Insert(new Message() { PlayerId = player.Id, Text = "Roll again. If even, go forward, if odd, go backward." });
         }
     }
 }

@@ -64,8 +64,9 @@ namespace HavenTest
             {
                 if (i == number)
                 {
-                    var message = a.PerformAction(input);
-                    Console.WriteLine(message.Text);
+                    a.PerformAction(input);
+                    var latestMessage = Persistence.Connection.Query<Message>("select Message.* from Message where Id=(select max(Message.Id) from Message join Player on Message.PlayerId=Player.Id where Player.Id=?)", game.CurrentPlayerId).First();
+                    Console.WriteLine(latestMessage.Text);
                     return;
                 }
                 i++;

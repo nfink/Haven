@@ -15,6 +15,7 @@ namespace Haven
         DeclineWar,
         EndTurn,
         EnterName,
+        EnterPassword,
         ExchangePlaces,
         ReadBibleVerse,
         ReciteBibleVerse,
@@ -57,7 +58,7 @@ namespace Haven
         {
             get
             {
-                return (this.Type == ActionType.EnterName) || (this.Type == ActionType.ReciteBibleVerse);
+                return (this.Type == ActionType.EnterName) || (this.Type == ActionType.ReciteBibleVerse) || (this.Type == ActionType.EnterPassword);
             }
         }
 
@@ -101,36 +102,52 @@ namespace Haven
             }
         }
 
-        public Message PerformAction(Object input)
+        public void PerformAction(Object input)
         {
             switch (this.Type)
             {
                 case (ActionType.AnswerChallenge):
-                    return AnswerChallengeAction(input);
+                    AnswerChallengeAction(input);
+                    break;
                 case (ActionType.AnswerWarChallenge):
-                    return AnswerWarChallengeAction(input);
+                    AnswerWarChallengeAction(input);
+                    break;
                 case (ActionType.DeclareWar):
-                    return DeclareWarAction(input);
+                    DeclareWarAction(input);
+                    break;
                 case (ActionType.DeclineWar):
-                    return DeclineWarAction(input);
+                    DeclineWarAction(input);
+                    break;
                 case (ActionType.EndTurn):
-                    return EndTurnAction(input);
+                    EndTurnAction(input);
+                    break;
                 case (ActionType.EnterName):
-                    return EnterNameAction(input);
+                    EnterNameAction(input);
+                    break;
+                case (ActionType.EnterPassword):
+                    EnterPasswordAction(input);
+                    break;
                 case (ActionType.ExchangePlaces):
-                    return ExchangePlacesAction(input);
+                    ExchangePlacesAction(input);
+                    break;
                 case (ActionType.ReadBibleVerse):
-                    return ReadBibleVerseAction(input);
+                    ReadBibleVerseAction(input);
+                    break;
                 case (ActionType.ReciteBibleVerse):
-                    return ReciteBibleVerseAction(input);
+                    ReciteBibleVerseAction(input);
+                    break;
                 case (ActionType.Roll):
-                    return RollAction(input);
+                    RollAction(input);
+                    break;
                 case (ActionType.RollToGo):
-                    return RollToGoAction(input);
+                    RollToGoAction(input);
+                    break;
                 case (ActionType.SelectPiece):
-                    return SelectPieceAction(input);
+                    SelectPieceAction(input);
+                    break;
                 case (ActionType.TurnAround):
-                    return TurnAroundAction(input);
+                    TurnAroundAction(input);
+                    break;
                 default:
                     throw new Exception("Action has no Type");
             }

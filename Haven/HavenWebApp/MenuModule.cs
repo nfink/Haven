@@ -30,11 +30,11 @@ namespace HavenWebApp
         }
     }
 
-    public class TestModule : NancyModule
+    public class MenuModule : NancyModule
     {
         public static DataLoad DataLoad;
 
-        public TestModule()
+        public MenuModule()
         {
             if (DataLoad == null)
             {
@@ -42,16 +42,16 @@ namespace HavenWebApp
                 DataLoad.LoadTables();
             }
 
-            Get["/"] = parameters => View["Home.html", null];
+            Get["/"] = parameters => View["Haven.cshtml", null];
 
             Get["/Boards"] = parameters =>
             {
-                return View["Boards.html", Persistence.Connection.Table<Board>()];
+                return View["BoardsMenu.cshtml", Persistence.Connection.Table<Board>()];
             };
 
             Get["/Games"] = parameters =>
             {
-                return View["Games.html", Persistence.Connection.Table<Game>()];
+                return View["GamesMenu.cshtml", Persistence.Connection.Table<Game>()];
             };
 
             Get["/NewGame"] = parameters =>
@@ -59,27 +59,7 @@ namespace HavenWebApp
                 var game = Game.NewGame((int)this.Request.Query.BoardId, (int)this.Request.Query.NumberOfPlayers);
                 game.Name = (string)this.Request.Query.Name;
                 Persistence.Connection.Update(game);
-                return JsonConvert.SerializeObject(game);
-            };
-
-            Get["/Game/{id}"] = parameters =>
-            {
-                var game = Persistence.Connection.Get<Game>((int)parameters.id);
-                return JsonConvert.SerializeObject(game);
-            };
-
-            Get["/Game/{id}/Players"] = parameters =>
-            {
-                var gameId = (int)parameters.id;
-                var players = Persistence.Connection.Table<Player>().Where(x => x.GameId == gameId);
-                return JsonConvert.SerializeObject(players);
-            };
-
-            Post["/PerformAction"] = parameters =>
-            {
-                var action = Persistence.Connection.Get<Haven.Action>((int)this.Request.Form.Id);
-                var message = action.PerformAction((string)this.Request.Form.Input);
-                return JsonConvert.SerializeObject(message);
+                return View["Game.cshtml", game];
             };
         }
     }

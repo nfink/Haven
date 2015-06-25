@@ -46,6 +46,7 @@
     <Compile Include="Actions\AnswerWarChallengeAction.cs" />
     <Compile Include="Actions\DeclineWarAction.cs" />
     <Compile Include="Actions\EnterNameAction.cs" />
+    <Compile Include="Actions\EnterPasswordAction.cs" />
     <Compile Include="BibleVerse.cs" />
     <Compile Include="Actions\RollAction.cs" />
     <Compile Include="Actions\ExchangePlacesAction.cs" />

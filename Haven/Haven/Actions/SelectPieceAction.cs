@@ -8,7 +8,7 @@ namespace Haven
 {
     public partial class Action
     {
-        private Message SelectPieceAction(Object input)
+        private void SelectPieceAction(Object input)
         {
             // remove all other select piece actions
             Persistence.Connection.Execute("delete from Action where Type=? and OwnerId=?", ActionType.SelectPiece, this.OwnerId);
@@ -21,7 +21,7 @@ namespace Haven
 
             var game = Persistence.Connection.Get<Game>(player.GameId);
             game.StartGame();
-            return new Message(string.Format("{0} piece selected.", piece.Name));
+            Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = string.Format("{0} piece selected.", piece.Name) });
         }
     }
 }

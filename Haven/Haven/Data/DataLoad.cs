@@ -18,13 +18,6 @@ namespace Haven.Data
             this.Connection = new SQLiteConnection("C:\\Users\\Nolan\\OneDrive\\Code\\Haven\\Haven\\Haven\\bin\\Debug\\Data\\SafeHavenGame.sqlite");
         }
 
-        public Board GetBoard(string name)
-        {
-            // load board
-            var board = this.Connection.Table<Board>().Where(x => x.Name == name).First();
-            return board;
-        }
-
         public void LoadTables()
         {
             this.LoadPiece();
@@ -57,7 +50,9 @@ namespace Haven.Data
         public void LoadBoard()
         {
             this.Connection.CreateTable<Board>();
-            this.Connection.Insert(new Board() { Id = 1, Name = "Genesis", Description = "Covers the book of Genesis", Icon = "Content/Rembrandt_Harmensz_square.jpg" });
+            this.Connection.Insert(new Board() { Id = 1, Name = "Genesis", Description = "Covers the book of Genesis", Icon = "Content/Rembrandt_Harmensz_square.jpg",
+                MessageAreaWidth = 7, MessageAreaHeight = 3, MessageAreaX = 2, MessageAreaY = 2,
+                StatusAreaWidth = 7, StatusAreaHeight = 4, StatusAreaX = 2, StatusAreaY = 5});
         }
 
         public void LoadChallenge()

@@ -8,7 +8,7 @@ namespace Haven
 {
     public partial class Action
     {
-        private Message ReadBibleVerseAction(Object input)
+        private void ReadBibleVerseAction(Object input)
         {
             Persistence.Connection.Execute("delete from Action where (Type=? or Type=?) and OwnerId=?", ActionType.ReadBibleVerse, ActionType.ReciteBibleVerse, this.OwnerId);
 
@@ -17,7 +17,7 @@ namespace Haven
 
             Game.EndTurn(this.OwnerId);
 
-            return new Message("Read bible verse.");
+            Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = "Read bible verse." });
         }
     }
 }

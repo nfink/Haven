@@ -63,6 +63,9 @@ namespace Haven
                 // add action for entering a name
                 Persistence.Connection.Insert(new Action() { Type = ActionType.EnterName, OwnerId = player.Id });
 
+                // add action for entering a password
+                Persistence.Connection.Insert(new Action() { Type = ActionType.EnterPassword, OwnerId = player.Id });
+
                 // start player on the first space
                 player.SpaceId = firstSpaceId;
 
@@ -96,8 +99,8 @@ namespace Haven
 
         public void StartGame()
         {
-            // if all players have selected a piece and entered a name, start game
-            if (Persistence.Connection.Query<Player>("select Player.* from Player where GameId=? and (PieceId=0 or Name is null)", this.Id).Count < 1)
+            // if all players have selected a piece and entered a name and password,  start game
+            if (Persistence.Connection.Query<Player>("select Player.* from Player where GameId=? and (PieceId=0 or Name is null or Password is null)", this.Id).Count < 1)
             {
                 Persistence.Connection.Insert(new Action() { Type = ActionType.Roll, OwnerId = this.CurrentPlayerId });
             }

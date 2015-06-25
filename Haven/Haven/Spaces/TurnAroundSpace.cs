@@ -8,14 +8,14 @@ namespace Haven
 {
     public partial class Space
     {
-        private Message OnLandTurnAround(Player player)
+        private void OnLandTurnAround(Player player)
         {
             // change player movement direction
             player.MovementDirection = !player.MovementDirection;
 
             Game.EndTurn(player.Id);
 
-            return new Message("Turned around.");
+            Persistence.Connection.Insert(new Message() { PlayerId = player.Id, Text = "Turned around." });
         }
     }
 }

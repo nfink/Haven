@@ -8,7 +8,7 @@ namespace Haven
 {
     public partial class Action
     {
-        private Message ExchangePlacesAction(Object input)
+        private void ExchangePlacesAction(Object input)
         {
             // remove all exchange places actions
             Persistence.Connection.Execute("delete from Action where Type=? and OwnerId=?", ActionType.ExchangePlaces, this.OwnerId);
@@ -23,7 +23,7 @@ namespace Haven
             Persistence.Connection.Update(playerToExchangeWith);
 
             Game.EndTurn(this.OwnerId);
-            return new Message(string.Format("Exchanged places with {0}.", playerToExchangeWith.Name));
+            Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = string.Format("Exchanged places with {0}.", playerToExchangeWith.Name) });
         }
     }
 }

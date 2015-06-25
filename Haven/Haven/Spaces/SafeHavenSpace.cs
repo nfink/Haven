@@ -8,10 +8,8 @@ namespace Haven
 {
     public partial class Space
     {
-        private Message OnLandSafeHaven(Player player)
+        private void OnLandSafeHaven(Player player)
         {
-            Message message;
-
             // add the safe haven card if the player has all name cards
             var safeHaven = Persistence.Connection.Get<SafeHavenCard>(this.SafeHavenCardId);
             var missingNameCards = Persistence.Connection.Query<NameCard>(
@@ -35,20 +33,19 @@ namespace Haven
 
                 if (missingSafeHavenCards.Count < 1)
                 {
-                    return new Message(string.Format("{0} gives you an award. You have collected all awards and win the game!", safeHaven.Name));
+                    Persistence.Connection.Insert(new Message() { PlayerId = player.Id, Text = string.Format("{0} gives you an award. You have collected all awards and win the game!", safeHaven.Name) });
                 }
                 else
                 {
-                    message = new Message(string.Format("{0} protects you this turn and gives you an award", safeHaven.Name));
+                    Persistence.Connection.Insert(new Message() { PlayerId = player.Id, Text = string.Format("{0} protects you this turn and gives you an award", safeHaven.Name) });
                 }
             }
             else
             {
-                message = new Message(string.Format("{0} protects you this turn.", safeHaven.Name));
+                Persistence.Connection.Insert(new Message() { PlayerId = player.Id, Text = string.Format("{0} protects you this turn.", safeHaven.Name) });
             }
 
             Game.EndTurn(player.Id);
-            return message;
         }
     }
 }

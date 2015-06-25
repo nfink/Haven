@@ -8,7 +8,7 @@ namespace Haven
 {
     public partial class Space
     {
-        private Message OnLandChallege(Player player)
+        private void OnLandChallege(Player player)
         {
             var game = Persistence.Connection.Get<Game>(player.GameId);
             var challenge = game.GetNextChallenge();
@@ -19,7 +19,7 @@ namespace Haven
                 Persistence.Connection.Insert(new Action() { Type = ActionType.AnswerChallenge, OwnerId = player.Id, NameCardId = this.NameCardId, AnswerId = ca.Id });
             }
 
-            return new Message(challenge.Question);
+            Persistence.Connection.Insert(new Message() { PlayerId = player.Id, Text = challenge.Question });
         }
     }
 }

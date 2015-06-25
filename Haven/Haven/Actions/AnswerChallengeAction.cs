@@ -8,9 +8,8 @@ namespace Haven
 {
     public partial class Action
     {
-        private Message AnswerChallengeAction(Object input)
+        private void AnswerChallengeAction(Object input)
         {
-            string message;
             var answer = Persistence.Connection.Get<ChallengeAnswer>(this.AnswerId);
 
             // remove all answer challenge actions
@@ -29,22 +28,27 @@ namespace Haven
                 {
                     var nameCard = Persistence.Connection.Get<NameCard>(this.NameCardId);
                     Persistence.Connection.Insert(new PlayerNameCard() { PlayerId = this.OwnerId, NameCardId = this.NameCardId });
-                    message = string.Format("Correct! Earned {0} card.", nameCard.Name);
+                    Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = string.Format("Correct! Earned {0} card.", nameCard.Name) });
+                    Game.EndTurn(this.OwnerId);
                 }
-                else
+                else if (missingNameCards.Count > 0)
                 {
                     var randomCard = missingNameCards.OrderBy(x => Dice.RollDice(1, missingNameCards.Count()).Sum).First();
                     Persistence.Connection.Insert(new PlayerNameCard() { PlayerId = this.OwnerId, NameCardId = randomCard.Id });
-                    message = string.Format("Correct! Earned {0} card.", randomCard.Name);
+                    Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = string.Format("Correct! Earned {0} card.", randomCard.Name) });
+                    Game.EndTurn(this.OwnerId);
+                }
+                else
+                {
+                    Persistence.Connection.Insert(new Action() { Type = ActionType.Roll, OwnerId = this.OwnerId });
+                    Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = "You have all the cards. Roll again!" });
                 }
             }
             else
             {
-                message = "Incorrect!";
+                Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = "Incorrect!" });
+                Game.EndTurn(this.OwnerId);
             }
-
-            Game.EndTurn(this.OwnerId);
-            return new Message(message);
         }
     }
 }

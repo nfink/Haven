@@ -1,0 +1,100 @@
+﻿@using Haven;
+
+@{  var spaces = @Model.Board.Spaces;
+    var NumberOfSpaces = spaces.Count;
+}
+
+<input type="hidden" id="gameid" value="@Model.Id" />
+<div id="board" style="position:absolute;left: 80px;width: 720px;">
+    <div>
+        <div id="spaces" class="padding5">
+            @for (var i = 0; i < @NumberOfSpaces; i++)
+            {
+                var space = spaces[@i];
+                var additionalClass = "";
+                var text = "";
+                var details = "";
+                SpaceType spaceType = space.Type;
+                switch (spaceType)
+                {
+                    case SpaceType.BibleVerse:
+                        additionalClass = "mif-books mif-2x";
+                        text = "";
+                        break;
+                    case SpaceType.Challenge:
+                        text = @space.NameCard.Name;
+                        details = @space.NameCard.Details;
+                        break;
+                    case SpaceType.ExchangePlaces:
+                        additionalClass = "mif-loop2 mif-2x";
+                        break;
+                    case SpaceType.OptionalTurnAround:
+                        additionalClass = "mif-undo mif-2x";
+                        text = "?";
+                        break;
+                    case SpaceType.RollToGo:
+                        additionalClass = "mif-dice mif-2x";
+                        break;
+                    case SpaceType.SafeHaven:
+                        text = @space.SafeHavenCard.Name;
+                        details = @space.SafeHavenCard.Details;
+                        break;
+                    case SpaceType.TurnAround:
+                        additionalClass = "mif-undo mif-2x";
+                        break;
+                    case SpaceType.War:
+                        additionalClass = "mif-fire mif-2x";
+                        break;
+                    default:
+                        break;
+                }
+
+                var left = space.X + "px";
+                var top = space.Y + "px";
+                var nextSpaceId = spaces[(@i + 1) % @NumberOfSpaces].Id;
+                var previousSpaceId = @i > 0 ? spaces[(@i - 1) % (@NumberOfSpaces - 1)].Id : spaces[@NumberOfSpaces - 1].Id;
+                
+            <div class="space tile-small bg-taupe fg-white"
+                 spaceid="@space.Id"
+                 nextspaceid="@nextSpaceId"
+                 previousspaceid="@previousSpaceId"
+                 style="position: absolute;
+                        left: @left;
+                        top: @top;">
+                <div class="tile-content slide-up-2">
+                    <div class="slide @additionalClass"
+                         style="text-align: center;
+                                display: inline-block;
+                                vertical-align: middle;
+                                line-height: 70px;">@text</div>
+                    <div class="slide-over bg-orange text-small">@details</div>
+                </div>
+            </div>
+            }
+        </div>
+        @{  var messageAreaWidth = @Model.Board.MessageAreaWidth;
+            var messageAreaHeight = @Model.Board.MessageAreaHeight;
+            var messageAreaLeft = @Model.Board.MessageAreaX + "px";
+            var messageAreaTop = @Model.Board.MessageAreaY + "px";
+            var statusAreaWidth = @Model.Board.StatusAreaWidth;
+            var statusAreaHeight = @Model.Board.StatusAreaHeight;
+            var statusAreaLeft = @Model.Board.StatusAreaX + "px";
+            var statusAreaTop = @Model.Board.StatusAreaY + "px";
+        }
+        <div id="messagearea" 
+             class="tile-small bg-taupe fg-white"
+             width="@messageAreaWidth"
+             height="@messageAreaHeight"
+             style="position: absolute;
+                    left: @messageAreaLeft;
+                    top: @messageAreaTop;"></div>
+        <div id="statusarea" 
+             class="tile-small tile-container bg-taupe fg-white"
+             width="@statusAreaWidth"
+             height="@statusAreaHeight"
+             style="position: absolute;
+                    left: @statusAreaLeft;
+                    top: @statusAreaTop;"></div>
+    </div>
+</div>
+@Html.Partial("Players", @Model.Players)

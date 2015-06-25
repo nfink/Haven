@@ -8,7 +8,7 @@ namespace Haven
 {
     public partial class Action
     {
-        private Message AnswerWarChallengeAction(Object input)
+        private void AnswerWarChallengeAction(Object input)
         {
             // remove all answer war challenge actions
             Persistence.Connection.Execute("delete from Action where Type=? and OwnerId=?", ActionType.AnswerWarChallenge, this.OwnerId);
@@ -25,8 +25,8 @@ namespace Haven
                 {
                     Persistence.Connection.Insert(new Action() { Type = ActionType.AnswerWarChallenge, OwnerId = enemy.Id, Challenger = !this.Challenger, PlayerId = this.OwnerId, AnswerId = ca.Id });
                 }
-                
-                return new Message(string.Format("Correct! Now {0} must answer a challenge.", enemy.Name));
+
+                Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = string.Format("Correct! Now {0} must answer a challenge.", enemy.Name) });
             }
             else
             {
@@ -50,11 +50,11 @@ namespace Haven
 
                     if (cardsToAdd.Count > 0)
                     {
-                        return new Message(string.Format("Incorrect! {0} has taken the following cards: {1}.", enemy.Name, cardsToAdd.Select(x => x.Name).Aggregate((x, y) => x + ", " + y)));
+                        Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = string.Format("Incorrect! {0} has taken the following cards: {1}.", enemy.Name, cardsToAdd.Select(x => x.Name).Aggregate((x, y) => x + ", " + y)) });
                     }
                     else
                     {
-                        return new Message(string.Format("Incorrect! {0} has won the war but you have no cards to take.", enemy.Name));
+                        Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = string.Format("Incorrect! {0} has won the war but you have no cards to take.", enemy.Name) });
                     }
                 }
                 else
@@ -76,11 +76,11 @@ namespace Haven
 
                     if (cardsToAdd.Count > 0)
                     {
-                        return new Message(string.Format("Incorrect! {0} has taken all of your cards.", enemy.Name));
+                        Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = string.Format("Incorrect! {0} has taken all of your cards.", enemy.Name) });
                     }
                     else
                     {
-                        return new Message(string.Format("Incorrect! {0} has won the war but you have no cards to take.", enemy.Name));
+                        Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = string.Format("Incorrect! {0} has won the war but you have no cards to take.", enemy.Name) });
                     }
                 }
             }

@@ -8,7 +8,7 @@ namespace Haven
 {
     public partial class Action
     {
-        private Message TurnAroundAction(Object input)
+        private void TurnAroundAction(Object input)
         {
             Persistence.Connection.Delete(this);
             Persistence.Connection.Execute("delete from Action where Type=? and OwnerId=?", ActionType.EndTurn, this.OwnerId);
@@ -16,7 +16,7 @@ namespace Haven
             player.MovementDirection = !player.MovementDirection;
             Persistence.Connection.Update(player);
             Game.EndTurn(this.OwnerId);
-            return new Message("Turned around.");
+            Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = "Turned around." });
         }
     }
 }

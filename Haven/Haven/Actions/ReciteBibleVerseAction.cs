@@ -8,7 +8,7 @@ namespace Haven
 {
     public partial class Action
     {
-        private Message ReciteBibleVerseAction(Object input)
+        private void ReciteBibleVerseAction(Object input)
         {
             Persistence.Connection.Execute("delete from Action where (Type=? or Type=?) and OwnerId=?", ActionType.ReadBibleVerse, ActionType.ReciteBibleVerse, this.OwnerId);
 
@@ -17,12 +17,12 @@ namespace Haven
             if ((string)input == verse.Text)
             {
                 Persistence.Connection.Insert(new Action() { Type = ActionType.Roll, OwnerId = this.OwnerId });
-                return new Message("Correct! Roll again.");
+                Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = "Correct! Roll again." });
             }
             else
             {
                 Game.EndTurn(this.OwnerId);
-                return new Message("Incorrect!");
+                Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = "Incorrect!" });
             }
         }
     }

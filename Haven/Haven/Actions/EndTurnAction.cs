@@ -8,13 +8,13 @@ namespace Haven
 {
     public partial class Action
     {
-        private Message EndTurnAction(Object input)
+        private void EndTurnAction(Object input)
         {
             Persistence.Connection.Execute("delete from Action where OwnerId=?", this.OwnerId);
 
             Game.EndTurn(this.OwnerId);
 
-            return new Message("Ended turn.");
+            Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = "Ended turn." });
         }
     }
 }
