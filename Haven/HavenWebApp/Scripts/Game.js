@@ -21,9 +21,30 @@ function SetupGame(game) {
     $("#messagearea, #statusarea").height(function (index, height) {
         return (($(this).attr("height") - 1) * ((height * 1.1) + 1)) + height;
     });
+
+    // click handler to show details for challenge and safe haven spaces
+    $(".space[details!='']").click(function (e) {
+        var statusarea = $("#statusarea");
+        var spaceClass = "spaceDetails" + $(this).attr("spaceid");
+        if (statusarea.hasClass(spaceClass)) {
+            statusarea.removeClass(spaceClass);
+            RestoreCards();
+        }
+        else {
+            RemoveSpaceClasses()
+            statusarea.addClass(spaceClass);
+            var details = $(this).attr("details");
+            $("#statusarea").empty();
+            $("#statusarea").text(details);
+        }
+    });
 }
 
 function PerformAction(actionForm) {
+    if (!FieldValidation(actionForm)) {
+        return false;
+    }
+
     // hide actions so the player can't try to perform multiple actions
     $(".action").hide();
 
@@ -68,7 +89,7 @@ function UpdatePieces(pieces) {
             var piece = $(".piece[playerId=" + playerId + "]");
             if (piece.attr("spaceId") !== spaceId) {
                 piece.attr("destinationSpaceId", spaceId);
-                piece.attr("direction", piece.attr("direction"));
+                piece.attr("direction", $(value).attr("direction"));
                 piece.MovePiece = MovePiece;
                 piece.MovePiece();
             }
@@ -111,10 +132,43 @@ function SelectPlayer(actionsDiv) {
     var playerId = $(actionsDiv).attr("playerid");
     $("#messagearea").empty();
     $("#messagearea").append($("#messages").find("[playerid=" + playerId + "]").clone());
-    $("#statusarea").empty();
-    $("#statusarea").append($("#cards").find("[playerid=" + playerId + "]").clone());
+    $("#statusarea").attr("playerid", playerId);
+    RestoreCards();
 }
 
+function RestoreCards() {
+    RemoveSpaceClasses();
+    var playerId = $("#statusarea").attr("playerid");
+    $("#statusarea").empty();
+    $("#statusarea").append($("#cards").find("[playerid=" + playerId + "]").clone());
+    $("#statusarea").attr("playerid", playerId);
+
+    // remove click handler while cards are displayed
+    $("#statusarea").off("click");
+
+    // add click handler to expand a card
+    $(".namecard, .safehavencard").click(function (e) {
+        e.stopPropagation();
+
+        var text = $(this).attr("details");
+        $("#statusarea").empty();
+        $("#statusarea").text(text);
+
+        // add click handler to restore the cards view
+        $("#statusarea").click(RestoreCards);
+    });
+}
+
+function RemoveSpaceClasses() {
+    // remove and spaceDetails classes from the statusarea
+    $("#statusarea").removeClass(function (index, className) {
+        var classesToRemove = "";
+        $.each($(".space[details!='']"), function (index, value) {
+            classesToRemove += ("spaceDetails" + $(value).attr("spaceid") + " ");
+        });
+        return classesToRemove;
+    });
+}
 
 function SetupGame2(game) {
     GameId = game.Id;

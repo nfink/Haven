@@ -59,36 +59,40 @@
 
     <!--New Game Dialog-->
     <div id="newGameDialog"
-         class="padding20 dialog"
+         class="dialog"
          data-overlay="true"
          data-overlay-color="op-dark"
          data-close-button="true"
          data-role="dialog">
-        <img id="newGameDialogIcon" src="" style="height: 200px; width: 200px;"/>
-        <h2 id="newGameDialogHeader"></h2>
-        <p id="newGameDialogDescription"></p>
-        <form onsubmit="return NewGame(this);" method="get" action="NewGame">
-            <input id="newGameDialogBoardId" name="BoardId" value="" type="hidden" />
-            <input id="newGameDialogPlayers" name="NumberOfPlayers" value="4" type="hidden" />
-            <div>
-                <div class="padding5 no-padding-left">Game name:</div>
-                <input id="newGameDialogName" name="Name" type="text" />
-            </div>
-            <div>
-                <div class="padding5 no-padding-left">Number of players:</div>
-                <div data-role="group" data-group-type="one-state">
-                    <button class="button playerSelection" type="button" onclick="$('#newGameDialogPlayers').val(2);">2</button>
-                    <button class="button playerSelection" type="button" onclick="$('#newGameDialogPlayers').val(3);">3</button>
-                    <button class="button playerSelection playerSelectionDefault active" type="button" onclick="$('#newGameDialogPlayers').val(4);">4</button>
-                    <button class="button playerSelection" type="button" onclick="$('#newGameDialogPlayers').val(5);">5</button>
-                    <button class="button playerSelection" type="button" onclick="$('#newGameDialogPlayers').val(6);">6</button>
+        <div id="newGameDialogBackground" style="width: 100%; height: 100%; position: absolute; background-size: cover; background-repeat: no-repeat;opacity: 0.25;"></div>
+        <div class="padding20">
+            <h2 id="newGameDialogHeader"></h2>
+            <p id="newGameDialogDescription"></p>
+            <form onsubmit="return NewGame(this);" method="get" action="NewGame">
+                <input id="newGameDialogBoardId" name="BoardId" value="" type="hidden" />
+                <input id="newGameDialogPlayers" name="NumberOfPlayers" value="4" type="hidden" />
+                <div>
+                    <label>Game name:</label>
+                    <div class="padding5 no-padding-left">
+                        <input id="newGameDialogName" name="Name" type="text" class="input-control text requiredField" />
+                    </div>
                 </div>
-            </div>
-            <div>
-                <button class="button" type="submit">Start Game</button>
-                <button class="button" type="button">Cancel</button>
-            </div>
-        </form>
+                <div>
+                    <label>Number of players:</label>
+                    <div class="padding5 no-padding-left" data-role="group" data-group-type="one-state">
+                        <button class="button playerSelection" type="button" onclick="$('#newGameDialogPlayers').val(2);">2</button>
+                        <button class="button playerSelection" type="button" onclick="$('#newGameDialogPlayers').val(3);">3</button>
+                        <button class="button playerSelection playerSelectionDefault active" type="button" onclick="$('#newGameDialogPlayers').val(4);">4</button>
+                        <button class="button playerSelection" type="button" onclick="$('#newGameDialogPlayers').val(5);">5</button>
+                        <button class="button playerSelection" type="button" onclick="$('#newGameDialogPlayers').val(6);">6</button>
+                    </div>
+                </div>
+                <div>
+                    <button class="button" type="submit">Start Game</button>
+                    <button class="button" type="button" onclick="$('#newGameDialog').data('dialog').close();">Cancel</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!--Continue Game Menu-->

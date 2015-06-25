@@ -58,16 +58,16 @@
                  spaceid="@space.Id"
                  nextspaceid="@nextSpaceId"
                  previousspaceid="@previousSpaceId"
+                 details="@details"
                  style="position: absolute;
                         left: @left;
                         top: @top;">
-                <div class="tile-content slide-up-2">
-                    <div class="slide @additionalClass"
-                         style="text-align: center;
-                                display: inline-block;
+                <div class="tile-content"
+                     style="text-align: center;">
+                    <div class="@additionalClass"
+                         style="display: inline-block;
                                 vertical-align: middle;
                                 line-height: 70px;">@text</div>
-                    <div class="slide-over bg-orange text-small">@details</div>
                 </div>
             </div>
             }

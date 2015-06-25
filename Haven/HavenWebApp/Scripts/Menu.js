@@ -10,6 +10,17 @@ function Back() {
     previousScreen();
 }
 
+function FieldValidation(form) {
+    var failures = $(form).find(".requiredField").filter(function (index, element) {
+            return !($(this).val());
+        })
+        .addClass("error")
+        .attr("placeholder", function (index, attr) {
+            return $(this).attr("name") + " is required";
+        }).length;
+    return failures == 0;
+}
+
 function ShowMainMenu() {
     $("#backButton").hide();
     $("#boardMenu").hide().empty();
@@ -47,28 +58,31 @@ function NewGameDialog(boardTile) {
     // set up dialog
     $("#newGameDialogBoardId").val(boardTile.attr("boardId"));
     $("#newGameDialogHeader").text(boardTile.attr("boardName"));
-    $("#newGameDialogIcon").attr("src", boardTile.attr("boardIcon"));
+    $("#newGameDialogBackground").css("background-image", "url('" + boardTile.attr("boardIcon") + "')");
     $("#newGameDialogDescription").text(boardTile.attr("boardDescription"));
     $("#newGameDialogName").val("");
     $(".playerSelection").removeClass("active");
     $(".playerSelectionDefault").trigger("click");
+    $("#newGameDialog").find(".requiredField").removeClass("error");
 
     $("#newGameDialog").data("dialog").open();
 }
 
 function NewGame(newGameForm) {
-    $("#newGameDialog").data("dialog").close();
-    $("#mainMenu").hide();
-    $("#boardMenu").hide().empty();
-    $("#continueMenu").hide().empty();
-    $("#loading").show();
+    if (FieldValidation(newGameForm)) {
+        $("#newGameDialog").data("dialog").close();
+        $("#mainMenu").hide();
+        $("#boardMenu").hide().empty();
+        $("#continueMenu").hide().empty();
+        $("#loading").show();
 
-    $.get("NewGame", $(newGameForm).serialize(), function (data) {
-        previousScreen = ShowContinueMenu;
-        SetupGame(data);
-        $("#loading").hide();
-        $("#game").show();
-    });
+        $.get("NewGame", $(newGameForm).serialize(), function (data) {
+            previousScreen = ShowContinueMenu;
+            SetupGame(data);
+            $("#loading").hide();
+            $("#game").show();
+        });
+    }
 
     return false;
 }
