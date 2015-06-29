@@ -7,13 +7,14 @@
 <input type="hidden" id="gameid" value="@Model.Id" />
 <div id="board" style="position:absolute;left: 80px;width: 720px;">
     <div>
-        <div id="spaces" class="padding5">
+        <div id="spaces">
             @for (var i = 0; i < @NumberOfSpaces; i++)
             {
                 var space = spaces[@i];
                 var additionalClass = "";
                 var text = "";
                 var details = "";
+                var image = "";
                 SpaceType spaceType = space.Type;
                 switch (spaceType)
                 {
@@ -24,6 +25,7 @@
                     case SpaceType.Challenge:
                         text = @space.NameCard.Name;
                         details = @space.NameCard.Details;
+                        image = @space.NameCard.Image;
                         break;
                     case SpaceType.ExchangePlaces:
                         additionalClass = "mif-loop2 mif-2x";
@@ -38,6 +40,7 @@
                     case SpaceType.SafeHaven:
                         text = @space.SafeHavenCard.Name;
                         details = @space.SafeHavenCard.Details;
+                        image = @space.SafeHavenCard.Image;
                         break;
                     case SpaceType.TurnAround:
                         additionalClass = "mif-undo mif-2x";
@@ -64,6 +67,16 @@
                         top: @top;">
                 <div class="tile-content"
                      style="text-align: center;">
+                    @if (!string.IsNullOrWhiteSpace(image))
+                    {
+                        <div id="newGameDialogBackground"
+                             style="width: 100%;
+                                    height: 100%;
+                                    position: absolute;
+                                    background-image: url('@image');
+                                    background-size: cover;
+                                    background-repeat: no-repeat;"></div>
+                    }
                     <div class="@additionalClass"
                          style="display: inline-block;
                                 vertical-align: middle;
@@ -81,7 +94,7 @@
             var statusAreaLeft = @Model.Board.StatusAreaX + "px";
             var statusAreaTop = @Model.Board.StatusAreaY + "px";
         }
-        <div id="messagearea" 
+        <div id="messagearea"
              class="tile-small bg-taupe fg-white"
              width="@messageAreaWidth"
              height="@messageAreaHeight"

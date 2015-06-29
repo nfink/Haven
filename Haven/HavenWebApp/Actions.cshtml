@@ -1,17 +1,25 @@
 ﻿@using Haven;
 
+@{var buttonClass = "button small-button bg-mauve bd-mauve bg-active-steel fg-white";}
+
 @foreach (Player player in @Model)
 {
     var playerName = player.Name == null ? " New Player" : " " + player.Name;
     var playerIcon = "mif-" + (player.Piece == null ? "user" : player.Piece.Image);
-    var iconColor = "bg-" + (player.Piece == null ? "lightOlive" : player.Piece.Color);
+    var iconColor = "fg-" + (player.Piece == null ? "white" : player.Piece.Color);
+    var passwordFieldHidden = "";
+    if (player.Password == null)
+    {
+        passwordFieldHidden = "display: none;";
+    }
     
     <div class="actionContainer tile bg-olive padding5"
          playerid="@player.Id"
          onclick="SelectPlayer(this);"
          style="width: auto;
                 height: auto;">
-        <div class="padding5">
+
+        @*<div class="padding5">
             <div class="icon header padding5 @playerIcon @iconColor"
                  style="display: table-cell;
                         min-width: 56px;
@@ -19,18 +27,43 @@
             <div class="padding10 header bg-olive"
                  style="min-width: 200px;
                         display: table-cell;">@playerName</div>
-        </div>
+        </div>*@
+
+        <form onsubmit="return EnterPassword(this);"
+               method="post"
+               action="Authenticate">
+            <input type="hidden" name="PlayerId" value="@player.Id" />
+            <div class="playerName password iconic" data-role="input">
+                <input class="requiredField" type="password" name="Password" style="@passwordFieldHidden">
+                <span class="playerNameLabel">@playerName</span>
+                <span class="playerNameInformer">Please enter your password</span>
+                <span class="playerNamePlaceholder">@playerName</span>
+                <span class="icon @playerIcon @iconColor"></span>
+                <button class="playerNameButton @buttonClass"
+                        type="submit">
+                    <span class="mif-play fg-white"></span>
+                </button>
+            </div>
+        </form>
+
         @foreach (Haven.Action action in player.Actions)
         {
             <div class="action padding5">
-                <form onsubmit="return PerformAction(this);"
+                @{
+                    var onsubmit = "return PerformAction(this);";
+                    if (action.Type == ActionType.EnterPassword)
+                    {
+                        onsubmit = "return EnterPasswordAction(this);";
+                    }
+                }
+                <form onsubmit="@onsubmit"
                       method="post"
-                      action="PerformAction">
-                    <input name="Id"
-                           value="@action.Id"
-                           type="hidden">
+                      action="PerformAction"
+                      playerid="@player.Id">
+                    <input name="Id" value="@action.Id" type="hidden">
+                    <input name="Password" type="hidden">
                     
-                    @{ var buttonClass = "button bg-mauve bd-mauve bg-active-steel fg-white";
+                    @{ 
                         if (action.RequiresInput)
                         {
                             var text = action.Name;
@@ -52,7 +85,7 @@
                             } 
                             
                             <div style="width: 100%;" data-role="input" class="input-control text">
-                                <input style="padding-right: 62px;" placeholder="@text" name="Input" type="@type" class="requiredField">
+                                <input style="padding-right: 62px;height: 80%;" placeholder="@text" name="Input" type="@type" class="requiredField">
                                 <button class="@buttonClass" type="submit">
                                     <span class="mif-play"></span>
                                 </button>

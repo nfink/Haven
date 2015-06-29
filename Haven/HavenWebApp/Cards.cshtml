@@ -6,6 +6,16 @@
         @foreach (SafeHavenCard safeHavenCard in player.SafeHavenCards)
         {
             <div class="tile-small safehavencard" details="@safeHavenCard.Details">
+                @if (!string.IsNullOrWhiteSpace(@safeHavenCard.Image))
+                {
+                    <div id="newGameDialogBackground"
+                         style="width: 100%;
+                                height 100%;
+                                position absolute;
+                                background-image url('@safeHavenCard.Image');
+                                background-size cover;
+                                background-repeat no-repeat;"></div>
+                }
                 <div class="tile-content"
                      style="text-align: center;">
                     <div style="display: inline-block;
@@ -18,6 +28,16 @@
         @foreach (NameCard nameCard in player.NameCards)
         {
             <div class="tile-small namecard" details="@nameCard.Details">
+                @if (!string.IsNullOrWhiteSpace(@nameCard.Image))
+                {
+                    <div id="newGameDialogBackground"
+                         style="width: 100%;
+                                height 100%;
+                                position absolute;
+                                background-image url('@nameCard.Image');
+                                background-size cover;
+                                background-repeat no-repeat;"></div>
+                }
                 <div class="tile-content"
                      style="text-align: center;">
                     <div style="display: inline-block;

@@ -9,24 +9,29 @@ using Nancy.Session;
 using Nancy.ModelBinding;
 using Newtonsoft.Json;
 using Nancy.Conventions;
+using Nancy.Responses;
 
 namespace HavenWebApp
 {
-    //public class Bootstrapper : DefaultNancyBootstrapper
-    //{
-    //    protected override void ApplicationStartup(Nancy.TinyIoc.TinyIoCContainer container, Nancy.Bootstrapper.IPipelines pipelines)
-    //    {
-    //        CookieBasedSessions.Enable(pipelines);
-    //    }
-    //}
-
     public class GameModule : NancyModule
     {
         public GameModule()
         {
+            Get["/NewGame"] = parameters =>
+            {
+                var game = Game.NewGame((int)this.Request.Query.BoardId, (int)this.Request.Query.NumberOfPlayers);
+                game.Name = (string)this.Request.Query.Name;
+                Persistence.Connection.Update(game);
+                // remove actions that the user does not have access to
+
+                return View["Game.cshtml", game];
+            };
+
             Get["/Game/{id}"] = parameters =>
             {
                 var game = Persistence.Connection.Get<Game>((int)parameters.id);
+                // remove actions that the user does not have access to
+
                 return View["Game.cshtml", game];
             };
 
@@ -34,16 +39,25 @@ namespace HavenWebApp
             {
                 var gameId = (int)parameters.id;
                 var players = Persistence.Connection.Table<Player>().Where(x => x.GameId == gameId);
+
+                // remove actions that the user does not have access to
+                //var passwords = parameters.passwords;
+
                 return View["Players.cshtml", players];
             };
 
-            Post["/PerformAction"] = parameters =>
+            Post["/Authenticate"] = parameters =>
             {
-                var action = Persistence.Connection.Get<Haven.Action>((int)this.Request.Form.Id);
-                int gameId = Persistence.Connection.Table<Player>().Where(x => x.Id == action.OwnerId).First().GameId;
-                action.PerformAction((string)this.Request.Form.Input);
-                var players = Persistence.Connection.Table<Player>().Where(x => x.GameId == gameId);
-                return View["Players.cshtml", players];
+                var password = (string)this.Request.Form.Password;
+                var player = Persistence.Connection.Get<Player>((int)this.Request.Form.PlayerId);
+                if (player.VerifyPassword(password))
+                {
+                    return View["Actions.cshtml", new Player[] { player }];
+                }
+                else
+                {
+                    return new HtmlResponse(HttpStatusCode.Unauthorized);
+                }
             };
         }
     }

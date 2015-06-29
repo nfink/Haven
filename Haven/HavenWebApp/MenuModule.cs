@@ -9,6 +9,7 @@ using Nancy.Session;
 using Nancy.ModelBinding;
 using Newtonsoft.Json;
 using Nancy.Conventions;
+using Nancy.Security;
 
 namespace HavenWebApp
 {
@@ -19,16 +20,6 @@ namespace HavenWebApp
     //        CookieBasedSessions.Enable(pipelines);
     //    }
     //}
-
-    public class ApplicationBootstrapper : DefaultNancyBootstrapper
-    {
-        protected override void ConfigureConventions(NancyConventions nancyConventions)
-        {
-            nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("Fonts", @"Fonts"));
-            nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("Scripts", @"Scripts"));
-            base.ConfigureConventions(nancyConventions);
-        }
-    }
 
     public class MenuModule : NancyModule
     {
@@ -52,14 +43,6 @@ namespace HavenWebApp
             Get["/Games"] = parameters =>
             {
                 return View["GamesMenu.cshtml", Persistence.Connection.Table<Game>()];
-            };
-
-            Get["/NewGame"] = parameters =>
-            {
-                var game = Game.NewGame((int)this.Request.Query.BoardId, (int)this.Request.Query.NumberOfPlayers);
-                game.Name = (string)this.Request.Query.Name;
-                Persistence.Connection.Update(game);
-                return View["Game.cshtml", game];
             };
         }
     }

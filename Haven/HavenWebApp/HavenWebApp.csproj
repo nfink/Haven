@@ -46,6 +46,10 @@
       <HintPath>..\packages\Nancy.1.2.0\lib\net40\Nancy.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Nancy.Authentication.Stateless, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nancy.Authentication.Stateless.1.2.0\lib\net40\Nancy.Authentication.Stateless.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Nancy.Hosting.Aspnet, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Nancy.Hosting.Aspnet.1.2.0\lib\net40\Nancy.Hosting.Aspnet.dll</HintPath>
       <Private>True</Private>
@@ -76,21 +80,37 @@
   <ItemGroup>
     <None Include="Actions.cshtml" />
     <None Include="BoardsMenu.cshtml" />
-    <Content Include="Content\board_continue.jpg" />
-    <Content Include="Content\board_continue_square.jpg" />
-    <Content Include="Content\board_new.jpg" />
-    <Content Include="Content\board_new_square.jpg" />
+    <Content Include="Content\Images\Abraham.jpg" />
+    <Content Include="Content\Images\Asher.JPG" />
+    <Content Include="Content\Images\Benjamin.JPG" />
+    <Content Include="Content\Images\board_continue.jpg" />
+    <Content Include="Content\Images\board_continue_square.jpg" />
+    <Content Include="Content\Images\board_new.jpg" />
+    <Content Include="Content\Images\board_new_square.jpg" />
+    <Content Include="Content\Images\Dan.JPG" />
+    <Content Include="Content\Images\Gad.JPG" />
     <Content Include="Content\Game.css" />
-    <Content Include="Content\Rembrandt_Harmensz_square.jpg" />
+    <Content Include="Content\Images\God_the_Father.jpg" />
+    <Content Include="Content\Images\Isaac.jpeg" />
+    <Content Include="Content\Images\Issachar.JPG" />
+    <Content Include="Content\Images\Jacob.jpg" />
+    <Content Include="Content\Images\Joseph.JPG" />
+    <Content Include="Content\Images\Judah.JPG" />
+    <Content Include="Content\Images\Levi.JPG" />
+    <Content Include="Content\Images\Naphtali.JPG" />
+    <Content Include="Content\Images\Rembrandt_Harmensz_square.jpg" />
     <Content Include="Cards.cshtml" />
     <None Include="GamesMenu.cshtml" />
+    <Content Include="Content\Images\Reuben.JPG" />
+    <Content Include="Content\Images\Simeon.JPG" />
+    <Content Include="Content\Images\Zebulun.JPG" />
     <Content Include="Scripts\Game.js" />
     <Content Include="Content\Haven.css" />
     <Content Include="Content\metro-icons.css" />
     <Content Include="Content\metro-icons.min.css" />
     <Content Include="Content\metro.css" />
     <Content Include="Content\metro.min.css" />
-    <Content Include="Content\white_marble.jpg" />
+    <Content Include="Content\Images\white_marble.jpg" />
     <Content Include="Fonts\metro.svg" />
     <None Include="Game.cshtml" />
     <Content Include="Messages.cshtml" />
@@ -102,9 +122,13 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bootstrapper.cs" />
     <Compile Include="GameModule.cs" />
+    <Compile Include="PlayerIdentity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MenuModule.cs" />
+    <Compile Include="PerformActionModule.cs" />
+    <Compile Include="StatelessAuthBootstrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

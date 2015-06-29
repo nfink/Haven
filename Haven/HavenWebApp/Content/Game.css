@@ -1,1 +1,143 @@
-﻿
+﻿.playerName {
+  position: relative;
+  width: 12.25rem;
+  height: 3rem;
+  display: inline-block;
+  margin: .625rem 0;
+}
+.playerName input {
+  position: absolute;
+  top: 1rem;
+  left: 0;
+  right: 0;
+  bottom: .5rem;
+  border: 0;
+  background-color: transparent;
+  color: transparent;
+  outline: none;
+  font-size: 1rem;
+  padding-bottom: .5rem;
+  padding-left: 0;
+  width: 100%;
+  z-index: 2;
+  height: 1.75rem;
+}
+.playerName input:focus {
+  color: white;
+}
+.playerName .playerNameLabel,
+.playerName .playerNameInformer {
+  position: absolute;
+  display: block;
+  z-index: 1;
+  color: white;
+}
+.playerName .playerNameLabel {
+  opacity: 0;
+  top: 16px;
+  left: 0;
+  transition: all 0.3s linear;
+}
+.playerName .playerNameInformer {
+  opacity: 0;
+  bottom: .75rem;
+  color: white;
+  font-size: .8rem;
+  transition: all 0.3s linear;
+}
+.playerName .playerNamePlaceholder {
+  font-size: 1rem;
+  color: white;
+  position: absolute;
+  top: 1.2rem;
+  left: 0;
+  z-index: 1;
+  opacity: 1;
+  transition: all 0.3s linear;
+}
+.playerName .playerNameButton {
+  opacity: 0;
+  position: absolute;
+  top: 17px;
+  right: 0px;
+  margin: 0px;
+  z-index: 2;
+  display: none;
+}
+.playerName.iconic {
+  margin-left: 32px;
+}
+.playerName.iconic .icon {
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
+  line-height: 1;
+  position: absolute;
+  left: -28px;
+  top: 50%;
+  margin-top: -8px;
+  display: block;
+  transition: all 0.3s linear;
+}
+.playerName.iconic .icon img {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  max-height: 100%;
+}
+.playerName.iconic.full-size {
+  width: calc(100% - 32px) !important;
+}
+.playerName input:focus ~ .playerNameLabel {
+  opacity: 1;
+  -webkit-transform: translateY(-18px);
+          transform: translateY(-18px);
+  transition: all 0.3s linear;
+}
+.playerName input:focus ~ .playerNamePlaceholder {
+  opacity: 0;
+  transition: all 0.3s linear;
+}
+.playerName input:focus ~ .playerNameInformer {
+  opacity: 1;
+  bottom: -0.75rem;
+  transition: all 0.3s linear;
+}
+.playerName input:focus ~ .playerNameButton {
+  opacity: 1;
+  transition: all 0.3s linear;
+}
+.playerName.error .playerNameInformer {
+  color: #ce352c;
+}
+.playerName.success .playerNameInformer {
+  color: #60a917;
+}
+.playerName.warning .playerNameInformer {
+  color: #e3c800;
+}
+.playerName.info .playerNameInformer {
+  color: #1ba1e2;
+}
+.playerName input:disabled {
+  color: #BCBCBC;
+}
+
+
+
+
+
+
+
+
+/*.playerPassword:focus {
+  background-color: #FFFFFF !important;
+  transition: all 0.3s linear;
+}
+
+.playerName input:focus ~ .playerNamePlaceholder {
+  opacity: 0;
+  -webkit-transform: none !important;
+          transform: none !important;
+  transition: all 0.3s linear;
+}*/

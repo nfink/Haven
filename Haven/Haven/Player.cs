@@ -17,8 +17,6 @@ namespace Haven
 
         public string Password { get; set; }
 
-        public string Salt { get; set; }
-
         public int PieceId { get; set; }
 
         public int SpaceId { get; set; }
@@ -100,20 +98,24 @@ namespace Haven
             Array.Copy(salt, 0, hashBytes, 0, 16);
             Array.Copy(hash, 0, hashBytes, 16, 20);
             string savedPasswordHash = Convert.ToBase64String(hashBytes);
-            this.Salt = Convert.ToBase64String(salt);
             this.Password = savedPasswordHash;
             Persistence.Connection.Update(this);
         }
 
         public bool VerifyPassword(string password)
         {
+            if (password == null || this.Password == null)
+            {
+                return false;
+            }
+
             // from http://stackoverflow.com/questions/4181198/how-to-hash-a-password
             byte[] hashBytes = Convert.FromBase64String(this.Password);
-            byte[] salt = Convert.FromBase64String(this.Salt);
+            byte[] salt = new byte[16];
             Array.Copy(hashBytes, 0, salt, 0, 16);
             var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 1000);
             byte[] hash = pbkdf2.GetBytes(20);
-            return hash.Where((x, i) => x != hashBytes[i + 16]).Any();
+            return !(hash.Where((x, i) => x != hashBytes[i + 16]).Any());
         }
 
         public IEnumerable<Message> RecentMessages(int number)

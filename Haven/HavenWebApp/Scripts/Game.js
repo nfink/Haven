@@ -36,8 +36,11 @@ function SetupGame(game) {
             var details = $(this).attr("details");
             $("#statusarea").empty();
             $("#statusarea").text(details);
+            $("#statusarea").click(RestoreCards);
         }
     });
+
+    PlayerNameSetup();
 }
 
 function PerformAction(actionForm) {
@@ -48,34 +51,64 @@ function PerformAction(actionForm) {
     // hide actions so the player can't try to perform multiple actions
     $(".action").hide();
 
-    $.post("PerformAction", $(actionForm).serialize(), function (data) {
-        var elements = $(data);
+    $.post("PerformAction", $(actionForm).serialize())
+        .done(function (data) {
+            var elements = $(data);
 
-        UpdatePieces(elements.filter("#pieces").children());
+            UpdatePieces(elements.filter("#pieces").children());
 
-        // update after pieces have moved
-        $(".piece").promise().done(function () {
-            // current player selection
-            var selectedPlayerId = $(".actionContainer.element-selected").attr("playerid");
+            // update after pieces have moved
+            $(".piece").promise().done(function () {
+                // current player selection
+                var selectedPlayerId = $(".actionContainer.element-selected").attr("playerid");
 
-            // update messages
-            $("#messages").empty();
-            $("#messages").append(elements.filter("#messages").children());
+                // update messages
+                $("#messages").empty();
+                $("#messages").append(elements.filter("#messages").children());
 
-            // update cards
-            $("#cards").empty();
-            $("#cards").append(elements.filter("#cards").children());
+                // update cards
+                $("#cards").empty();
+                $("#cards").append(elements.filter("#cards").children());
 
-            // update actions
-            $("#actions").empty();
-            $("#actions").append(elements.filter("#actions").children());
+                // update actions
+                $("#actions").empty();
+                $("#actions").append(elements.filter("#actions").children());
+                PlayerNameSetup();
+                UpdateActionPasswords();
 
-            // retain player selection
-            $(".actionContainer[playerid=" + selectedPlayerId + "]").trigger("click");
+                // retain player selection
+                $(".actionContainer[playerid=" + selectedPlayerId + "]").trigger("click");
+            });
+        })
+        .fail(function () {
+            $(".action").show();
+            alert("invalid attempt to perform action");
         });
-    });
 
     return false;
+}
+
+function UpdateActionPasswords()
+{
+    // set passwords
+    $.each($(".playerPassword"), function (index, value) {
+        var playerId = $(value).attr("playerid");
+        var password = $(value).attr("password");
+        $(".actionContainer[playerid=" + playerId + "]").find(".action").find("[name=Password]").val(password);
+        $(".actionContainer[playerid=" + playerId + "]").find(".playerName").find("input").hide();
+        $(".actionContainer[playerid=" + playerId + "]").find(".playerNameButton").hide();
+    });
+
+    //// hide actions without a password
+    //$.each($(".action"), function (index, value) {
+    //    if (!($(value).find("[name=Password]").val())) {
+    //        $(value).hide();
+    //    }
+    //    else
+    //    {
+    //        $(value).show();
+    //    }
+    //});
 }
 
 function UpdatePieces(pieces) {
@@ -170,257 +203,67 @@ function RemoveSpaceClasses() {
     });
 }
 
-function SetupGame2(game) {
-    GameId = game.Id;
-    // $("#spaces").empty();
-    // $("#pieces").empty();
-    // $("#actions").empty();
-
-    // load spaces
-    for (i = 0; i < game.Board.Spaces.length; ++i) {
-        var space = game.Board.Spaces[i];
-
-        //<div class="tile">
-        //    <div class="tile-content slide-up2">
-        //        <div class="slide">
-        //            ... Main slide content ...
-        //        </div>
-        //        <div class="slide-over">
-        //            ... Over slide content here ...
-        //        </div>
-        //    </div>
-        //</div>
-
-        // tile containers
-        var box = $("<div/>", {
-            class: "space tile-small bg-taupe fg-white",
-            spaceId: space.Id,
-            nextSpaceId: game.Board.Spaces[(i + 1) % (game.Board.Spaces.length - 1)].Id,
-            previousSpaceId: i > 0 ? game.Board.Spaces[(i - 1) % (game.Board.Spaces.length - 1)].Id : game.Board.Spaces[game.Board.Spaces.length - 1].Id,
-        })
-            .css({
-                position: "absolute",
-                //width: space.Width,
-                //height: space.Height,
-                left: space.X,
-                top: space.Y,
-                //left: (space.X - 1) * 80 + 10,
-                //top: (space.Y - 1) * 80 + 10,
-                //backgroundColor: space.BackgroundColor,
-                //borderColor: space.BorderColor,
-                //lineHeight: space.Height + "px",
-                //lineHeight: "70px",
-                //textAlign: "center",
-            });
-        //box.css("left", 10 + (space.X - 1) * box.width() * 1.1);
-        //box.css("top", 10 + (space.Y - 1) * box.height() * 1.1);
-
-        var tile = $("<div/>", {
-            class: "tile-content slide-up-2",
-        });
-
-        // main content
-        var label = $("<div/>", {
-            class: "slide spaceLabel" + space.Type,
-        })
-            .text(space.Name)
-            .css({
-                textAlign: "center",
-                display: "inline-block",
-                verticalAlign: "middle",
-                lineHeight: "70px",
-                //lineHeight: "normal",
-            });
-
-        tile.append(label);
-
-        if ((space.Type == 1) || (space.Type == 2) || (space.Type == 6)) {
-            // slide over
-            var slideOver = $("<div/>", {
-                class: "slide-over bg-orange text-small",
-            })
-                .text(space.Type == 6 ? space.SafeHavenCard.Details : "test");
-
-            tile.append(slideOver);
-        }
-
-        box.append(tile);
-        $("#spaces").append(box);
+function EnterPasswordAction(actionForm) {
+    if (!FieldValidation(actionForm)) {
+        return false;
     }
 
-    // add styling for spaces with icons instead of text
-    $(".spaceLabel1").addClass("mif-books mif-2x");
-    $(".spaceLabel1").empty();
-    $(".spaceLabel3").addClass("mif-loop2 mif-2x");
-    $(".spaceLabel3").empty();
-    $(".spaceLabel4").addClass("mif-undo mif-2x");
-    $(".spaceLabel4").text("?");
-    $(".spaceLabel5").addClass("mif-dice mif-2x");
-    $(".spaceLabel5").empty();
-    $(".spaceLabel7").addClass("mif-undo mif-2x");
-    $(".spaceLabel7").empty();
-    $(".spaceLabel8").addClass("mif-fire mif-2x");
-    $(".spaceLabel8").empty();
+    AddPassword($(actionForm).attr("playerid"), $(actionForm).find("[name=Input]").val());
 
-    // adjust position of spaces
-    $(".space").offset(function (index) {
-        var left = $(this).css("left");
-        left = left.replace("px", "");
-        var top = $(this).css("top");
-        top = top.replace("px", "");
-        var newLeft = 10 + (left - 1) * $(this).width() * 1.1;
-        var newTop = 10 + (top - 1) * $(this).height() * 1.1;
-        return { left: newLeft, top: newTop };
+    // continue with normal action
+    return PerformAction(actionForm);
+}
+
+function EnterPassword(form) {
+    var playerId = $(form).find("[name=PlayerId]").val();
+    var password = $(form).find("[name=Password]").val();
+    $.post("Authenticate", $(form).serialize())
+        .done(function (data) {
+            AddPassword(playerId, password);
+            $("#actions").find(".actionContainer[playerId=" + playerId + "]").append($(data).filter(".actions"));
+            UpdateActionPasswords();
+        })
+        .fail(function () {
+            $(form).find(".playerName").addClass("error");
+            $(form).find(".playerNameInformer").text("Incorrect password");
+            $(form).find("[name=Password]").focus();
+        })
+        .always(function () {
+            $(form).find("[name=Password]").val("");
+        });
+
+    return false;
+}
+
+function AddPassword(playerId, password) {
+    // add password element to the game if it doesn't exist already
+    if ($(".playerPassword[playerid=" + playerId + "]").length < 1) {
+        var passwordElement = $("<input/>", {
+            type: "hidden",
+            class: "playerPassword",
+            playerid: playerId,
+            password: password,
+            name: "playerId" + playerId,
+            value: password,
+        });
+        $("#game").append(passwordElement);
+    }
+}
+
+function PlayerNameSetup() {
+    $.each($(".playerName"), function (index, value) {
+        var input = $(value).find("input");
+        var button = $(value).find(".playerNameButton");
+
+        input.blur(function () {
+            setTimeout( function() {
+                button.hide();
+            },
+            100);
+        });
+
+        input.focus(function () {
+            button.show();
+        });
     });
-
-    // load players
-    for (i = 0; i < game.Players.length; ++i) {
-        var player = game.Players[i];
-        var piece = $("<div/>", {
-            class: "piece ",//mif-" + player.Piece.Image + " bg-" + player.Piece.Color,
-            playerId: player.Id,
-            spaceId: player.SpaceId,
-        })
-            .css({
-                position: "absolute",
-                width: "40px",
-                height: "40px",
-                borderRadius: "50%",
-                backgroundColor: "blue",
-                transform: "translate(-10px,-10px)",
-            });
-        $("#pieces").append(piece);
-
-        //players[player.Player.Id] = player;
-        //var startingLocation = spaces[player.Player.SpaceId].getCenter();
-        //player.x = startingLocation.x;
-        //player.y = startingLocation.y;
-    }
-
-    LoadActions(game.Players);
-    UpdatePieces(game.Players);
-}
-
-function LoadActions(players)
-{
-    for (i = 0; i < players.length; ++i) {
-        var player = players[i];
-
-        var div = $("<div/>", {
-            class: "bg-lightOlive padding5",
-        });
-
-        var nameDiv = $("<div/>", {
-            class: "padding5",
-        });
-
-        var nameLabel = $("<div/>", {
-            class: "padding10 header bg-lightOlive",
-        })
-            .css({
-                minWidth: "200px",
-                display: "table-cell",
-            })
-            .text(player.Name == null ? " New Player" : " " + player.Name);
-
-        var nameIcon = $("<div/>", {
-            class: "icon header padding5 mif-" + (player.Piece == null ? "user" : player.Piece.Image) + " bg-" + (player.Piece == null ? "lightOlive" : player.Piece.Color),
-        })
-            .css({
-                display: "table-cell",
-                minWidth: "56px",
-                textAlign: "center",
-                //borderRadius: "50%",
-            });
-
-        nameDiv.append(nameIcon);
-        nameDiv.append(nameLabel);
-        div.append(nameDiv);
-
-        for (j = 0; j < player.Actions.length; ++j) {
-            var action = player.Actions[j];
-
-            var form = $("<form/>", {
-                action: "PerformAction",
-                method: "post",
-                onsubmit: "return PerformAction(this);",
-            });
-                //.css({
-                //    width: "100px",
-                //});
-
-            var id = $("<input/>", {
-                name: "Id",
-                value: action.Id,
-                type: "hidden",
-            });
-
-            var input = $("<input/>", {
-                name: "Input",
-                type: action.RequiresInput ? "text" : "hidden",
-            });
-
-            var button = $("<button/>", {
-                type: "submit",
-                class: "action button bg-lightBlue bd-lightBlue bg-active-blue fg-white " + action.Name,
-            })
-                .text(action.Name);
-
-            if (action.Type == 12) {
-                button.addClass("image-button");
-                var buttonIcon = $("<span/>", {
-                    class: "icon mif-" + action.Piece.Image + " bg-" + action.Piece.Color,
-                });
-                button.append(buttonIcon);
-            }
-
-            form.append(id)
-
-            if (action.RequiresInput) {
-                input.attr("placeholder", action.Name);
-                button.empty();
-
-                var inputDiv = $("<div/>", {
-                    class: "input-control text",
-                    "data-role": "input",
-                })
-                    .css("width", "100%");
-
-                var icon = $("<span/>", {
-                    class: "mif-play",
-                })
-
-                inputDiv.append(input);
-                button.append(icon);
-                inputDiv.append(button);
-                form.append(inputDiv);
-                form.append($("<br/>"));
-            }
-            else {
-                button.css("width", "100%");
-                form.append(input);
-                form.append(button);
-            }
-
-            div.append($("<div/>", { class: "padding5" }).append(form));
-        }
-
-        $("#actions").append(div);
-        $("#actions").append($("<div/>", {class: "padding10"}));
-    }
-}
-
-function UpdatePieces2(players) {
-    for (i = 0; i < players.length; ++i) {
-        var player = players[i];
-        var piece = $(".piece[playerId=" + player.Id + "]");
-
-        if (piece.attr("spaceId") !== player.SpaceId) {
-            var piece = $(".piece[playerId=" + player.Id + "]");
-            piece.attr("destinationSpaceId", player.SpaceId);
-            piece.attr("direction", player.MovementDirection);
-            piece.MovePiece = MovePiece;
-            piece.MovePiece();
-        }
-    }
 }
