@@ -10,17 +10,10 @@ using Nancy.ModelBinding;
 using Newtonsoft.Json;
 using Nancy.Conventions;
 using Nancy.Security;
+using Nancy.Authentication.Forms;
 
 namespace HavenWebApp
 {
-    //public class Bootstrapper : DefaultNancyBootstrapper
-    //{
-    //    protected override void ApplicationStartup(Nancy.TinyIoc.TinyIoCContainer container, Nancy.Bootstrapper.IPipelines pipelines)
-    //    {
-    //        CookieBasedSessions.Enable(pipelines);
-    //    }
-    //}
-
     public class MenuModule : NancyModule
     {
         public static DataLoad DataLoad;
@@ -33,16 +26,19 @@ namespace HavenWebApp
                 DataLoad.LoadTables();
             }
 
-            Get["/"] = parameters => View["Haven.cshtml", null];
+            Get["/"] = parameters =>
+            {
+                return View["Views/Haven.cshtml"];
+            };
 
             Get["/Boards"] = parameters =>
             {
-                return View["BoardsMenu.cshtml", Persistence.Connection.Table<Board>()];
+                return View["Views/BoardsMenu.cshtml", Persistence.Connection.Table<Board>().Where(x => x.Active)];
             };
 
             Get["/Games"] = parameters =>
             {
-                return View["GamesMenu.cshtml", Persistence.Connection.Table<Game>()];
+                return View["Views/GamesMenu.cshtml", Persistence.Connection.Table<Game>()];
             };
         }
     }

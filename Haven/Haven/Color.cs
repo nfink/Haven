@@ -7,22 +7,18 @@ using SQLite;
 
 namespace Haven
 {
-    public class NameCard
+    public class Color
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
         public string Name { get; set; }
 
-        public string Details { get; set; }
-
-        public int ImageId { get; set; }
-
-        public Image Image
+        public static IEnumerable<Color> Colors
         {
             get
             {
-                return this.ImageId == 0 ? null : Persistence.Connection.Get<Image>(this.ImageId);
+                return Persistence.Connection.Table<Color>();
             }
         }
     }

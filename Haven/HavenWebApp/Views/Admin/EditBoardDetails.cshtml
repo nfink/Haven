@@ -1,0 +1,37 @@
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
+@using Haven;
+
+<form method="post" action="/Admin/Board/Edit" onsubmit="return EditBoard(this);">
+    <input type="hidden" name="Id" value="@Model.Id" />
+    <div class="grid">
+        <div class="row cells2">
+            <div class="cell">
+                <label for="boardName">Name:</label>
+                <br />
+                <div class="input-control text">
+                    <input id="boardName" type="text" name="Name" value="@Model.Name" />
+                </div>
+                <br />
+                <label for="boardIcon">Icon:<img id="boardIconDisplay" src="@Model.Image.Filepath" style="float: right;width: 70px; height: 70px; border-radius: 0px;" /></label>
+                <br />
+                <div id="iconFileInput">
+                    <input id="boardIcon" name="Icon" value="@Model.Image.Filename" tabindex="-1" style="z-index: 0; display: none;" type="file" onchange="$('#iconSelectOverlay').val($(this).val()); PreviewImage(this, $('#boardIconDisplay'));">
+                    <div class="input-control text" data-role="input">
+                        <input id="iconSelectOverlay" style="padding-right: 62px;" type="text" readonly="" value="@Model.Image.Filename" onclick="$('#boardIcon').trigger('click');">
+                    </div>
+                    
+                </div>
+                
+            </div>
+            <div class="cell">
+                <label for="boardDescription">Description:</label>
+                <br />
+                <div class="input-control textarea">
+                    <textarea id="boardDescription" name="Description">@Model.Description</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <button class="button" type="submit">Save</button>
+</form>

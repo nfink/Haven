@@ -1,19 +1,19 @@
-﻿@using Haven;
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
+@using Haven;
 
 @foreach (Board board in @Model)
 {
-    <div class="tile fg-white bg-black"
+    <div class="board tile fg-white bg-black"
          data-role="tile"
-         onclick="NewGameDialog($(this));"
          boardid="@board.Id"
-         boardIcon="@board.Icon"
+         boardIcon="@board.Image.Filepath"
          boardName="@board.Name"
          boardDescription="@board.Description">
         <div class="tile-content slide-down">
             <div class="slide">
                 <div style="width: 100%;" class="image-container image-format-square">
                     <div class="frame">
-                        <div style="width: 100%; height: 150px; background-image: url('@board.Icon'); background-size: cover; background-repeat: no-repeat; border-radius: 0px;">
+                        <div style="width: 100%; height: 150px; background-image: url('@board.Image.Filepath'); background-size: cover; background-repeat: no-repeat; border-radius: 0px;">
                         </div>
                     </div>
                 </div>

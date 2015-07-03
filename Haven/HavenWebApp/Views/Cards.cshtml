@@ -1,0 +1,49 @@
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
+@using Haven;
+
+@foreach (Player player in @Model)
+{
+    <div playerid="@player.Id">
+        @foreach (SafeHavenCard safeHavenCard in player.SafeHavenCards)
+        {
+            <div class="tile-small safehavencard" details="@safeHavenCard.Details">
+                <div class="tile-content"
+                     style="text-align: center;">
+                    @if (!string.IsNullOrWhiteSpace(@safeHavenCard.Image.Filepath))
+                    {
+                        <div style="width: 100%;
+                             height: 100%;
+                             position: absolute;
+                             background-image: url('@safeHavenCard.Image.Filepath');
+                             background-size: cover;
+                             background-repeat: no-repeat;"></div>
+                    }
+                    <div style="display: inline-block;
+                                vertical-align: middle;
+                                line-height: 70px;">@safeHavenCard.Name</div>
+                </div>
+            </div>
+        }
+
+        @foreach (NameCard nameCard in player.NameCards)
+        {
+            <div class="tile-small namecard" details="@nameCard.Details">
+                <div class="tile-content"
+                     style="text-align: center;">
+                    @if (!string.IsNullOrWhiteSpace(@nameCard.Image.Filepath))
+                    {
+                        <div style="width: 100%;
+                                    height: 100%;
+                                    position: absolute;
+                                    background-image: url('@nameCard.Image.Filepath');
+                                    background-size: cover;
+                                    background-repeat: no-repeat;"></div>
+                    }
+                    <div style="display: inline-block;
+                                vertical-align: middle;
+                                line-height: 70px;">@nameCard.Name</div>
+                </div>
+            </div>
+        }
+    </div>
+}

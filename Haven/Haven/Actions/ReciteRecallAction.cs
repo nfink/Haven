@@ -8,7 +8,7 @@ namespace Haven
 {
     public partial class Action
     {
-        private void ReciteBibleVerseAction(Object input)
+        private void ReciteRecallAction(Object input)
         {
             Persistence.Connection.Execute("delete from Action where (Type=? or Type=?) and OwnerId=?", ActionType.ReadBibleVerse, ActionType.ReciteBibleVerse, this.OwnerId);
 

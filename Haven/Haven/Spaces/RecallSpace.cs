@@ -8,7 +8,7 @@ namespace Haven
 {
     public partial class Space
     {
-        private void OnLandBibleVerse(Player player)
+        private void OnLandRecall(Player player)
         {
             // player can either read the verse or recite it
             Persistence.Connection.Insert(new Action() { Type = ActionType.ReadBibleVerse, OwnerId = player.Id, BibleVerseId = this.BibleVerseId });

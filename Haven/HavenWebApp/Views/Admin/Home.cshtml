@@ -1,0 +1,40 @@
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
+@using Haven;
+@using System.Collections.Generic;
+@using System.Linq;
+
+<!DOCTYPE html>
+<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<html>
+<head>
+    <link href="/Content/metro.css" rel="stylesheet">
+    <link href="/Content/metro-icons.css" rel="stylesheet">
+    <script src="/Scripts/metro.js"></script>
+    <link href="/Content/Haven.css" rel="stylesheet">
+    <script src="/Scripts/Admin.js"></script>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+</head>
+<body class="bg-grayLighter">
+    <div>
+        @{ var boards = (IEnumerable<Board>)@Model; }
+        
+        <div id="active" class="tile-container padding10" style="width: 680px; margin: auto;">
+            <div class="header">Active</div>
+            @Html.Partial("BoardsMenu", @boards.Where(x => x.Active))
+        </div>
+        
+        <div id="inactive" class="tile-container padding10" style="width: 680px; margin: auto;">
+            <div class="header">Inactive</div>
+            @Html.Partial("BoardsMenu", @boards.Where(x => !x.Active))
+        </div>
+        
+        <div id="incomplete" class="tile-container padding10" style="width: 680px; margin: auto;">
+            <div class="header">Incomplete</div>
+        </div>
+
+        <div id="boardDialog" class="dialog" data-overlay="true" data-overlay-color="op-dark" data-close-button="true" data-role="dialog">
+        </div>
+    </div>
+</body>
+</html>

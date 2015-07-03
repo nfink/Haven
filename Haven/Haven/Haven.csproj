@@ -12,6 +12,8 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>5b0acaf1</NuGetPackageImportStamp>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,6 +33,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -53,24 +59,27 @@
     <Compile Include="Actions\EndTurnAction.cs" />
     <Compile Include="Actions\SelectPieceAction.cs" />
     <Compile Include="Actions\RollToGoAction.cs" />
-    <Compile Include="Actions\ReadBibleVerseAction.cs" />
+    <Compile Include="Actions\ReadRecallAction.cs" />
     <Compile Include="Challenge.cs" />
     <Compile Include="ChallengeAnswer.cs" />
+    <Compile Include="Color.cs" />
     <Compile Include="Data\DataLoad.cs" />
-    <Compile Include="Actions\ReciteBibleVerseAction.cs" />
+    <Compile Include="Actions\ReciteRecallAction.cs" />
     <Compile Include="Data\Persistence.cs" />
+    <Compile Include="Image.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="Board.cs" />
     <Compile Include="Dice.cs" />
     <Compile Include="DiceRoll.cs" />
     <Compile Include="Movement.cs" />
     <Compile Include="NameCard.cs" />
+    <Compile Include="Password.cs" />
     <Compile Include="Piece.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="PlayerNameCard.cs" />
     <Compile Include="PlayerSafeHavenCard.cs" />
     <Compile Include="SafeHavenCard.cs" />
-    <Compile Include="Spaces\BibleVerseSpace.cs" />
+    <Compile Include="Spaces\RecallSpace.cs" />
     <Compile Include="Spaces\ChallengeSpace.cs" />
     <Compile Include="Spaces\ExchangePlacesSpace.cs" />
     <Compile Include="Spaces\OptionalTurnAroundSpace.cs" />
@@ -86,6 +95,7 @@
     <Compile Include="Actions\TurnAroundAction.cs" />
     <Compile Include="Actions\DeclareWarAction.cs" />
     <Compile Include="UsedChallenge.cs" />
+    <Compile Include="User.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -100,6 +110,13 @@
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

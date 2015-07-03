@@ -16,7 +16,13 @@ namespace Haven
 
         public string Description { get; set; }
 
-        public string Icon { get; set; }
+        public int ImageId { get; set; }
+
+        public bool Active { get; set; }
+
+        public int Width { get; set; }
+
+        public int Height { get; set; }
 
         public int MessageAreaWidth { get; set; }
 
@@ -66,6 +72,22 @@ namespace Haven
             }
         }
 
+        public IEnumerable<Challenge> Challenges
+        {
+            get
+            {
+                return Persistence.Connection.Table<Challenge>().Where(x => x.BoardId == this.Id);
+            }
+        }
+
+        public Image Image
+        {
+            get
+            {
+                return this.ImageId == 0 ? null : Persistence.Connection.Get<Image>(this.ImageId);
+            }
+        }
+
         public Space GetNewSpace(int startSpaceId, int spacesToMove, bool direction)
         {
             var spaces = Persistence.Connection.Table<Space>().Where(x => x.BoardId == this.Id).OrderBy(x => x.Order).ToList();
@@ -82,6 +104,119 @@ namespace Haven
             Persistence.Connection.Update(player);
             var space = Persistence.Connection.Get<Space>(player.SpaceId);
             space.OnLand(player);
+        }
+
+        public BoardValidation Validate()
+        {
+            var spaces = this.Spaces;
+            var challenges = this.Challenges;
+            var validation = new BoardValidation();
+
+            // validate board
+            if (this.Name == null)
+            {
+                validation.Errors.Add("No name");
+            }
+            if (this.Description == null)
+            {
+                validation.Warnings.Add("No description");
+            }
+            if (this.ImageId == null)
+            {
+                validation.Warnings.Add("No icon");
+            }
+
+            // validate spaces
+            // make sure there are enough spaces
+            //int requiredSpaces = (this.Width * 2) + ((this.Height - 1) * 2);
+            //if (spaces.Count() < requiredSpaces)
+            //{
+            //    validation.Errors.Add(string.Format("{0}/{1} required spaces", spaces.Count(), requiredSpaces));
+            //}
+            // make sure the board has spaces
+            if (spaces.Count() < 1)
+            {
+                validation.Errors.Add("No spaces");
+            }
+            // make sure the board has enough spaces
+            int recommendedNumberOfSpaces = 7;
+            if (spaces.Count() < recommendedNumberOfSpaces)
+            {
+                validation.Warnings.Add(string.Format("{0}/{1} recommended minimum number of spaces", spaces.Count(), recommendedNumberOfSpaces));
+            }
+            // make sure all spaces have a type
+            var typed = spaces.Where(x => x.Type != SpaceType.None);
+            if (typed.Count() < spaces.Count())
+            {
+                validation.Errors.Add(string.Format("{0}/{1} spaces with a type", typed.Count(), spaces.Count()));
+            }
+            // make sure any challenge space has a corresponding card
+            var challengeSpaces = spaces.Where(x => x.Type == SpaceType.Challenge);
+            var noChallengeCard = challengeSpaces.Where(x => x.NameCardId == 0);
+            if (noChallengeCard.Count() > 0)
+            {
+                validation.Errors.Add(string.Format("{0}/{1} challenge spaces with a corresponding card", noChallengeCard.Count(), challengeSpaces.Count()));
+            }
+            // make sure any safe haven space has a corresponding card
+            var safeHavenSpaces = spaces.Where(x => x.Type == SpaceType.SafeHaven);
+            var noSafeHavenCard = safeHavenSpaces.Where(x => x.SafeHavenCardId == 0);
+            if (noSafeHavenCard.Count() > 0)
+            {
+                validation.Errors.Add(string.Format("{0}/{1} safe haven spaces with a corresponding card", noSafeHavenCard.Count(), safeHavenSpaces.Count()));
+            }
+            // make sure any recall space has a corresponding verse
+            var recallSpaces = spaces.Where(x => x.Type == SpaceType.Recall);
+            var noRecall = recallSpaces.Where(x => x.BibleVerseId == 0);
+            if (noRecall.Count() > 0)
+            {
+                validation.Errors.Add(string.Format("{0}/{1} recall spaces with a corresponding card", noRecall.Count(), recallSpaces.Count()));
+            }
+            // make sure there are no collisions in order
+            var sameOrder = spaces.Select(x => x.Order).GroupBy(x => x).SelectMany(x => x.Skip(1));
+            if (sameOrder.Count() > 0)
+            {
+                validation.Errors.Add(string.Format("Multiple spaces with the same order: {0}", sameOrder.Select(x => x.ToString()).Aggregate((x, y) => x + ", " + y)));
+            }
+
+            // validate dimensions
+            // make sure all dimenions are set
+            // make sure there are no overlapping spaces or areas
+
+            // validate challenges
+            // make sure every challenge has at least one correct answer
+            var challengesWithoutCorrectAnswer = challenges.Where(x => x.Answers.Where(y => y.Correct).Count() < 1);
+            if (challengesWithoutCorrectAnswer.Count() > 0)
+            {
+                validation.Errors.Add(string.Format("{0}/{1} challenges with a correct anwser", challenges.Count() - challengesWithoutCorrectAnswer.Count(), challenges.Count()));
+            }
+            // warn if there aren't very many challenges
+            var recommendedChallenges = 10 + (challengeSpaces.Count() * 5);
+            if (challenges.Count() < recommendedChallenges)
+            {
+                validation.Warnings.Add(string.Format("{0}/{1} recommended minimum number of challenges", challenges.Count(), recommendedChallenges));
+            }
+
+            // validate name cards
+
+
+            // validate safe haven cards
+
+
+            return validation;
+        }
+    }
+
+
+    public class BoardValidation
+    {
+        public List<string> Errors;
+
+        public List<string> Warnings;
+
+        public BoardValidation()
+        {
+            this.Errors = new List<string>();
+            this.Warnings = new List<string>();
         }
     }
 }

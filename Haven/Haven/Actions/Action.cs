@@ -9,7 +9,8 @@ namespace Haven
 {
     public enum ActionType
     {
-        AnswerChallenge = 1,
+        None = 0,
+        AnswerChallenge,
         AnswerWarChallenge,
         DeclareWar,
         DeclineWar,
@@ -50,15 +51,16 @@ namespace Haven
 
         public int NameCardId { get; set; }
 
-        public int PieceId { get; set; }
-
         public int PlayerId { get; set; }
 
         public bool RequiresInput
         {
             get
             {
-                return (this.Type == ActionType.EnterName) || (this.Type == ActionType.ReciteBibleVerse) || (this.Type == ActionType.EnterPassword);
+                return (this.Type == ActionType.EnterName) || 
+                    (this.Type == ActionType.ReciteBibleVerse) || 
+                    (this.Type == ActionType.EnterPassword) ||
+                    (this.Type == ActionType.SelectPiece);
             }
         }
 
@@ -83,14 +85,6 @@ namespace Haven
             get
             {
                 return this.NameCardId == 0 ? null : Persistence.Connection.Get<NameCard>(this.NameCardId);
-            }
-        }
-
-        public Piece Piece
-        {
-            get
-            {
-                return this.PieceId == 0 ? null : Persistence.Connection.Get<Piece>(this.PieceId);
             }
         }
 
@@ -131,10 +125,10 @@ namespace Haven
                     ExchangePlacesAction(input);
                     break;
                 case (ActionType.ReadBibleVerse):
-                    ReadBibleVerseAction(input);
+                    ReadRecallAction(input);
                     break;
                 case (ActionType.ReciteBibleVerse):
-                    ReciteBibleVerseAction(input);
+                    ReciteRecallAction(input);
                     break;
                 case (ActionType.Roll):
                     RollAction(input);

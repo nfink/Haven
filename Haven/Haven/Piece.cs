@@ -12,12 +12,16 @@ namespace Haven
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
-        public int BoardId { get; set; }
-
         public string Name { get; set; }
 
         public string Image { get; set; }
 
-        public string Color { get; set; }
+        public static IEnumerable<Piece> Pieces
+        {
+            get
+            {
+                return Persistence.Connection.Table<Piece>();
+            }
+        }
     }
 }

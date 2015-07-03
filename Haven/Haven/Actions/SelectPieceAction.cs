@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Haven
 {
@@ -10,18 +11,32 @@ namespace Haven
     {
         private void SelectPieceAction(Object input)
         {
-            // remove all other select piece actions
-            Persistence.Connection.Execute("delete from Action where Type=? and OwnerId=?", ActionType.SelectPiece, this.OwnerId);
+            var selection = JsonConvert.DeserializeObject<dynamic>((string)input);
+            var pieceId = (int)selection.PieceId;
+            var colorId = (int)selection.ColorId;
 
-            // set piece
-            var piece = Persistence.Connection.Get<Piece>(this.PieceId);
-            var player = Persistence.Connection.Get<Player>(this.OwnerId);
-            player.PieceId = this.PieceId;
-            Persistence.Connection.Update(player);
+            // make sure no other player in the game has the same piece
+            var samePiece = Persistence.Connection.Query<Player>("select * from Player where PieceId=? and ColorId=?", pieceId, colorId);
+            if (samePiece.Count > 0)
+            {
+                Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = "Another player has the same piece. Please choose another picture and/or color." });
+            }
+            else
+            {
+                Persistence.Connection.Delete(this);
 
-            var game = Persistence.Connection.Get<Game>(player.GameId);
-            game.StartGame();
-            Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = string.Format("{0} piece selected.", piece.Name) });
+                // set piece
+                var piece = Persistence.Connection.Get<Piece>(pieceId);
+                var color = Persistence.Connection.Get<Color>(colorId);
+                var player = Persistence.Connection.Get<Player>(this.OwnerId);
+                player.PieceId = pieceId;
+                player.ColorId = colorId;
+                Persistence.Connection.Update(player);
+
+                var game = Persistence.Connection.Get<Game>(player.GameId);
+                game.StartGame();
+                Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = string.Format("{0} {1} piece selected.", piece.Name, color.Name) });
+            }
         }
     }
 }

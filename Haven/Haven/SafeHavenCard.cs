@@ -16,6 +16,14 @@ namespace Haven
 
         public string Details { get; set; }
 
-        public string Image { get; set; }
+        public int ImageId { get; set; }
+
+        public Image Image
+        {
+            get
+            {
+                return this.ImageId == 0 ? null : Persistence.Connection.Get<Image>(this.ImageId);
+            }
+        }
     }
 }

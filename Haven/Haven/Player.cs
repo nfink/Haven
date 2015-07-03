@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SQLite;
-using System.Security.Cryptography;
 
 namespace Haven
 {
@@ -13,11 +12,15 @@ namespace Haven
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
+        public string Guid { get; set; }
+
         public string Name { get; set; }
 
         public string Password { get; set; }
 
         public int PieceId { get; set; }
+
+        public int ColorId { get; set; }
 
         public int SpaceId { get; set; }
 
@@ -34,6 +37,14 @@ namespace Haven
             get
             {
                 return this.PieceId == 0 ? null : Persistence.Connection.Get<Piece>(this.PieceId);
+            }
+        }
+
+        public Color Color
+        {
+            get
+            {
+                return this.ColorId == 0 ? null : Persistence.Connection.Get<Color>(this.ColorId);
             }
         }
 
@@ -89,33 +100,14 @@ namespace Haven
 
         public void SetPassword(string password)
         {
-            // from http://stackoverflow.com/questions/4181198/how-to-hash-a-password
-            byte[] salt;
-            new RNGCryptoServiceProvider().GetBytes(salt = new byte[16]);
-            var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 1000);
-            byte[] hash = pbkdf2.GetBytes(20);
-            byte[] hashBytes = new byte[36];
-            Array.Copy(salt, 0, hashBytes, 0, 16);
-            Array.Copy(hash, 0, hashBytes, 16, 20);
-            string savedPasswordHash = Convert.ToBase64String(hashBytes);
+            string savedPasswordHash = Haven.Password.HashPassword(password);
             this.Password = savedPasswordHash;
             Persistence.Connection.Update(this);
         }
 
         public bool VerifyPassword(string password)
         {
-            if (password == null || this.Password == null)
-            {
-                return false;
-            }
-
-            // from http://stackoverflow.com/questions/4181198/how-to-hash-a-password
-            byte[] hashBytes = Convert.FromBase64String(this.Password);
-            byte[] salt = new byte[16];
-            Array.Copy(hashBytes, 0, salt, 0, 16);
-            var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 1000);
-            byte[] hash = pbkdf2.GetBytes(20);
-            return !(hash.Where((x, i) => x != hashBytes[i + 16]).Any());
+            return Haven.Password.VerifyPassword(this.Password, password);
         }
 
         public IEnumerable<Message> RecentMessages(int number)

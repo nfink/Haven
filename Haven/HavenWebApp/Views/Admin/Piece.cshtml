@@ -1,0 +1,8 @@
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
+@using Haven;
+
+<div class="piece tile-small bg-@Model.Color fg-black" pieceid="@Model.Id" onclick="SelectPiece(this);">
+    <div class="tile-content" style="text-align: center;">
+        <div class="mif-@Model.Image mif-2x" style="display: inline-block; vertical-align: middle; line-height: 70px;"></div>
+    </div>
+</div>

@@ -1,0 +1,14 @@
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
+@using Haven;
+
+<div class="challenge tile tile-small-y tile-square-x bg-white fg-black" challengeid="@Model.Id" onclick="SelectChallenge(this);" style="border-style: solid; border-width: 1px;">
+    <div class="tile-content slide-up-2">
+        <div class="slide text-small">@Model.Question</div>
+        <div class="slide-over text-small">
+            @foreach (ChallengeAnswer answer in Model.Answers)
+            {
+                @answer.Answer<br />
+            }
+        </div>
+    </div>
+</div>

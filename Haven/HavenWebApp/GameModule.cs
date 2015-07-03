@@ -10,6 +10,7 @@ using Nancy.ModelBinding;
 using Newtonsoft.Json;
 using Nancy.Conventions;
 using Nancy.Responses;
+using Nancy.Security;
 
 namespace HavenWebApp
 {
@@ -17,14 +18,14 @@ namespace HavenWebApp
     {
         public GameModule()
         {
-            Get["/NewGame"] = parameters =>
+            Post["/NewGame"] = parameters =>
             {
-                var game = Game.NewGame((int)this.Request.Query.BoardId, (int)this.Request.Query.NumberOfPlayers);
-                game.Name = (string)this.Request.Query.Name;
+                var game = Game.NewGame((int)this.Request.Form.BoardId, (int)this.Request.Form.NumberOfPlayers);
+                game.Name = (string)this.Request.Form.Name;
                 Persistence.Connection.Update(game);
                 // remove actions that the user does not have access to
 
-                return View["Game.cshtml", game];
+                return View["Views/Game.cshtml", game];
             };
 
             Get["/Game/{id}"] = parameters =>
@@ -32,7 +33,7 @@ namespace HavenWebApp
                 var game = Persistence.Connection.Get<Game>((int)parameters.id);
                 // remove actions that the user does not have access to
 
-                return View["Game.cshtml", game];
+                return View["Views/Game.cshtml", game];
             };
 
             Get["/Game/{id}/Players"] = parameters =>
@@ -43,7 +44,7 @@ namespace HavenWebApp
                 // remove actions that the user does not have access to
                 //var passwords = parameters.passwords;
 
-                return View["Players.cshtml", players];
+                return View["Views/Players.cshtml", players];
             };
 
             Post["/Authenticate"] = parameters =>
@@ -52,12 +53,19 @@ namespace HavenWebApp
                 var player = Persistence.Connection.Get<Player>((int)this.Request.Form.PlayerId);
                 if (player.VerifyPassword(password))
                 {
-                    return View["Actions.cshtml", new Player[] { player }];
+                    return new HtmlResponse(HttpStatusCode.OK);
                 }
                 else
                 {
                     return new HtmlResponse(HttpStatusCode.Unauthorized);
                 }
+            };
+
+            Get["/test"] = parameters =>
+            {
+                this.RequiresAuthentication();
+
+                return this.Context.CurrentUser.UserName;
             };
         }
     }

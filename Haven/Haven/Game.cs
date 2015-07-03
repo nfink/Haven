@@ -43,7 +43,6 @@ namespace Haven
             Persistence.Connection.Insert(game);
 
             int firstSpaceId = Persistence.Connection.Query<Space>("select [Id] from [Space] where [Order]=(select min([Order]) from [Space] where BoardId=?) and BoardId=?", game.BoardId, game.BoardId).First().Id;
-            var pieces = Persistence.Connection.Table<Piece>().Where(x => x.BoardId == game.BoardId);
 
             var players = new List<Player>();
 
@@ -52,18 +51,12 @@ namespace Haven
             {
                 var player = new Player();
                 player.GameId = game.Id;
+                player.Guid = Guid.NewGuid().ToString();
                 Persistence.Connection.Insert(player);
 
-                // add actions for selecting a piece
-                foreach (Piece p in pieces)
-                {
-                    Persistence.Connection.Insert(new Action() { Type = ActionType.SelectPiece, OwnerId = player.Id, PieceId = p.Id });
-                }
-
-                // add action for entering a name
+                // add actions for setting up the player
+                Persistence.Connection.Insert(new Action() { Type = ActionType.SelectPiece, OwnerId = player.Id });
                 Persistence.Connection.Insert(new Action() { Type = ActionType.EnterName, OwnerId = player.Id });
-
-                // add action for entering a password
                 Persistence.Connection.Insert(new Action() { Type = ActionType.EnterPassword, OwnerId = player.Id });
 
                 // start player on the first space

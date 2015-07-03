@@ -1,10 +1,11 @@
-﻿@using Haven;
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
+@using Haven;
 
 @foreach (Player player in @Model)
 {
     if (player.PieceId != 0)
     {
-        <div class="piece bg-@player.Piece.Color"
+        <div class="piece bg-@player.Color.Name"
              direction="@player.MovementDirection"
              spaceid="@player.SpaceId"
              playerid="@player.Id"
@@ -15,7 +16,7 @@
                     transform: translate(-10px, -10px);
                     box-shadow: 1px 1px 5px black;
                     z-index: 999;">
-            <span class="icon mif-@player.Piece.Image mif-lg bg-@player.Piece.Color"
+            <span class="icon @player.Piece.Image mif-lg bg-@player.Color.Name"
                   style="position: relative;
                          top: 50%;
                          left: 50%;

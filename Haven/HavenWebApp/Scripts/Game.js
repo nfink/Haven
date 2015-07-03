@@ -3,24 +3,24 @@
 function SetupGame(game) {
     $("#game").append(game);
 
-    // adjust position of board elements
-    $(".space, #messagearea, #statusarea").offset(function (index) {
-        var left = $(this).css("left");
-        left = left.replace("px", "");
-        var top = $(this).css("top");
-        top = top.replace("px", "");
-        var newLeft = 10 + (left - 1) * $(this).width() * 1.1;
-        var newTop = 10 + (top - 1) * $(this).height() * 1.1;
-        return { left: newLeft, top: newTop };
-    });
+    AdjustBoardDimensions($(".space, #messagearea, #statusarea"), $("#messagearea, #statusarea"));
 
-    // adjust size of status and message areas
-    $("#messagearea, #statusarea").width(function (index, width) {
-        return (($(this).attr("width") - 1) * ((width * 1.1) + 1)) + width;
+    // set up links between spaces for piece movement
+    var spaceOrders = [];
+    $(".space").each(function () {
+        spaceOrders.push(Number($(this).attr("order")));
     });
-    $("#messagearea, #statusarea").height(function (index, height) {
-        return (($(this).attr("height") - 1) * ((height * 1.1) + 1)) + height;
-    });
+    spaceOrders.sort(function (x, y) { return x - y; });
+    var numberOfSpaces = spaceOrders.length;
+    for (i = 0; i < spaceOrders.length; i++) {
+        var nextSpaceOrder = spaceOrders[(i + 1) % numberOfSpaces];
+        var previousSpaceOrder = i > 0 ? spaceOrders[(i - 1) % (numberOfSpaces - 1)] : spaceOrders[numberOfSpaces - 1];
+        var space = $(".space[order=" + spaceOrders[i] + "]");
+        var nextSpaceId = $(".space[order=" + nextSpaceOrder + "]").attr("spaceid");
+        var previousSpaceId = $(".space[order=" + previousSpaceOrder + "]").attr("spaceId");
+        space.attr("nextspaceid", nextSpaceId);
+        space.attr("previousspaceid", previousSpaceId);
+    }
 
     // click handler to show details for challenge and safe haven spaces
     $(".space[details!='']").click(function (e) {
@@ -41,6 +41,26 @@ function SetupGame(game) {
     });
 
     PlayerNameSetup();
+    UpdateActionPasswords();
+}
+
+function AdjustBoardDimensions(spaces, areas) {
+    // adjust position of board elements
+    spaces.offset(function (index) {
+        var left = $(this).attr("x");
+        var top = $(this).attr("y");
+        var newLeft = 10 + (left - 1) * $(this).width() * 1.1;
+        var newTop = 10 + (top - 1) * $(this).height() * 1.1;
+        return { left: newLeft, top: newTop };
+    });
+
+    // adjust size of status and message areas
+    areas.width(function (index, width) {
+        return (($(this).attr("width") - 1) * (width * 1.1)) + width;
+    });
+    areas.height(function (index, height) {
+        return (($(this).attr("height") - 1) * (height * 1.1)) + height;
+    });
 }
 
 function PerformAction(actionForm) {
@@ -94,21 +114,19 @@ function UpdateActionPasswords()
     $.each($(".playerPassword"), function (index, value) {
         var playerId = $(value).attr("playerid");
         var password = $(value).attr("password");
-        $(".actionContainer[playerid=" + playerId + "]").find(".action").find("[name=Password]").val(password);
-        $(".actionContainer[playerid=" + playerId + "]").find(".playerName").find("input").hide();
-        $(".actionContainer[playerid=" + playerId + "]").find(".playerNameButton").hide();
+        var actionContainer = $(".actionContainer[playerid=" + playerId + "]");
+        actionContainer.find(".action").find("[name=Password]").val(password);
+        actionContainer.find(".playerName").find("input").hide();
+        actionContainer.find(".playerNameButton").hide();
+        // set background to indicate player has logged in
+        actionContainer.attr("class", actionContainer.attr("class").replace("ribbed-", "bg-"));
     });
 
-    //// hide actions without a password
-    //$.each($(".action"), function (index, value) {
-    //    if (!($(value).find("[name=Password]").val())) {
-    //        $(value).hide();
-    //    }
-    //    else
-    //    {
-    //        $(value).show();
-    //    }
-    //});
+    // hide actions without a password
+    $(".actionContainer:not(.passwordNotSet)").find(".action").find("[name=Password]:not([value])").parents(".action").hide();
+
+    // show actions with a password
+    $(".actionContainer:not(.passwordNotSet)").find(".action").find("[name=Password][value]").parents(".action").show();
 }
 
 function UpdatePieces(pieces) {
@@ -220,8 +238,9 @@ function EnterPassword(form) {
     $.post("Authenticate", $(form).serialize())
         .done(function (data) {
             AddPassword(playerId, password);
-            $("#actions").find(".actionContainer[playerId=" + playerId + "]").append($(data).filter(".actions"));
+            //$("#actions").find(".actionContainer[playerId=" + playerId + "]").append($(data).filter(".actions"));
             UpdateActionPasswords();
+            $(form).find("[name=Password]").blur();
         })
         .fail(function () {
             $(form).find(".playerName").addClass("error");
@@ -243,8 +262,6 @@ function AddPassword(playerId, password) {
             class: "playerPassword",
             playerid: playerId,
             password: password,
-            name: "playerId" + playerId,
-            value: password,
         });
         $("#game").append(passwordElement);
     }
@@ -266,4 +283,34 @@ function PlayerNameSetup() {
             button.show();
         });
     });
+}
+
+function SelectIcon(iconKey) {
+    var image = $(iconKey).attr("image");
+    var pieceId = $(iconKey).attr("pieceId");
+    var form = $(iconKey).parents("form");
+    form.find(".imageValue").val(pieceId);
+    form.find(".imageSelect").attr("class", "imageSelect mif-2x " + image);
+    form.find('.imagePad').toggle();
+    SetPieceInputValue(form);
+}
+
+function SelectColor(colorKey) {
+    var color = $(colorKey).attr("name");
+    var colorId = $(colorKey).attr("colorId");
+    var form = $(colorKey).parents("form");
+    form.find(".colorValue").val(colorId);
+    form.find(".colorSelect").attr("class", "colorSelect bg-" + color);
+    form.find('.colorPad').toggle();
+    SetPieceInputValue(form);
+}
+
+function SetPieceInputValue(form) {
+    var pieceId = form.find(".imageValue").val();
+    var colorId = form.find(".colorValue").val();
+    var inputValue = form.find("[name=Input]").val(JSON.stringify({ PieceId: pieceId, ColorId: colorId }));
+    if (pieceId && colorId)
+    {
+        form.find("button").prop("disabled", false);
+    }
 }

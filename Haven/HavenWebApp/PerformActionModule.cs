@@ -44,7 +44,7 @@ namespace HavenWebApp
                 int gameId = Persistence.Connection.Table<Player>().Where(x => x.Id == action.OwnerId).First().GameId;
                 action.PerformAction((string)this.Request.Form.Input);
                 var players = Persistence.Connection.Table<Player>().Where(x => x.GameId == gameId);
-                return View["Players.cshtml", players];
+                return View["Views/Players.cshtml", players];
             };
         }
     }

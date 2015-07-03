@@ -9,7 +9,8 @@ namespace Haven
 {
     public enum SpaceType
     {
-        BibleVerse = 1,
+        None = 0,
+        Recall,
         Challenge,
         ExchangePlaces,
         OptionalTurnAround,
@@ -34,7 +35,7 @@ namespace Haven
             {
                 switch (this.Type)
                 {
-                    case SpaceType.BibleVerse:
+                    case SpaceType.Recall:
                         return this.BibleVerse.ToString();
                     case SpaceType.Challenge:
                         return this.NameCard.Name;
@@ -106,8 +107,8 @@ namespace Haven
         {
             switch (this.Type)
             {
-                case (SpaceType.BibleVerse):
-                    OnLandBibleVerse(player);
+                case (SpaceType.Recall):
+                    OnLandRecall(player);
                     break;
                 case (SpaceType.Challenge):
                     OnLandChallege(player);

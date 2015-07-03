@@ -1,0 +1,24 @@
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
+@using Haven;
+
+<form method="post" action="/Admin/Challenge/Edit" onsubmit="return EditChallenge(this);">
+    <div class="header">Edit Challenge</div>
+    <input type="hidden" name="Id" value="@Model.Id" />
+    <input type="hidden" name="BoardId" value="@Model.BoardId" />
+    <input class="input-control text" name="Question" value="@Model.Question" />
+    <button class="button" type="button" onclick="AddAnswer($('#answers'));">Add Answer</button>
+    <div id="answers">
+        @foreach (ChallengeAnswer answer in @Model.Answers)
+        {
+            string correct = answer.Correct ? "checked" : "";
+            <div class="answer">
+                <input class="input-control text" name="Answer" value="@answer.Answer" />
+                <input name="Correct" type="checkbox" @correct />
+                <button class="button" type="button" onclick="$(this).parent().remove();">Remove</button>
+            </div>
+        }
+    </div>
+
+    <button class="button" type="submit">Save</button>
+    <button class="button" type="button" onclick="$('#editPane').empty();">Close</button>
+</form>

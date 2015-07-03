@@ -26,11 +26,14 @@ namespace Haven.Data
             this.LoadBibleVerse();
             this.LoadChallenge();
             this.LoadChallengeAnswer();
+            this.LoadColor();
+            this.LoadImage();
             this.LoadSpace();
             this.LoadBoard();
             this.LoadMessage();
             this.LoadPlayer();
             this.LoadGame();
+            this.LoadUser();
             this.Connection.CreateTable<Action>();
             this.Connection.CreateTable<UsedChallenge>();
             this.Connection.CreateTable<PlayerNameCard>();
@@ -50,7 +53,7 @@ namespace Haven.Data
         public void LoadBoard()
         {
             this.Connection.CreateTable<Board>();
-            this.Connection.Insert(new Board() { Id = 1, Name = "Genesis", Description = "Covers the book of Genesis", Icon = "Content/Images/Rembrandt_Harmensz_square.jpg",
+            this.Connection.Insert(new Board() { Id = 1, Name = "Genesis", Description = "Covers the book of Genesis", ImageId = 17, Active = true,
                 MessageAreaWidth = 7, MessageAreaHeight = 3, MessageAreaX = 2, MessageAreaY = 2,
                 StatusAreaWidth = 7, StatusAreaHeight = 4, StatusAreaX = 2, StatusAreaY = 5});
         }
@@ -80,26 +83,57 @@ namespace Haven.Data
             this.Connection.Insert(new ChallengeAnswer() { Answer = "Test Answer 3d", Correct = false, ChallengeId = 3 });
         }
 
+        public void LoadColor()
+        {
+            this.Connection.CreateTable<Color>();
+            this.Connection.Insert(new Color() { Name = "green" });
+            this.Connection.Insert(new Color() { Name = "red" });
+            this.Connection.Insert(new Color() { Name = "cobalt" });
+            this.Connection.Insert(new Color() { Name = "amber" });
+        }
+
         public void LoadGame()
         {
             this.Connection.CreateTable<Game>();
         }
 
+        public void LoadImage()
+        {
+            this.Connection.CreateTable<Image>();
+            this.Connection.Insert(new Image() { Id = 1, Filename = "Judah.jpg", Filepath = "/Content/Images/Judah.jpg" });
+            this.Connection.Insert(new Image() { Id = 2, Filename = "Issachar.jpg", Filepath = "/Content/Images/Issachar.jpg" });
+            this.Connection.Insert(new Image() { Id = 3, Filename = "Zebulun.jpg", Filepath = "/Content/Images/Zebulun.jpg" });
+            this.Connection.Insert(new Image() { Id = 4, Filename = "Reuben.jpg", Filepath = "/Content/Images/Reuben.jpg" });
+            this.Connection.Insert(new Image() { Id = 5, Filename = "Simeon.jpg", Filepath = "/Content/Images/Simeon.jpg" });
+            this.Connection.Insert(new Image() { Id = 6, Filename = "Gad.jpg", Filepath = "/Content/Images/Gad.jpg" });
+            this.Connection.Insert(new Image() { Id = 7, Filename = "Joseph.jpg", Filepath = "/Content/Images/Joseph.jpg" });
+            this.Connection.Insert(new Image() { Id = 8, Filename = "Levi.jpg", Filepath = "/Content/Images/Levi.jpg" });
+            this.Connection.Insert(new Image() { Id = 9, Filename = "Benjamin.jpg", Filepath = "/Content/Images/Benjamin.jpg" });
+            this.Connection.Insert(new Image() { Id = 10, Filename = "Dan.jpg", Filepath = "/Content/Images/Dan.jpg" });
+            this.Connection.Insert(new Image() { Id = 11, Filename = "Asher.jpg", Filepath = "/Content/Images/Asher.jpg" });
+            this.Connection.Insert(new Image() { Id = 12, Filename = "Naphtali.jpg", Filepath = "/Content/Images/Naphtali.jpg" });
+            this.Connection.Insert(new Image() { Id = 13, Filename = "God_the_Father.jpg", Filepath = "/Content/Images/God_the_Father.jpg" });
+            this.Connection.Insert(new Image() { Id = 14, Filename = "Abraham.jpg", Filepath = "/Content/Images/Abraham.jpg" });
+            this.Connection.Insert(new Image() { Id = 15, Filename = "Isaac.jpeg", Filepath = "/Content/Images/Isaac.jpeg" });
+            this.Connection.Insert(new Image() { Id = 16, Filename = "Jacob.jpg", Filepath = "/Content/Images/Jacob.jpg" });
+            this.Connection.Insert(new Image() { Id = 17, Filename = "Rembrandt_Harmensz_square.jpg", Filepath = "/Content/Images/Rembrandt_Harmensz_square.jpg" });
+        }
+
         public void LoadNameCard()
         {
             this.Connection.CreateTable<NameCard>();
-            this.Connection.Insert(new NameCard() { Id = 1, Name = "Judah", Image = "Content/Images/Judah.jpg" });
-            this.Connection.Insert(new NameCard() { Id = 2, Name = "Issachar", Image = "Content/Images/Issachar.jpg" });
-            this.Connection.Insert(new NameCard() { Id = 3, Name = "Zebulun", Image = "Content/Images/Zebulun.jpg" });
-            this.Connection.Insert(new NameCard() { Id = 4, Name = "Reuben", Image = "Content/Images/Reuben.jpg" });
-            this.Connection.Insert(new NameCard() { Id = 5, Name = "Simeon", Image = "Content/Images/Simeon.jpg" });
-            this.Connection.Insert(new NameCard() { Id = 6, Name = "Gad", Image = "Content/Images/Gad.jpg" });
-            this.Connection.Insert(new NameCard() { Id = 7, Name = "Joseph", Image = "Content/Images/Joseph.jpg" });
-            this.Connection.Insert(new NameCard() { Id = 8, Name = "Levi", Image = "Content/Images/Levi.jpg" });
-            this.Connection.Insert(new NameCard() { Id = 9, Name = "Benjamin", Image = "Content/Images/Benjamin.jpg" });
-            this.Connection.Insert(new NameCard() { Id = 10, Name = "Dan", Image = "Content/Images/Dan.jpg" });
-            this.Connection.Insert(new NameCard() { Id = 11, Name = "Asher", Image = "Content/Images/Asher.jpg" });
-            this.Connection.Insert(new NameCard() { Id = 12, Name = "Naphtali", Image = "Content/Images/Naphtali.jpg" });
+            this.Connection.Insert(new NameCard() { Id = 1, Name = "Judah", ImageId = 1 });
+            this.Connection.Insert(new NameCard() { Id = 2, Name = "Issachar", ImageId = 2 });
+            this.Connection.Insert(new NameCard() { Id = 3, Name = "Zebulun", ImageId = 3 });
+            this.Connection.Insert(new NameCard() { Id = 4, Name = "Reuben", ImageId = 4 });
+            this.Connection.Insert(new NameCard() { Id = 5, Name = "Simeon", ImageId = 5 });
+            this.Connection.Insert(new NameCard() { Id = 6, Name = "Gad", ImageId = 6 });
+            this.Connection.Insert(new NameCard() { Id = 7, Name = "Joseph", ImageId = 7 });
+            this.Connection.Insert(new NameCard() { Id = 8, Name = "Levi", ImageId = 8 });
+            this.Connection.Insert(new NameCard() { Id = 9, Name = "Benjamin", ImageId = 9 });
+            this.Connection.Insert(new NameCard() { Id = 10, Name = "Dan", ImageId = 10 });
+            this.Connection.Insert(new NameCard() { Id = 11, Name = "Asher", ImageId = 11 });
+            this.Connection.Insert(new NameCard() { Id = 12, Name = "Naphtali", ImageId = 12 });
         }
 
         public void LoadMessage()
@@ -110,10 +144,10 @@ namespace Haven.Data
         public void LoadPiece()
         {
             this.Connection.CreateTable<Piece>();
-            this.Connection.Insert(new Piece() { Name = "Square", BoardId = 1, Image = "bug", Color = "cobalt" });
-            this.Connection.Insert(new Piece() { Name = "Circle", BoardId = 1, Image = "rocket", Color = "amber" });
-            this.Connection.Insert(new Piece() { Name = "Triangle", BoardId = 1, Image = "truck", Color = "magenta" });
-            this.Connection.Insert(new Piece() { Name = "Pentagon", BoardId = 1, Image = "local-airport", Color = "emerald" });
+            this.Connection.Insert(new Piece() { Name = "Bug", Image = "mif-bug" });
+            this.Connection.Insert(new Piece() { Name = "Rocket", Image = "mif-rocket" });
+            this.Connection.Insert(new Piece() { Name = "Truck", Image = "mif-truck" });
+            this.Connection.Insert(new Piece() { Name = "Airplance", Image = "mif-local-airport" });
         }
 
         public void LoadPlayer()
@@ -124,19 +158,19 @@ namespace Haven.Data
         public void LoadSafeHavenCard()
         {
             this.Connection.CreateTable<SafeHavenCard>();
-            this.Connection.Insert(new SafeHavenCard() { Id = 1, Name = "God", Image = "Content/Images/God_the_Father.jpg", Details = "The Father, creator of the universe." });
-            this.Connection.Insert(new SafeHavenCard() { Id = 2, Name = "Abraham", Image = "Content/Images/Abraham.jpg", Details = "The founding father of the Jewish nation of Israel, he was a man of great faith and obedience to the will of God." });
-            this.Connection.Insert(new SafeHavenCard() { Id = 3, Name = "Isaac", Image = "Content/Images/Isaac.jpeg", Details = "Only child of Abraham and Sarah. Miraculously born after Sarah healed of being barren." });
-            this.Connection.Insert(new SafeHavenCard() { Id = 4, Name = "Jacob", Image = "Content/Images/Jacob.jpg", Details = "Son of Isaac, father of the twelve sons who form the tribes of Israel." });
+            this.Connection.Insert(new SafeHavenCard() { Id = 1, Name = "God", ImageId = 13, Details = "The Father, creator of the universe." });
+            this.Connection.Insert(new SafeHavenCard() { Id = 2, Name = "Abraham", ImageId = 14, Details = "The founding father of the Jewish nation of Israel, he was a man of great faith and obedience to the will of God." });
+            this.Connection.Insert(new SafeHavenCard() { Id = 3, Name = "Isaac", ImageId = 15, Details = "Only child of Abraham and Sarah. Miraculously born after Sarah healed of being barren." });
+            this.Connection.Insert(new SafeHavenCard() { Id = 4, Name = "Jacob", ImageId = 16, Details = "Son of Isaac, father of the twelve sons who form the tribes of Israel." });
         }
 
         public void LoadSpace()
         {
             this.Connection.CreateTable<Space>();
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 1, Type = SpaceType.BibleVerse, BibleVerseId = 1, Width = 100, Height = 100, X = 150, Y = 50, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 9, Type = SpaceType.BibleVerse, BibleVerseId = 2, Width = 100, Height = 100, X = 850, Y = 150, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 17, Type = SpaceType.BibleVerse, BibleVerseId = 3, Width = 100, Height = 100, X = 750, Y = 850, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 25, Type = SpaceType.BibleVerse, BibleVerseId = 4, Width = 100, Height = 100, X = 50, Y = 750, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 1, Type = SpaceType.Recall, BibleVerseId = 1, Width = 100, Height = 100, X = 150, Y = 50, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 9, Type = SpaceType.Recall, BibleVerseId = 2, Width = 100, Height = 100, X = 850, Y = 150, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 17, Type = SpaceType.Recall, BibleVerseId = 3, Width = 100, Height = 100, X = 750, Y = 850, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 25, Type = SpaceType.Recall, BibleVerseId = 4, Width = 100, Height = 100, X = 50, Y = 750, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
 
             this.Connection.Insert(new Space() { BoardId = 1, Order = 6, Type = SpaceType.ExchangePlaces, Width = 100, Height = 100, X = 650, Y = 50, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
             this.Connection.Insert(new Space() { BoardId = 1, Order = 14, Type = SpaceType.ExchangePlaces, Width = 100, Height = 100, X = 850, Y = 650, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
@@ -175,6 +209,14 @@ namespace Haven.Data
 
             //this.Connection.Execute("update Space set Width=70, Height=70, X=(X - (X / 4)), Y=(Y - (Y / 4))");
             this.Connection.Execute("update Space set X=(((X - 50) / 100) + 1), Y=(((Y - 50) / 100) + 1)");
+        }
+
+        public void LoadUser()
+        {
+            this.Connection.CreateTable<User>();
+            var testUser = new User() { Username = "test", Guid = Guid.NewGuid().ToString() };
+            testUser.SetPassword("password");
+            this.Connection.Insert(testUser);
         }
     }
 }

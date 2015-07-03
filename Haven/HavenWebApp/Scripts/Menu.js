@@ -38,6 +38,12 @@ function ShowBoardMenu() {
         previousScreen = ShowMainMenu;
         $("#loading").hide();
         $("#boardMenu").append(data).show();
+        // add onclick handlers
+        $(document).ready(function() {
+            $(".board").click(function () {
+                NewGameDialog($(this));
+            });
+        });
     });
 }
 
@@ -76,7 +82,7 @@ function NewGame(newGameForm) {
         $("#continueMenu").hide().empty();
         $("#loading").show();
 
-        $.get("NewGame", $(newGameForm).serialize(), function (data) {
+        $.post("NewGame", $(newGameForm).serialize(), function (data) {
             previousScreen = ShowContinueMenu;
             SetupGame(data);
             $("#loading").hide();

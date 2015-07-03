@@ -1,0 +1,108 @@
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
+@using Haven;
+
+@{ var color = @Model.Color;
+   if (color == null) color = "white"; 
+}
+
+<form method="post" action="/Admin/Piece/Edit" onsubmit="return EditPiece(this);">
+    <input type="hidden" name="Id" value="@Model.Id" />
+    <input type="hidden" name="BoardId" value="@Model.BoardId" />
+    <input type="hidden" name="Name" value="@Model.Name" />
+    <input id="imageInput" type="hidden" name="Image" value="@Model.Image" />
+    <input id="colorInput" type="hidden" name="Color" value="@color" />
+
+    <div class="header">Edit Piece</div>
+    <label>Icon:</label>
+    <div>
+        <div id="imageDisplay" class="imageSelect mif-@Model.Image mif-2x" onclick="$('#imagePad').toggle();"></div>
+        <div id="imagePad" style="position: absolute; z-index: 1000; width: 242px; display: none;" class="keypad keypad-dropdown">
+            <div class="key mif-microscope" onclick="SelectIcon(this);"></div>
+            <div class="key mif-lamp" onclick="SelectIcon(this);"></div>
+            <div class="key mif-stethoscope" onclick="SelectIcon(this);"></div>
+            <div class="key mif-local-airport" onclick="SelectIcon(this);"></div>
+            <div class="key mif-cart" onclick="SelectIcon(this);"></div>
+            <div class="key mif-bug" onclick="SelectIcon(this);"></div>
+            <div class="key mif-rocket" onclick="SelectIcon(this);"></div>
+            <div class="key mif-truck" onclick="SelectIcon(this);"></div>
+            <div class="key mif-ambulance" onclick="SelectIcon(this);"></div>
+            <div class="key mif-directions-bike" onclick="SelectIcon(this);"></div>
+            <div class="key mif-paint" onclick="SelectIcon(this);"></div>
+            <div class="key mif-wrench" onclick="SelectIcon(this);"></div>
+            <div class="key mif-hammer" onclick="SelectIcon(this);"></div>
+            <div class="key mif-paper-plane" onclick="SelectIcon(this);"></div>
+            <div class="key mif-satellite" onclick="SelectIcon(this);"></div>
+            <div class="key mif-justice" onclick="SelectIcon(this);"></div>
+            <div class="key mif-paw" onclick="SelectIcon(this);"></div>
+            <div class="key mif-barbell" onclick="SelectIcon(this);"></div>
+            <div class="key mif-drive-eta" onclick="SelectIcon(this);"></div>
+            <div class="key mif-gift" onclick="SelectIcon(this);"></div>
+            <div class="key mif-spoon-fork" onclick="SelectIcon(this);"></div>
+            <div class="key mif-lab" onclick="SelectIcon(this);"></div>
+            <div class="key mif-suitcase" onclick="SelectIcon(this);"></div>
+            <div class="key mif-dollar" onclick="SelectIcon(this);"></div>
+            <div class="key mif-tools" onclick="SelectIcon(this);"></div>
+            <div class="key mif-anchor" onclick="SelectIcon(this);"></div>
+            <div class="key mif-gamepad" onclick="SelectIcon(this);"></div>
+            <div class="key mif-piano" onclick="SelectIcon(this);"></div>
+            <div class="key mif-phone" onclick="SelectIcon(this);"></div>
+            <div class="key mif-display" onclick="SelectIcon(this);"></div>
+            <div class="key mif-medkit" onclick="SelectIcon(this);"></div>
+            <div class="key mif-gas-station" onclick="SelectIcon(this);"></div>
+            <div class="key mif-magic-wand" onclick="SelectIcon(this);"></div>
+            <div class="key mif-eye" onclick="SelectIcon(this);"></div>
+            <div class="key mif-shopping-basket2" onclick="SelectIcon(this);"></div>
+        </div>
+    </div>
+    <label>Color:</label>
+    <div>
+        <div id="colorDisplay" class="colorSelect bg-@color" onclick="$('#colorPad').toggle();"></div>
+        <div id="colorPad" style="position: absolute; z-index: 1000; width: 242px; display: none;" class="keypad keypad-dropdown">
+            <div class="key bg-lightTeal" onclick="SelectColor(this);"></div>
+            <div class="key bg-teal" onclick="SelectColor(this);"></div>
+            <div class="key bg-darkTeal" onclick="SelectColor(this);"></div>
+            <div class="key bg-lighterBlue" onclick="SelectColor(this);"></div>
+            <div class="key bg-lightBlue" onclick="SelectColor(this);"></div>
+            <div class="key bg-blue" onclick="SelectColor(this);"></div>
+            <div class="key bg-darkBlue" onclick="SelectColor(this);"></div>
+            <div class="key bg-cyan" onclick="SelectColor(this);"></div>
+            <div class="key bg-darkCyan" onclick="SelectColor(this);"></div>
+            <div class="key bg-cobalt" onclick="SelectColor(this);"></div>
+            <div class="key bg-darkCobalt" onclick="SelectColor(this);"></div>
+            <div class="key bg-indigo" onclick="SelectColor(this);"></div>
+            <div class="key bg-darkIndigo" onclick="SelectColor(this);"></div>
+            <div class="key bg-violet" onclick="SelectColor(this);"></div>
+            <div class="key bg-darkViolet" onclick="SelectColor(this);"></div>
+            <div class="key bg-mauve" onclick="SelectColor(this);"></div>
+            <div class="key bg-lightPink" onclick="SelectColor(this);"></div>
+            <div class="key bg-pink" onclick="SelectColor(this);"></div>
+            <div class="key bg-darkPink" onclick="SelectColor(this);"></div>
+            <div class="key bg-magenta" onclick="SelectColor(this);"></div>
+            <div class="key bg-darkMagenta" onclick="SelectColor(this);"></div>
+            <div class="key bg-lightRed" onclick="SelectColor(this);"></div>
+            <div class="key bg-red" onclick="SelectColor(this);"></div>
+            <div class="key bg-darkRed" onclick="SelectColor(this);"></div>
+            <div class="key bg-crimson" onclick="SelectColor(this);"></div>
+            <div class="key bg-darkCrimson" onclick="SelectColor(this);"></div>
+            <div class="key bg-lightOrange" onclick="SelectColor(this);"></div>
+            <div class="key bg-orange" onclick="SelectColor(this);"></div>
+            <div class="key bg-darkOrange" onclick="SelectColor(this);"></div>
+            <div class="key bg-amber" onclick="SelectColor(this);"></div>
+            <div class="key bg-yellow" onclick="SelectColor(this);"></div>
+            <div class="key bg-lime" onclick="SelectColor(this);"></div>
+            <div class="key bg-lightGreen" onclick="SelectColor(this);"></div>
+            <div class="key bg-green" onclick="SelectColor(this);"></div>
+            <div class="key bg-darkGreen" onclick="SelectColor(this);"></div>
+            <div class="key bg-emerald" onclick="SelectColor(this);"></div>
+            <div class="key bg-darkEmerald" onclick="SelectColor(this);"></div>
+            <div class="key bg-lightOlive" onclick="SelectColor(this);"></div>
+            <div class="key bg-olive" onclick="SelectColor(this);"></div>
+            <div class="key bg-taupe" onclick="SelectColor(this);"></div>
+            <div class="key bg-brown" onclick="SelectColor(this);"></div>
+            <div class="key bg-darkBrown" onclick="SelectColor(this);"></div>
+        </div>
+    </div>
+
+    <button class="button" type="submit">Save</button>
+    <button class="button" type="button" onclick="$('#editPane').empty();">Close</button>
+</form>

@@ -1,0 +1,54 @@
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
+@using Haven;
+
+<!DOCTYPE html>
+<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<html>
+<head>
+    <link href="/Content/metro.css" rel="stylesheet">
+    <link href="/Content/metro-icons.css" rel="stylesheet">
+    <link href="/Content/Haven.css" rel="stylesheet">
+    <script src="/Scripts/metro.js"></script>
+    <script src="/Scripts/EditBoard.js"></script>
+    <script src="/Scripts/Game.js"></script>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+</head>
+<body class="bg-grayLighter">
+    <input id="BoardId" name="BoardId" value="@Model.Id" type="hidden" />
+    <div id="board" style="position:absolute;left: 80px;width: 720px;">
+        <!--dummy spaces for editing-->
+        @for (int i = 1; i <= 10; i++)
+        {
+            for (int j = 1; j <= 10; j++)
+            {
+                <div class="space dummySpace tile-small bg-white fg-black bd-black" x="@i" y="@j" spaceid="0" style="position: absolute;">
+                    <div class="padding5">Add...</div>
+                </div>
+            }
+        }
+
+        @Html.Partial("Board", @Model)
+    </div>
+    <div class="padding5" style="position:absolute;left: 820px;">
+        <div>
+            <div>
+                <div class="header">Board</div>
+                @Html.Partial("Admin/EditBoardDetails", @Model)
+            </div>
+            <div class="padding5"></div>
+            <div >
+                <div class="header">Challenges</div>
+                <div id="challenges" class="tile-container" style="overflow-x: hidden; overflow-y: scroll; height: 180px;">
+                    <div class="dummyChallenge tile tile-small-y tile-square-x bg-white fg-black bd-black padding5" challengeid="0" onclick="SelectChallenge(this);">Add...</div>
+                    @foreach (Challenge challenge in @Model.Challenges)
+                    {
+                        @Html.Partial("Admin/Challenge", challenge)
+                    }
+                </div>
+            </div>
+        </div>
+        <div id="editPane"></div>
+    </div>
+</body>
+</html>

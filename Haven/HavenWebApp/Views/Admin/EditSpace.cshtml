@@ -1,0 +1,87 @@
+﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
+@using Haven;
+
+@{
+    var recallText = "";
+    var recallSelected = "display: none;";
+    var recallEditType = "editType" + ((int)SpaceType.Recall).ToString();
+    var nameCardName = "";
+    var nameCardDetails = "";
+    var nameCardImage = "";
+    var nameCardSelected = "display: none;";
+    var nameCardEditType = "editType" + ((int)SpaceType.Challenge).ToString();
+    var safeHavenCardName = "";
+    var safeHavenCardDetails = "";
+    var safeHavenCardImage = "";
+    var safeHavenCardSelected = "display: none;";
+    var safeHavenCardEditType = "editType" + ((int)SpaceType.SafeHaven).ToString();
+    SpaceType spaceType = @Model.Type;
+}
+@if (@Model.BibleVerse != null)
+{
+        recallText = @Model.BibleVerse.Text;
+}
+@if (@Model.NameCard != null)
+{
+    nameCardName = @Model.NameCard.Name;
+    nameCardDetails = @Model.NameCard.Details;
+    nameCardImage = @Model.NameCard.Image.Filepath;
+}
+@if (@Model.SafeHavenCard != null)
+{
+    safeHavenCardName = @Model.SafeHavenCard.Name;
+    safeHavenCardDetails = @Model.SafeHavenCard.Details;
+    safeHavenCardImage = @Model.SafeHavenCard.Image.Filepath;
+}
+@switch(spaceType)
+{
+    case SpaceType.Recall:
+        recallSelected = "";
+        break;
+    case SpaceType.Challenge:
+        nameCardSelected = "";
+        break;
+    case SpaceType.SafeHaven:
+        safeHavenCardSelected = "";
+        break;
+    default:
+        break;
+}
+
+<form method="post" action="/Admin/Space/Edit" onsubmit="return EditSpace(this);">
+    <div class="header">Edit Space</div>
+    <input type="hidden" name="Id" value="@Model.Id" />
+    <input type="hidden" name="BoardId" value="@Model.BoardId" />
+    <input type="hidden" name="X" value="@Model.X" />
+    <input type="hidden" name="Y" value="@Model.Y" />
+    <div class="input-control select">
+        <select name="Type" onchange="TypeSelectionChange(this);">
+            @foreach (SpaceType type in Enum.GetValues(typeof(SpaceType)))
+            {
+                string selected = "";
+                if (@Model.Type == type)
+                {
+                    selected = "selected";
+                }
+                <option value="@Convert.ChangeType(type, type.GetTypeCode())" @selected>@type.ToString()</option>
+            }
+        </select>
+    </div>
+    <input name="Order" value="@Model.Order" />
+    <div class="additionalEdit @recallEditType" style="@recallSelected">
+        <input class="input-control text" name="RecallText" value="@recallText" />
+    </div>
+    <div class="additionalEdit @nameCardEditType" style="@nameCardSelected">
+        <input class="input-control text" name="NameCardName" value="@nameCardName" />
+        <textarea class="input-control textarea" name="NameCardDetails">@nameCardDetails</textarea>
+        <input class="input-control text" name="NameCardImage" value="@nameCardImage" />
+    </div>
+    <div class="additionalEdit @safeHavenCardEditType" style="@safeHavenCardSelected">
+        <input class="input-control text" name="SafeHavenCardName" value="@safeHavenCardName" />
+        <textarea class="input-control textarea" name="SafeHavenCardDetails">@safeHavenCardDetails</textarea>
+        <input class="input-control text" name="SafeHavenCardImage" value="@safeHavenCardImage" />
+    </div>
+
+    <button class="button" type="submit">Save</button>
+    <button class="button" type="button" onclick="$('#editPane').empty();">Close</button>
+</form>

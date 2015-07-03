@@ -122,22 +122,3 @@
 .playerName input:disabled {
   color: #BCBCBC;
 }
-
-
-
-
-
-
-
-
-/*.playerPassword:focus {
-  background-color: #FFFFFF !important;
-  transition: all 0.3s linear;
-}
-
-.playerName input:focus ~ .playerNamePlaceholder {
-  opacity: 0;
-  -webkit-transform: none !important;
-          transform: none !important;
-  transition: all 0.3s linear;
-}*/
