@@ -17,20 +17,25 @@ namespace Haven
 
         public string Filename { get; set; }
 
-        public void SaveImage(string folder, Stream stream)
+        public void SaveImage(string rootPath, string folder, Stream stream)
         {
-            this.Filepath = folder + "/" + this.Id;
+            this.Filepath = "/" + folder + "/" + this.Id.ToString();
 
-            using (var fileStream = File.Create(this.Filepath))
+            using (var fileStream = File.Create(Path.Combine(rootPath, this.FixedFilepath())))
             {
                 stream.Seek(0, SeekOrigin.Begin);
                 stream.CopyTo(fileStream);
             }
         }
 
-        public void DeleteImage()
+        public void DeleteImage(string rootPath)
         {
-            File.Delete(this.Filepath);
+            File.Delete(Path.Combine(rootPath, this.FixedFilepath()));
+        }
+
+        private string FixedFilepath()
+        {
+            return this.Filepath.TrimStart('/');
         }
     }
 }

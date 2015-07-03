@@ -11,7 +11,18 @@ $(document).ready(function () {
 });
 
 function EditBoard(form) {
-    $.post("/Admin/Board/Edit", $(form).serialize(), function (data) {});
+    var formData = new FormData($(form)[0]);
+    $.ajax({
+        url: "/Admin/Board/Edit",
+        type: 'POST',
+        xhr: function () {
+            return $.ajaxSettings.xhr();
+        },
+        data: formData,
+        cache: false,
+        contentType: false,
+        processData: false
+    });
 
     return false;
 }
@@ -128,7 +139,7 @@ function PreviewImage(input, imageElement) {
         var reader = new FileReader();
 
         reader.onload = function (e) {
-            imageElement.attr("src", e.target.result);
+            imageElement.css("background-image", "url(" + e.target.result + ")");
         }
 
         reader.readAsDataURL(input.files[0]);

@@ -85,82 +85,38 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Views\Actions.cshtml" />
-    <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
-    <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
-    <Content Include="Content\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
-    <Content Include="Content\themes\base\images\ui-bg_glass_65_ffffff_1x400.png" />
-    <Content Include="Content\themes\base\images\ui-bg_glass_75_dadada_1x400.png" />
-    <Content Include="Content\themes\base\images\ui-bg_glass_75_e6e6e6_1x400.png" />
-    <Content Include="Content\themes\base\images\ui-bg_glass_95_fef1ec_1x400.png" />
-    <Content Include="Content\themes\base\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
-    <Content Include="Content\themes\base\images\ui-icons_222222_256x240.png" />
-    <Content Include="Content\themes\base\images\ui-icons_2e83ff_256x240.png" />
-    <Content Include="Content\themes\base\images\ui-icons_454545_256x240.png" />
-    <Content Include="Content\themes\base\images\ui-icons_888888_256x240.png" />
-    <Content Include="Content\themes\base\images\ui-icons_cd0a0a_256x240.png" />
-    <Content Include="Content\themes\base\jquery-ui.css" />
-    <Content Include="Content\themes\base\jquery.ui.accordion.css" />
-    <Content Include="Content\themes\base\jquery.ui.all.css" />
-    <Content Include="Content\themes\base\jquery.ui.autocomplete.css" />
-    <Content Include="Content\themes\base\jquery.ui.base.css" />
-    <Content Include="Content\themes\base\jquery.ui.button.css" />
-    <Content Include="Content\themes\base\jquery.ui.core.css" />
-    <Content Include="Content\themes\base\jquery.ui.datepicker.css" />
-    <Content Include="Content\themes\base\jquery.ui.dialog.css" />
-    <Content Include="Content\themes\base\jquery.ui.menu.css" />
-    <Content Include="Content\themes\base\jquery.ui.progressbar.css" />
-    <Content Include="Content\themes\base\jquery.ui.resizable.css" />
-    <Content Include="Content\themes\base\jquery.ui.selectable.css" />
-    <Content Include="Content\themes\base\jquery.ui.slider.css" />
-    <Content Include="Content\themes\base\jquery.ui.spinner.css" />
-    <Content Include="Content\themes\base\jquery.ui.tabs.css" />
-    <Content Include="Content\themes\base\jquery.ui.theme.css" />
-    <Content Include="Content\themes\base\jquery.ui.tooltip.css" />
-    <Content Include="Content\themes\base\minified\images\ui-bg_flat_0_aaaaaa_40x100.png" />
-    <Content Include="Content\themes\base\minified\images\ui-bg_flat_75_ffffff_40x100.png" />
-    <Content Include="Content\themes\base\minified\images\ui-bg_glass_55_fbf9ee_1x400.png" />
-    <Content Include="Content\themes\base\minified\images\ui-bg_glass_65_ffffff_1x400.png" />
-    <Content Include="Content\themes\base\minified\images\ui-bg_glass_75_dadada_1x400.png" />
-    <Content Include="Content\themes\base\minified\images\ui-bg_glass_75_e6e6e6_1x400.png" />
-    <Content Include="Content\themes\base\minified\images\ui-bg_glass_95_fef1ec_1x400.png" />
-    <Content Include="Content\themes\base\minified\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
-    <Content Include="Content\themes\base\minified\images\ui-icons_222222_256x240.png" />
-    <Content Include="Content\themes\base\minified\images\ui-icons_2e83ff_256x240.png" />
-    <Content Include="Content\themes\base\minified\images\ui-icons_454545_256x240.png" />
-    <Content Include="Content\themes\base\minified\images\ui-icons_888888_256x240.png" />
-    <Content Include="Content\themes\base\minified\images\ui-icons_cd0a0a_256x240.png" />
-    <Content Include="Content\themes\base\minified\jquery-ui.min.css" />
-    <Content Include="Content\themes\base\minified\jquery.ui.accordion.min.css" />
-    <Content Include="Content\themes\base\minified\jquery.ui.autocomplete.min.css" />
-    <Content Include="Content\themes\base\minified\jquery.ui.button.min.css" />
-    <Content Include="Content\themes\base\minified\jquery.ui.core.min.css" />
-    <Content Include="Content\themes\base\minified\jquery.ui.datepicker.min.css" />
-    <Content Include="Content\themes\base\minified\jquery.ui.dialog.min.css" />
-    <Content Include="Content\themes\base\minified\jquery.ui.menu.min.css" />
-    <Content Include="Content\themes\base\minified\jquery.ui.progressbar.min.css" />
-    <Content Include="Content\themes\base\minified\jquery.ui.resizable.min.css" />
-    <Content Include="Content\themes\base\minified\jquery.ui.selectable.min.css" />
-    <Content Include="Content\themes\base\minified\jquery.ui.slider.min.css" />
-    <Content Include="Content\themes\base\minified\jquery.ui.spinner.min.css" />
-    <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
-    <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
-    <Content Include="Content\themes\base\minified\jquery.ui.tooltip.min.css" />
+    <Content Include="Content\Images\Rembrandt_Harmensz_square.jpg" />
+    <Content Include="Uploads\Abraham.jpg" />
+    <Content Include="Uploads\Asher.JPG" />
+    <Content Include="Uploads\Benjamin.JPG" />
+    <Content Include="Uploads\board_continue.jpg" />
+    <Content Include="Uploads\board_continue_square.jpg" />
+    <Content Include="Uploads\board_new.jpg" />
+    <Content Include="Uploads\board_new_square.jpg" />
+    <Content Include="Uploads\Dan.JPG" />
+    <Content Include="Uploads\Gad.JPG" />
+    <Content Include="Uploads\God_the_Father.jpg" />
+    <Content Include="Uploads\Isaac.jpeg" />
+    <Content Include="Uploads\Issachar.JPG" />
+    <Content Include="Uploads\Jacob.jpg" />
+    <Content Include="Uploads\Joseph.JPG" />
+    <Content Include="Uploads\Judah.JPG" />
+    <Content Include="Uploads\Levi.JPG" />
+    <Content Include="Uploads\Naphtali.JPG" />
+    <Content Include="Uploads\Rembrandt_Harmensz_square.jpg" />
     <Content Include="Scripts\Admin.js" />
     <Content Include="Scripts\EditBoard.js" />
-    <None Include="Scripts\jquery-1.6-vsdoc.js" />
-    <Content Include="Scripts\jquery-1.6.js" />
-    <Content Include="Scripts\jquery-1.6.min.js" />
-    <Content Include="Scripts\jquery-ui-1.9.0.js" />
-    <Content Include="Scripts\jquery-ui-1.9.0.min.js" />
+    <Content Include="Uploads\Reuben.JPG" />
+    <Content Include="Uploads\Simeon.JPG" />
+    <Content Include="Uploads\white_marble.jpg" />
+    <Content Include="Uploads\Zebulun.JPG" />
     <Content Include="Views\Admin\Login.cshtml" />
     <Content Include="Views\Admin\Home.cshtml" />
     <Content Include="Views\Admin\BoardDialog.cshtml" />
     <Content Include="Views\Admin\EditBoard.cshtml" />
     <Content Include="Views\Board.cshtml" />
-    <Content Include="Views\Admin\EditPiece.cshtml" />
     <Content Include="Views\Admin\EditSpace.cshtml" />
     <Content Include="Views\Admin\EditChallenge.cshtml" />
-    <Content Include="Views\Admin\Piece.cshtml" />
     <Content Include="Views\Admin\Challenge.cshtml" />
     <Content Include="Views\Space.cshtml" />
     <Content Include="Views\Admin\EditBoardDetails.cshtml" />
@@ -183,7 +139,6 @@
     <Content Include="Content\Images\Judah.JPG" />
     <Content Include="Content\Images\Levi.JPG" />
     <Content Include="Content\Images\Naphtali.JPG" />
-    <Content Include="Content\Images\Rembrandt_Harmensz_square.jpg" />
     <Content Include="Views\Cards.cshtml" />
     <None Include="Views\GamesMenu.cshtml" />
     <Content Include="Content\Images\Reuben.JPG" />
@@ -237,9 +192,7 @@
       <Name>Haven</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Uploads\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

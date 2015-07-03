@@ -12,16 +12,14 @@
                     <input id="boardName" type="text" name="Name" value="@Model.Name" />
                 </div>
                 <br />
-                <label for="boardIcon">Icon:<img id="boardIconDisplay" src="@Model.Image.Filepath" style="float: right;width: 70px; height: 70px; border-radius: 0px;" /></label>
+                <label for="boardIcon">Icon:<span id="boardIconDisplay" style="float: right;width: 70px; height: 70px; background-image: url('@Model.Image.Filepath'); background-size: cover; background-repeat: no-repeat; border-radius: 0px;" /></label>
                 <br />
                 <div id="iconFileInput">
                     <input id="boardIcon" name="Icon" value="@Model.Image.Filename" tabindex="-1" style="z-index: 0; display: none;" type="file" onchange="$('#iconSelectOverlay').val($(this).val()); PreviewImage(this, $('#boardIconDisplay'));">
                     <div class="input-control text" data-role="input">
                         <input id="iconSelectOverlay" style="padding-right: 62px;" type="text" readonly="" value="@Model.Image.Filename" onclick="$('#boardIcon').trigger('click');">
                     </div>
-                    
                 </div>
-                
             </div>
             <div class="cell">
                 <label for="boardDescription">Description:</label>
@@ -33,5 +31,5 @@
         </div>
     </div>
     
-    <button class="button" type="submit">Save</button>
+    <button class="button primary" type="submit">Save</button>
 </form>

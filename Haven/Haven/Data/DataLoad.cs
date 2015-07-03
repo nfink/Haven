@@ -100,23 +100,23 @@ namespace Haven.Data
         public void LoadImage()
         {
             this.Connection.CreateTable<Image>();
-            this.Connection.Insert(new Image() { Id = 1, Filename = "Judah.jpg", Filepath = "/Content/Images/Judah.jpg" });
-            this.Connection.Insert(new Image() { Id = 2, Filename = "Issachar.jpg", Filepath = "/Content/Images/Issachar.jpg" });
-            this.Connection.Insert(new Image() { Id = 3, Filename = "Zebulun.jpg", Filepath = "/Content/Images/Zebulun.jpg" });
-            this.Connection.Insert(new Image() { Id = 4, Filename = "Reuben.jpg", Filepath = "/Content/Images/Reuben.jpg" });
-            this.Connection.Insert(new Image() { Id = 5, Filename = "Simeon.jpg", Filepath = "/Content/Images/Simeon.jpg" });
-            this.Connection.Insert(new Image() { Id = 6, Filename = "Gad.jpg", Filepath = "/Content/Images/Gad.jpg" });
-            this.Connection.Insert(new Image() { Id = 7, Filename = "Joseph.jpg", Filepath = "/Content/Images/Joseph.jpg" });
-            this.Connection.Insert(new Image() { Id = 8, Filename = "Levi.jpg", Filepath = "/Content/Images/Levi.jpg" });
-            this.Connection.Insert(new Image() { Id = 9, Filename = "Benjamin.jpg", Filepath = "/Content/Images/Benjamin.jpg" });
-            this.Connection.Insert(new Image() { Id = 10, Filename = "Dan.jpg", Filepath = "/Content/Images/Dan.jpg" });
-            this.Connection.Insert(new Image() { Id = 11, Filename = "Asher.jpg", Filepath = "/Content/Images/Asher.jpg" });
-            this.Connection.Insert(new Image() { Id = 12, Filename = "Naphtali.jpg", Filepath = "/Content/Images/Naphtali.jpg" });
-            this.Connection.Insert(new Image() { Id = 13, Filename = "God_the_Father.jpg", Filepath = "/Content/Images/God_the_Father.jpg" });
-            this.Connection.Insert(new Image() { Id = 14, Filename = "Abraham.jpg", Filepath = "/Content/Images/Abraham.jpg" });
-            this.Connection.Insert(new Image() { Id = 15, Filename = "Isaac.jpeg", Filepath = "/Content/Images/Isaac.jpeg" });
-            this.Connection.Insert(new Image() { Id = 16, Filename = "Jacob.jpg", Filepath = "/Content/Images/Jacob.jpg" });
-            this.Connection.Insert(new Image() { Id = 17, Filename = "Rembrandt_Harmensz_square.jpg", Filepath = "/Content/Images/Rembrandt_Harmensz_square.jpg" });
+            this.Connection.Insert(new Image() { Id = 1, Filename = "Judah.jpg", Filepath = "/Uploads/Judah.jpg" });
+            this.Connection.Insert(new Image() { Id = 2, Filename = "Issachar.jpg", Filepath = "/Uploads/Issachar.jpg" });
+            this.Connection.Insert(new Image() { Id = 3, Filename = "Zebulun.jpg", Filepath = "/Uploads/Zebulun.jpg" });
+            this.Connection.Insert(new Image() { Id = 4, Filename = "Reuben.jpg", Filepath = "/Uploads/Reuben.jpg" });
+            this.Connection.Insert(new Image() { Id = 5, Filename = "Simeon.jpg", Filepath = "/Uploads/Simeon.jpg" });
+            this.Connection.Insert(new Image() { Id = 6, Filename = "Gad.jpg", Filepath = "/Uploads/Gad.jpg" });
+            this.Connection.Insert(new Image() { Id = 7, Filename = "Joseph.jpg", Filepath = "/Uploads/Joseph.jpg" });
+            this.Connection.Insert(new Image() { Id = 8, Filename = "Levi.jpg", Filepath = "/Uploads/Levi.jpg" });
+            this.Connection.Insert(new Image() { Id = 9, Filename = "Benjamin.jpg", Filepath = "/Uploads/Benjamin.jpg" });
+            this.Connection.Insert(new Image() { Id = 10, Filename = "Dan.jpg", Filepath = "/Uploads/Dan.jpg" });
+            this.Connection.Insert(new Image() { Id = 11, Filename = "Asher.jpg", Filepath = "/Uploads/Asher.jpg" });
+            this.Connection.Insert(new Image() { Id = 12, Filename = "Naphtali.jpg", Filepath = "/Uploads/Naphtali.jpg" });
+            this.Connection.Insert(new Image() { Id = 13, Filename = "God_the_Father.jpg", Filepath = "/Uploads/God_the_Father.jpg" });
+            this.Connection.Insert(new Image() { Id = 14, Filename = "Abraham.jpg", Filepath = "/Uploads/Abraham.jpg" });
+            this.Connection.Insert(new Image() { Id = 15, Filename = "Isaac.jpeg", Filepath = "/Uploads/Isaac.jpeg" });
+            this.Connection.Insert(new Image() { Id = 16, Filename = "Jacob.jpg", Filepath = "/Uploads/Jacob.jpg" });
+            this.Connection.Insert(new Image() { Id = 17, Filename = "Rembrandt_Harmensz_square.jpg", Filepath = "/Uploads/Rembrandt_Harmensz_square.jpg" });
         }
 
         public void LoadNameCard()

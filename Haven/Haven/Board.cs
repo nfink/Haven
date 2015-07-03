@@ -121,7 +121,7 @@ namespace Haven
             {
                 validation.Warnings.Add("No description");
             }
-            if (this.ImageId == null)
+            if (this.Image == null)
             {
                 validation.Warnings.Add("No icon");
             }

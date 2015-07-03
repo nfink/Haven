@@ -13,7 +13,7 @@ namespace HavenWebApp
 {
     public class AdminModule : NancyModule
     {
-        public AdminModule() : base("/Admin")
+        public AdminModule(IRootPathProvider pathProvider) : base("/Admin")
         {
 
             var formsAuthConfiguration =
@@ -53,16 +53,19 @@ namespace HavenWebApp
                 // only set image if it is valid and has changed
                 var imageFile = this.Request.Files.FirstOrDefault();
                 
-                if ((imageFile != null) && (imageFile.ContentType.StartsWith("image") && ((board.Image == null) || (board.Image.Filename != imageFile.Name))))
+                if ((imageFile != null) &&
+                    (imageFile.ContentType.StartsWith("image") &&
+                    ((board.Image == null) || (board.Image.Filename != imageFile.Name))))
                 {
                     // delete the image
-                    board.Image.DeleteImage();
+                    board.Image.DeleteImage(pathProvider.GetRootPath());
                     Persistence.Connection.Delete(board.Image);
 
                     // add the new image
                     var image = new Image() { Filename = imageFile.Name };
                     Persistence.Connection.Insert(image);
-                    image.SaveImage("/Uploads", imageFile.Value);
+                    image.SaveImage(pathProvider.GetRootPath(), "Uploads", imageFile.Value);
+                    Persistence.Connection.Update(image);
                     board.ImageId = image.Id;
                 }
 
