@@ -72,7 +72,6 @@
     <Compile Include="Board.cs" />
     <Compile Include="Dice.cs" />
     <Compile Include="DiceRoll.cs" />
-    <Compile Include="Movement.cs" />
     <Compile Include="NameCard.cs" />
     <Compile Include="Password.cs" />
     <Compile Include="Piece.cs" />

@@ -98,6 +98,14 @@ namespace Haven
             return Persistence.Connection.Table<Action>().Where(x => x.OwnerId == playerId);
         }
 
+        public void Move(int spaceId)
+        {
+            this.SpaceId = spaceId;
+            Persistence.Connection.Update(this);
+            var space = Persistence.Connection.Get<Space>(this.SpaceId);
+            space.OnLand(this);
+        }
+
         public void SetPassword(string password)
         {
             string savedPasswordHash = Haven.Password.HashPassword(password);

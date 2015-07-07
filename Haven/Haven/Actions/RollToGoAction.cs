@@ -20,7 +20,7 @@ namespace Haven
             var player = Persistence.Connection.Get<Player>(this.OwnerId);
             var board = Persistence.Connection.Query<Board>("select Board.* from Board join Game on Game.BoardId=Board.Id where Game.Id=?", player.GameId).First();
             var newSpace = board.GetNewSpace(player.SpaceId, roll.Sum, (roll.Sum % 2 == 0));
-            board.MovePlayer(player, newSpace.Id);
+            player.Move(newSpace.Id);
         }
     }
 }

@@ -98,14 +98,6 @@ namespace Haven
             return spaces[endLocation];
         }
 
-        public void MovePlayer(Player player, int spaceId)
-        {
-            player.SpaceId = spaceId;
-            Persistence.Connection.Update(player);
-            var space = Persistence.Connection.Get<Space>(player.SpaceId);
-            space.OnLand(player);
-        }
-
         public void Delete()
         {
             // delete spaces

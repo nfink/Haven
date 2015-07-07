@@ -59,6 +59,75 @@ namespace HavenUnitTest
             Assert.IsEmpty(Persistence.Connection.Table<Board>().Where(x => x.Id == board.Id));
         }
 
+        [Test]
+        public void GetNewSpace()
+        {
+            // create a board with some spaces
+            var board = new Board();
+            Persistence.Connection.Insert(board);
+            var space1 = new Space() { BoardId = board.Id, Order = 10 };
+            var space2 = new Space() { BoardId = board.Id, Order = 20 };
+            var space3 = new Space() { BoardId = board.Id, Order = 30 };
+            var space4 = new Space() { BoardId = board.Id, Order = 40 };
+            var space5 = new Space() { BoardId = board.Id, Order = 50 };
+            Persistence.Connection.InsertAll(new Space[] { space1, space2, space3, space4, space5 });
+
+            // verify that the correct space is returned moving forward
+            Assert.AreEqual(space2.Id, board.GetNewSpace(space1.Id, 1, true).Id);
+            Assert.AreEqual(space3.Id, board.GetNewSpace(space1.Id, 2, true).Id);
+            Assert.AreEqual(space5.Id, board.GetNewSpace(space1.Id, 4, true).Id);
+
+            // verify that the correct space is returned moving forward and wrapping around
+            Assert.AreEqual(space1.Id, board.GetNewSpace(space5.Id, 1, true).Id);
+            Assert.AreEqual(space3.Id, board.GetNewSpace(space4.Id, 4, true).Id);
+
+            // verify that the correct space is returned moving forward and moving more than the number of spaces
+            Assert.AreEqual(space1.Id, board.GetNewSpace(space1.Id, 5, true).Id);
+            Assert.AreEqual(space2.Id, board.GetNewSpace(space1.Id, 11, true).Id);
+
+            // verify that the correct space is returned moving backward
+            Assert.AreEqual(space4.Id, board.GetNewSpace(space5.Id, 1, false).Id);
+            Assert.AreEqual(space3.Id, board.GetNewSpace(space5.Id, 2, false).Id);
+            Assert.AreEqual(space1.Id, board.GetNewSpace(space5.Id, 4, false).Id);
+
+            // verify that the correct space is returned moving backward and wrapping around
+            Assert.AreEqual(space5.Id, board.GetNewSpace(space1.Id, 1, false).Id);
+            Assert.AreEqual(space3.Id, board.GetNewSpace(space2.Id, 4, false).Id);
+
+            // verify that the correct space is returned moving backward and moving more than the number of spaces
+            Assert.AreEqual(space1.Id, board.GetNewSpace(space1.Id, 5, false).Id);
+            Assert.AreEqual(space5.Id, board.GetNewSpace(space1.Id, 11, false).Id);
+        }
+
+        [Test]
+        public void GetNewSpaceSingleSpace()
+        {
+            // create a board with a single space
+            var board = new Board();
+            Persistence.Connection.Insert(board);
+            var space = new Space() { BoardId = board.Id, Order = 10 };
+            Persistence.Connection.Insert(space);
+
+            // verify that the same space is returned when moving forward
+            Assert.AreEqual(space.Id, board.GetNewSpace(space.Id, 1, true).Id);
+            Assert.AreEqual(space.Id, board.GetNewSpace(space.Id, 5, true).Id);
+
+            // verify that the same space is returned when moving backward
+            Assert.AreEqual(space.Id, board.GetNewSpace(space.Id, 1, false).Id);
+            Assert.AreEqual(space.Id, board.GetNewSpace(space.Id, 5, false).Id);
+        }
+
+        [Test]
+        public void GetNewSpaceNoSpace()
+        {
+            // create a board without spaces
+            var board = new Board();
+            Persistence.Connection.Insert(board);
+
+            // verify that an exception is raised when trying to move
+            Assert.Catch<Exception>(() => board.GetNewSpace(0, 1, true));
+        }
+
         private Board CreateBoardData()
         {
             var image = new Image();
