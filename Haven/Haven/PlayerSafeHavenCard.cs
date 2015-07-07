@@ -7,7 +7,7 @@ using SQLite;
 
 namespace Haven
 {
-    class PlayerSafeHavenCard
+    public class PlayerSafeHavenCard
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }

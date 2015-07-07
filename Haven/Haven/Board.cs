@@ -120,6 +120,12 @@ namespace Haven
                 challenge.Delete();
             }
 
+            // delete image
+            if (this.ImageId != 0)
+            {
+                Persistence.Connection.Execute("delete from Image where Id=?", this.ImageId);
+            }
+
             // delete board
             Persistence.Connection.Delete(this);
         }
