@@ -20,7 +20,7 @@ namespace Haven
         War,
     }
 
-    public partial class Space
+    public partial class Space : IDeletable
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
@@ -134,6 +134,29 @@ namespace Haven
                 default:
                     throw new Exception("Space has no Type");
             }
+        }
+
+        public void Delete()
+        {
+            // delete any dependent records
+            if (this.Id != 0)
+            {
+                if (this.BibleVerseId != 0)
+                {
+                    Persistence.Connection.Execute("delete from BibleVerse where Id=?", this.BibleVerseId);
+                }
+                if (this.NameCardId != 0)
+                {
+                    Persistence.Connection.Execute("delete from NameCard where Id=?", this.NameCardId);
+                }
+                if (this.SafeHavenCardId != 0)
+                {
+                    Persistence.Connection.Execute("delete from SafeHavenCard where Id=?", this.SafeHavenCardId);
+                }
+            }
+
+            // delete space
+            Persistence.Connection.Delete(this);
         }
     }
 }

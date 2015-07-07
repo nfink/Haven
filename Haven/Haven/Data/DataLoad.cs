@@ -86,10 +86,48 @@ namespace Haven.Data
         public void LoadColor()
         {
             this.Connection.CreateTable<Color>();
-            this.Connection.Insert(new Color() { Name = "green" });
-            this.Connection.Insert(new Color() { Name = "red" });
+            this.Connection.Insert(new Color() { Name = "lightTeal" });
+            this.Connection.Insert(new Color() { Name = "teal" });
+            this.Connection.Insert(new Color() { Name = "darkTeal" });
+            this.Connection.Insert(new Color() { Name = "lighterBlue" });
+            this.Connection.Insert(new Color() { Name = "lightBlue" });
+            this.Connection.Insert(new Color() { Name = "blue" });
+            this.Connection.Insert(new Color() { Name = "darkBlue" });
+            this.Connection.Insert(new Color() { Name = "cyan" });
+            this.Connection.Insert(new Color() { Name = "darkCyan" });
             this.Connection.Insert(new Color() { Name = "cobalt" });
+            this.Connection.Insert(new Color() { Name = "darkCobalt" });
+            this.Connection.Insert(new Color() { Name = "indigo" });
+            this.Connection.Insert(new Color() { Name = "darkIndigo" });
+            this.Connection.Insert(new Color() { Name = "violet" });
+            this.Connection.Insert(new Color() { Name = "darkViolet" });
+            this.Connection.Insert(new Color() { Name = "mauve" });
+            this.Connection.Insert(new Color() { Name = "lightPink" });
+            this.Connection.Insert(new Color() { Name = "pink" });
+            this.Connection.Insert(new Color() { Name = "darkPink" });
+            this.Connection.Insert(new Color() { Name = "magenta" });
+            this.Connection.Insert(new Color() { Name = "darkMagenta" });
+            this.Connection.Insert(new Color() { Name = "lightRed" });
+            this.Connection.Insert(new Color() { Name = "red" });
+            this.Connection.Insert(new Color() { Name = "darkRed" });
+            this.Connection.Insert(new Color() { Name = "crimson" });
+            this.Connection.Insert(new Color() { Name = "darkCrimson" });
+            this.Connection.Insert(new Color() { Name = "lightOrange" });
+            this.Connection.Insert(new Color() { Name = "orange" });
+            this.Connection.Insert(new Color() { Name = "darkOrange" });
             this.Connection.Insert(new Color() { Name = "amber" });
+            this.Connection.Insert(new Color() { Name = "yellow" });
+            this.Connection.Insert(new Color() { Name = "lime" });
+            this.Connection.Insert(new Color() { Name = "lightGreen" });
+            this.Connection.Insert(new Color() { Name = "green" });
+            this.Connection.Insert(new Color() { Name = "darkGreen" });
+            this.Connection.Insert(new Color() { Name = "emerald" });
+            this.Connection.Insert(new Color() { Name = "darkEmerald" });
+            this.Connection.Insert(new Color() { Name = "lightOlive" });
+            this.Connection.Insert(new Color() { Name = "olive" });
+            this.Connection.Insert(new Color() { Name = "taupe" });
+            this.Connection.Insert(new Color() { Name = "brown" });
+            this.Connection.Insert(new Color() { Name = "darkBrown" });
         }
 
         public void LoadGame()
@@ -144,10 +182,41 @@ namespace Haven.Data
         public void LoadPiece()
         {
             this.Connection.CreateTable<Piece>();
+            this.Connection.Insert(new Piece() { Name = "Microscope", Image = "mif-microscope" });
+            this.Connection.Insert(new Piece() { Name = "Lamp", Image = "mif-lamp" });
+            this.Connection.Insert(new Piece() { Name = "Stethoscope", Image = "mif-stethoscope" });
+            this.Connection.Insert(new Piece() { Name = "Airplane", Image = "mif-local-airport" });
+            this.Connection.Insert(new Piece() { Name = "Cart", Image = "mif-cart" });
             this.Connection.Insert(new Piece() { Name = "Bug", Image = "mif-bug" });
             this.Connection.Insert(new Piece() { Name = "Rocket", Image = "mif-rocket" });
             this.Connection.Insert(new Piece() { Name = "Truck", Image = "mif-truck" });
-            this.Connection.Insert(new Piece() { Name = "Airplance", Image = "mif-local-airport" });
+            this.Connection.Insert(new Piece() { Name = "Ambulance", Image = "mif-ambulance" });
+            this.Connection.Insert(new Piece() { Name = "Bicycle", Image = "mif-directions-bike" });
+            this.Connection.Insert(new Piece() { Name = "Paint Roller", Image = "mif-paint" });
+            this.Connection.Insert(new Piece() { Name = "Wrench", Image = "mif-wrench" });
+            this.Connection.Insert(new Piece() { Name = "Hammer", Image = "mif-hammer" });
+            this.Connection.Insert(new Piece() { Name = "Paper Airplane", Image = "mif-paper-plane" });
+            this.Connection.Insert(new Piece() { Name = "Satellite", Image = "mif-satellite" });
+            this.Connection.Insert(new Piece() { Name = "Scales", Image = "mif-justice" });
+            this.Connection.Insert(new Piece() { Name = "Paw", Image = "mif-paw" });
+            this.Connection.Insert(new Piece() { Name = "Barbell", Image = "mif-barbell" });
+            this.Connection.Insert(new Piece() { Name = "Car", Image = "mif-drive-eta" });
+            this.Connection.Insert(new Piece() { Name = "Gift", Image = "mif-gift" });
+            this.Connection.Insert(new Piece() { Name = "Silverware", Image = "mif-spoon-fork" });
+            this.Connection.Insert(new Piece() { Name = "Flask", Image = "mif-lab" });
+            this.Connection.Insert(new Piece() { Name = "Suitcase", Image = "mif-suitcase" });
+            this.Connection.Insert(new Piece() { Name = "Money", Image = "mif-dollar" });
+            this.Connection.Insert(new Piece() { Name = "Tools", Image = "mif-tools" });
+            this.Connection.Insert(new Piece() { Name = "Anchor", Image = "mif-anchor" });
+            this.Connection.Insert(new Piece() { Name = "Gamepad", Image = "mif-gamepad" });
+            this.Connection.Insert(new Piece() { Name = "Piano", Image = "mif-piano" });
+            this.Connection.Insert(new Piece() { Name = "Phone", Image = "mif-phone" });
+            this.Connection.Insert(new Piece() { Name = "Computer", Image = "mif-display" });
+            this.Connection.Insert(new Piece() { Name = "Medical Kit", Image = "mif-medkit" });
+            this.Connection.Insert(new Piece() { Name = "Gas Pump", Image = "mif-gas-station" });
+            this.Connection.Insert(new Piece() { Name = "Magic Wand", Image = "mif-magic-wand" });
+            this.Connection.Insert(new Piece() { Name = "Eye", Image = "mif-eye" });
+            this.Connection.Insert(new Piece() { Name = "Shopping Basket", Image = "mif-shopping-basket2" });
         }
 
         public void LoadPlayer()

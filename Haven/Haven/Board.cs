@@ -7,7 +7,7 @@ using SQLite;
 
 namespace Haven
 {
-    public class Board
+    public class Board : IDeletable
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
@@ -104,6 +104,24 @@ namespace Haven
             Persistence.Connection.Update(player);
             var space = Persistence.Connection.Get<Space>(player.SpaceId);
             space.OnLand(player);
+        }
+
+        public void Delete()
+        {
+            // delete spaces
+            foreach (Space space in this.Spaces)
+            {
+                space.Delete();
+            }
+
+            // delete challenges
+            foreach (Challenge challenge in this.Challenges)
+            {
+                challenge.Delete();
+            }
+
+            // delete board
+            Persistence.Connection.Delete(this);
         }
 
         public BoardValidation Validate()

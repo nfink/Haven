@@ -1,7 +1,7 @@
 ﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
 @using Haven;
 
-<form method="post" action="/Admin/Board/Edit" onsubmit="return EditBoard(this);">
+<form id="editBoard" method="post" action="/Admin/Board/Edit" onsubmit="return EditBoard(this);">
     <input type="hidden" name="Id" value="@Model.Id" />
     <div class="grid">
         <div class="row cells2">
@@ -14,7 +14,7 @@
                 <br />
                 <label for="boardIcon">Icon:<span id="boardIconDisplay" style="float: right;width: 70px; height: 70px; background-image: url('@Model.Image.Filepath'); background-size: cover; background-repeat: no-repeat; border-radius: 0px;" /></label>
                 <br />
-                <div id="iconFileInput">
+                <div id="iconFileInput" style="width: 350px;">
                     <input id="boardIcon" name="Icon" value="@Model.Image.Filename" tabindex="-1" style="z-index: 0; display: none;" type="file" onchange="$('#iconSelectOverlay').val($(this).val()); PreviewImage(this, $('#boardIconDisplay'));">
                     <div class="input-control text" data-role="input">
                         <input id="iconSelectOverlay" style="padding-right: 62px;" type="text" readonly="" value="@Model.Image.Filename" onclick="$('#boardIcon').trigger('click');">
@@ -30,6 +30,5 @@
             </div>
         </div>
     </div>
-    
     <button class="button primary" type="submit">Save</button>
 </form>

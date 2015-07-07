@@ -5,20 +5,34 @@
     <div class="header">Edit Challenge</div>
     <input type="hidden" name="Id" value="@Model.Id" />
     <input type="hidden" name="BoardId" value="@Model.BoardId" />
-    <input class="input-control text" name="Question" value="@Model.Question" />
-    <button class="button" type="button" onclick="AddAnswer($('#answers'));">Add Answer</button>
+    <div class="input-control text">
+        <input name="Question" type="text" value="@Model.Question" placeholder="Enter question here...">
+    </div>
+    <button class="button small mini-button success rounded" type="button" onclick="AddAnswer($('#answers'));">
+        <span class="mif-plus"></span>
+    </button>
+
     <div id="answers">
         @foreach (ChallengeAnswer answer in @Model.Answers)
         {
             string correct = answer.Correct ? "checked" : "";
             <div class="answer">
-                <input class="input-control text" name="Answer" value="@answer.Answer" />
-                <input name="Correct" type="checkbox" @correct />
-                <button class="button" type="button" onclick="$(this).parent().remove();">Remove</button>
+                <button class="button small mini-button danger rounded" type="button" onclick="$(this).parent().remove();">
+                    <span class="mif-minus"></span>
+                </button>
+                <div class="input-control text">
+                    <input name="Answer" type="text" value="@answer.Answer" placeholder="Enter answer here..." />
+                </div>
+                <label class="input-control checkbox">
+                    <input type="checkbox" name="Correct" @correct>
+                    <span class="check"></span>
+                    <span class="caption">Correct</span>
+                </label>
             </div>
         }
     </div>
 
     <button class="button primary" type="submit">Save</button>
+    <button class="button primary" type="button" onclick="ConfirmDelete(function () { DeleteChallenge(this); });">Delete</button>
     <button class="button primary" type="button" onclick="$('#editPane').empty();">Close</button>
 </form>

@@ -7,6 +7,7 @@ using Nancy;
 using Nancy.Security;
 using Nancy.Authentication.Forms;
 using Nancy.ModelBinding;
+using Nancy.Responses;
 using Newtonsoft.Json;
 
 namespace HavenWebApp
@@ -77,6 +78,14 @@ namespace HavenWebApp
             {
                 var board = new Board() { Active = false };
                 return View["Views/Admin/EditBoard.cshtml", board];
+            };
+
+            Delete["/Board"] = parameters =>
+            {
+                var boardId = (int)this.Request.Query.BoardId;
+                var board = Persistence.Connection.Get<Board>(boardId);
+                board.Delete();
+                return new HtmlResponse(HttpStatusCode.OK);
             };
 
             Get["/Space/Edit"] = parameters =>
@@ -154,6 +163,14 @@ namespace HavenWebApp
                 return View["Views/Space.cshtml", space];
             };
 
+            Delete["/Space"] = parameters =>
+            {
+                var spaceId = (int)this.Request.Query.Id;
+                var space = Persistence.Connection.Get<Space>(spaceId);
+                space.Delete();
+                return new HtmlResponse(HttpStatusCode.OK);
+            };
+
             Get["/Challenge/Edit"] = parameters =>
             {
                 var challengeId = (int)this.Request.Query.ChallengeId;
@@ -193,6 +210,14 @@ namespace HavenWebApp
                 }
 
                 return View["Views/Admin/Challenge.cshtml", challenge];
+            };
+
+            Delete["/Challenge"] = parameters =>
+            {
+                var challengeId = (int)this.Request.Query.Id;
+                var challenge = Persistence.Connection.Get<Challenge>(challengeId);
+                challenge.Delete();
+                return new HtmlResponse(HttpStatusCode.OK);
             };
         }
     }

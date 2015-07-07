@@ -33,12 +33,18 @@
     <div class="padding5" style="position:absolute;left: 820px;">
         <div>
             <div>
-                <div class="header">Board</div>
+                <div class="header" style="float: left; padding-right: 10px;">Board</div>
+                <button class="button small primary mini-button cycle-button" onclick="ExpandToggle(this, $('#editBoard'))">
+                    <span class="mif-expand-less mif-lg"></span>
+                </button>
                 @Html.Partial("Admin/EditBoardDetails", @Model)
             </div>
             <div class="padding5"></div>
             <div >
-                <div class="header">Challenges</div>
+                <div class="header" style="float: left; padding-right: 10px;">Challenges</div>
+                <button class="button small primary mini-button cycle-button" onclick="ExpandToggle(this, $('#challenges'))">
+                    <span class="mif-expand-less mif-lg"></span>
+                </button>
                 <div id="challenges" class="tile-container" style="overflow-x: hidden; overflow-y: scroll; height: 180px;">
                     <div class="dummyChallenge tile tile-small-y tile-square-x bg-white fg-black bd-black padding5" challengeid="0" onclick="SelectChallenge(this);">Add...</div>
                     @foreach (Challenge challenge in @Model.Challenges)
@@ -48,7 +54,15 @@
                 </div>
             </div>
         </div>
+        <div class="padding5"></div>
         <div id="editPane"></div>
+    </div>
+    <div id="deleteDialog" style="width: auto; height: auto; display: none;" data-role="dialog" class="padding20 dialog" data-close-button="true" data-overlay="true" data-overlay-color="op-dark">
+        <p>Are you sure you want to delete?</p>
+        <div>
+            <button id="confirmDelete" class="button" type="button">Yes</button>
+            <button class="button" type="button" onclick="$('#deleteDialog').data('dialog').close();">No</button>
+        </div>
     </div>
 </body>
 </html>

@@ -69,8 +69,19 @@ function EditChallenge(form) {
     return false;
 }
 
+function DeleteChallenge(form) {
+    $.ajax({
+        url: "/Admin/Challenge",
+        methd: "DELETE",
+        data: { Id: $(form).find("[name=Id]").val() },
+        success: function () {
+            $('#editPane').empty();
+        }
+    });
+}
+
 function AddAnswer(element) {
-    element.append('<div class="answer"><input name="Answer" value="" /><input name="Correct" type="checkbox" /><button class="button" type="button" onclick="$(this).parent().remove();">Remove</button></div>');
+    element.append('<div class="answer"><button class="button small mini-button danger rounded" type="button" onclick="$(this).parent().remove();"><span class="mif-minus"></span></button><div class="input-control text"><input name="Answer" type="text" placeholder="Enter answer here..." /></div><label class="input-control checkbox"><input type="checkbox" name="Correct"><span class="check"></span><span class="caption">Correct</span></label></div>');
 }
 
 function SelectSpace(space) {
@@ -133,6 +144,11 @@ function EditSpace(form) {
     return false;
 }
 
+function DeleteSpace(form) {
+
+    $('#editPane').empty();
+}
+
 // from http://stackoverflow.com/questions/4459379/preview-an-image-before-it-is-uploaded
 function PreviewImage(input, imageElement) {
     if (input.files && input.files[0]) {
@@ -144,4 +160,26 @@ function PreviewImage(input, imageElement) {
 
         reader.readAsDataURL(input.files[0]);
     }
+}
+
+function ExpandToggle(toggleButton, elementToToggle) {
+    elementToToggle.toggle();
+    var button = $(toggleButton);
+    if (button.find('span').hasClass('mif-expand-less')) {
+        button.find('span').removeClass('mif-expand-less');
+        button.find('span').addClass('mif-expand-more');
+    }
+    else {
+        button.find('span').removeClass('mif-expand-more');
+        button.find('span').addClass('mif-expand-less');
+    }
+}
+
+function ConfirmDelete(deleteFunction) {
+    $("#confirmDelete").off("click");
+    $("#confirmDelete").click(function () {
+        deleteFunction();
+        $('#deleteDialog').data('dialog').close();
+    });
+    $("#deleteDialog").data("dialog").open();
 }

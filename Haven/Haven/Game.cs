@@ -7,7 +7,7 @@ using SQLite;
 
 namespace Haven
 {
-    public class Game
+    public class Game : IDeletable
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
@@ -122,6 +122,21 @@ namespace Haven
                   where (UsedChallenge.ChallengeId is null or UsedChallenge.GameId<>?)
                   and Challenge.BoardId=?",
                   this.Id, this.BoardId);
+        }
+
+        public void Delete()
+        {
+            // delete players
+            foreach (Player player in this.Players)
+            {
+                player.Delete();
+            }
+
+            // delete record of used challenges
+            Persistence.Connection.Execute("delete from UsedChallenge where GameId=?", this.Id);
+
+            // delete game
+            Persistence.Connection.Delete(this);
         }
     }
 }

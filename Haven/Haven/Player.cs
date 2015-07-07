@@ -7,7 +7,7 @@ using SQLite;
 
 namespace Haven
 {
-    public class Player
+    public class Player : IDeletable
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
@@ -113,6 +113,25 @@ namespace Haven
         public IEnumerable<Message> RecentMessages(int number)
         {
             return Persistence.Connection.Table<Message>().Where(x => x.PlayerId == this.Id).OrderByDescending(x => x.Id).Take(number).OrderBy(x => x.Id);
+        }
+
+        public void Delete()
+        {
+            // delete actions
+            Persistence.Connection.Execute("delete from Action where OwnerId=?", this.Id);
+
+            // delete cards
+            Persistence.Connection.Execute("delete from PlayerNameCard where PlayerId=?", this.Id);
+            Persistence.Connection.Execute("delete from PlayerSafeHavenCard where PlayerId=?", this.Id);
+
+            // delete messages
+            Persistence.Connection.Execute("delete from Message where PlayerId=?", this.Id);
+
+            // update NextPlayerId for other players
+            Persistence.Connection.Execute("update Player set NextPlayerId=? where NextPlayerId=?", this.NextPlayerId, this.Id);
+
+            // delete player
+            Persistence.Connection.Delete(this);
         }
     }
 }

@@ -66,6 +66,7 @@
     <Compile Include="Data\DataLoad.cs" />
     <Compile Include="Actions\ReciteRecallAction.cs" />
     <Compile Include="Data\Persistence.cs" />
+    <Compile Include="IDeletable.cs" />
     <Compile Include="Image.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="Board.cs" />
