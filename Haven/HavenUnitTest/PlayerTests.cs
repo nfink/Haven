@@ -11,7 +11,7 @@ namespace HavenUnitTest
     [TestFixture]
     public class PlayerTests
     {
-        [SetUp]
+        [TestFixtureSetUp]
         public void Setup()
         {
             // add needed tables
@@ -122,7 +122,7 @@ namespace HavenUnitTest
             // verify that the correct messages are returned and in the correct order
             var expectedMessages = new Message[] { message5, message4, message3 }.Select(x => x.Id);
             var recentMessages = player.RecentMessages(3).Select(x => x.Id);
-            Assert.True(expectedMessages.SequenceEqual(recentMessages));
+            Assert.AreEqual(expectedMessages, recentMessages);
 
             // add more messages
             var message6 = new Message() { PlayerId = player.Id };
@@ -133,7 +133,7 @@ namespace HavenUnitTest
             // verify that the correct messages are returned and in the correct order
             expectedMessages = new Message[] { message7, message6, message5 }.Select(x => x.Id);
             recentMessages = player.RecentMessages(3).Select(x => x.Id);
-            Assert.True(expectedMessages.SequenceEqual(recentMessages));
+            Assert.AreEqual(expectedMessages, recentMessages);
         }
 
         private Player CreatePlayerData()

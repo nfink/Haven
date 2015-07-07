@@ -12,7 +12,7 @@ namespace HavenUnitTest
     [TestFixture]
     public class ChallengeTests
     {
-        [SetUp]
+        [TestFixtureSetUp]
         public void Setup()
         {
             // create tables

@@ -11,7 +11,7 @@ namespace HavenUnitTest
     [TestFixture]
     public class BoardTests
     {
-        [SetUp]
+        [TestFixtureSetUp]
         public void Setup()
         {
             // create necessary tables

@@ -7,7 +7,7 @@ using SQLite;
 
 namespace Haven
 {
-    class UsedChallenge
+    public class UsedChallenge
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
