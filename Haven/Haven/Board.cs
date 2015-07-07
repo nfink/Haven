@@ -98,7 +98,7 @@ namespace Haven
             return spaces[endLocation];
         }
 
-        public void MovePlayer(Game game, Player player, int spaceId)
+        public void MovePlayer(Player player, int spaceId)
         {
             player.SpaceId = spaceId;
             Persistence.Connection.Update(player);

@@ -18,9 +18,9 @@ namespace Haven
 
             // move player to next space
             var player = Persistence.Connection.Get<Player>(this.OwnerId);
-            var game = Persistence.Connection.Get<Game>(player.GameId);
-            var newSpace = game.Board.GetNewSpace(player.SpaceId, roll.Sum, player.MovementDirection);
-            game.Board.MovePlayer(game, player, newSpace.Id);
+            var board = Persistence.Connection.Query<Board>("select Board.* from Board join Game on Game.BoardId=Board.Id where Game.Id=?", player.GameId).First();
+            var newSpace = board.GetNewSpace(player.SpaceId, roll.Sum, player.MovementDirection);
+            board.MovePlayer(player, newSpace.Id);
         }
     }
 }

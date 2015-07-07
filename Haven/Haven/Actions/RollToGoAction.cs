@@ -18,9 +18,9 @@ namespace Haven
 
             // move player forward if even, backward if odd
             var player = Persistence.Connection.Get<Player>(this.OwnerId);
-            var game = Persistence.Connection.Get<Game>(player.GameId);
-            var newSpace = game.Board.GetNewSpace(player.SpaceId, roll.Sum, (roll.Sum % 2 == 0));
-            game.Board.MovePlayer(game, player, newSpace.Id);
+            var board = Persistence.Connection.Query<Board>("select Board.* from Board join Game on Game.BoardId=Board.Id where Game.Id=?", player.GameId).First();
+            var newSpace = board.GetNewSpace(player.SpaceId, roll.Sum, (roll.Sum % 2 == 0));
+            board.MovePlayer(player, newSpace.Id);
         }
     }
 }
