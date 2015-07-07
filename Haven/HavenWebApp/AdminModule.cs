@@ -163,10 +163,9 @@ namespace HavenWebApp
                 return View["Views/Space.cshtml", space];
             };
 
-            Delete["/Space"] = parameters =>
+            Delete["/Space/{id}"] = parameters =>
             {
-                var spaceId = (int)this.Request.Query.Id;
-                var space = Persistence.Connection.Get<Space>(spaceId);
+                var space = Persistence.Connection.Get<Space>((int)parameters.id);
                 space.Delete();
                 return new HtmlResponse(HttpStatusCode.OK);
             };
@@ -212,10 +211,9 @@ namespace HavenWebApp
                 return View["Views/Admin/Challenge.cshtml", challenge];
             };
 
-            Delete["/Challenge"] = parameters =>
+            Delete["/Challenge/{id}"] = parameters =>
             {
-                var challengeId = (int)this.Request.Query.Id;
-                var challenge = Persistence.Connection.Get<Challenge>(challengeId);
+                var challenge = Persistence.Connection.Get<Challenge>((int)parameters.id);
                 challenge.Delete();
                 return new HtmlResponse(HttpStatusCode.OK);
             };

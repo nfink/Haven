@@ -69,13 +69,16 @@ function EditChallenge(form) {
     return false;
 }
 
-function DeleteChallenge(form) {
+function DeleteChallenge(id) {
     $.ajax({
-        url: "/Admin/Challenge",
-        methd: "DELETE",
-        data: { Id: $(form).find("[name=Id]").val() },
+        url: "/Admin/Challenge/" + id,
+        method: "DELETE",
         success: function () {
+            // clear the edit pane
             $('#editPane').empty();
+
+            // remove from the challenges area
+            $(".challenge[challengeid=" + id + "]").remove();
         }
     });
 }
@@ -144,9 +147,18 @@ function EditSpace(form) {
     return false;
 }
 
-function DeleteSpace(form) {
+function DeleteSpace(id) {
+    $.ajax({
+        url: "/Admin/Space/" + id,
+        method: "DELETE",
+        success: function () {
+            // clear the edit pane
+            $('#editPane').empty();
 
-    $('#editPane').empty();
+            // remove from the spaces grid
+            $(".space[spaceid=" + id + "]").remove();
+        }
+    });
 }
 
 // from http://stackoverflow.com/questions/4459379/preview-an-image-before-it-is-uploaded

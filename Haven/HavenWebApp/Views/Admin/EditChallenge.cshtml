@@ -33,6 +33,9 @@
     </div>
 
     <button class="button primary" type="submit">Save</button>
-    <button class="button primary" type="button" onclick="ConfirmDelete(function () { DeleteChallenge(this); });">Delete</button>
+    @if (@Model.Id != 0)
+    {
+        <button class="button primary" type="button" onclick="ConfirmDelete(function () { DeleteChallenge(@Model.Id); });">Delete</button>
+    }
     <button class="button primary" type="button" onclick="$('#editPane').empty();">Close</button>
 </form>

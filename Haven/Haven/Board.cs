@@ -44,7 +44,7 @@ namespace Haven
         {
             get
             {
-                return Persistence.Connection.Table<Space>().Where(x => x.BoardId == this.Id).OrderBy(x => x.Order).ToList();
+                return Persistence.Connection.Table<Space>().Where(x => x.BoardId == this.Id);
             }
         }
 
@@ -90,7 +90,7 @@ namespace Haven
 
         public Space GetNewSpace(int startSpaceId, int spacesToMove, bool direction)
         {
-            var spaces = Persistence.Connection.Table<Space>().Where(x => x.BoardId == this.Id).OrderBy(x => x.Order).ToList();
+            var spaces = this.Spaces.OrderBy(x => x.Order).ToList();
             int directionMultiplier = direction ? 1 : -1;
             int movement = spacesToMove * directionMultiplier;
             int startLocation = spaces.Select(x => x.Id).ToList().IndexOf(startSpaceId);
