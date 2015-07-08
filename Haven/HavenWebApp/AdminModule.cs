@@ -50,23 +50,10 @@ namespace HavenWebApp
                 var board = Persistence.Connection.Get<Board>(boardId);
                 board.Name = (string)this.Request.Form.Name;
                 board.Description = (string)this.Request.Form.Description;
-
-                // only set image if it is valid and has changed
                 var imageFile = this.Request.Files.FirstOrDefault();
-                
-                if ((imageFile != null) &&
-                    (imageFile.ContentType.StartsWith("image") &&
-                    ((board.Image == null) || (board.Image.Filename != imageFile.Name))))
+                var image = this.UpdateImage(pathProvider, board.Image, imageFile);
+                if (image != null)
                 {
-                    // delete the image
-                    board.Image.DeleteImage(pathProvider.GetRootPath());
-                    Persistence.Connection.Delete(board.Image);
-
-                    // add the new image
-                    var image = new Image() { Filename = imageFile.Name };
-                    Persistence.Connection.Insert(image);
-                    image.SaveImage(pathProvider.GetRootPath(), "Uploads", imageFile.Value);
-                    Persistence.Connection.Update(image);
                     board.ImageId = image.Id;
                 }
 
@@ -111,43 +98,68 @@ namespace HavenWebApp
             {
                 var space = this.Bind<Space>();
 
+                var imageFile = this.Request.Files.FirstOrDefault();
+                Image image = null;
+
                 // clean up any dependent records
                 if (space.Id != 0)
                 {
                     var existingSpace = Persistence.Connection.Get<Space>(space.Id);
                     if (existingSpace.BibleVerseId != 0)
                     {
-                        Persistence.Connection.Execute("delete from BibleVerse where Id=?", existingSpace.BibleVerseId);
+                        Persistence.Connection.Delete<BibleVerse>(existingSpace.BibleVerseId);
                     }
                     if (existingSpace.NameCardId != 0)
                     {
-                        Persistence.Connection.Execute("delete from NameCard where Id=?", existingSpace.NameCardId);
+                        image = existingSpace.NameCard.Image;
+                        Persistence.Connection.Delete<NameCard>(existingSpace.NameCardId);
                     }
                     if (existingSpace.SafeHavenCardId != 0)
                     {
-                        Persistence.Connection.Execute("delete from SafeHavenCard where Id=?", existingSpace.SafeHavenCardId);
+                        image = existingSpace.SafeHavenCard.Image;
+                        Persistence.Connection.Delete<SafeHavenCard>(existingSpace.SafeHavenCardId);
                     }
                 }
 
                 // add any dependent records
-                if (space.Type == SpaceType.Recall)
-                {
-                    var recall = JsonConvert.DeserializeObject<BibleVerse>((string)this.Request.Form.Recall);
-                    Persistence.Connection.Insert(recall);
-                    space.BibleVerseId = recall.Id;
-
-                }
-                else if (space.Type == SpaceType.Challenge)
+                if (space.Type == SpaceType.Challenge)
                 {
                     var nameCard = JsonConvert.DeserializeObject<NameCard>((string)this.Request.Form.NameCard);
+                    image = this.UpdateImage(pathProvider, image, imageFile);
+                    if (image != null)
+                    {
+                        nameCard.ImageId = image.Id;
+                    }
                     Persistence.Connection.Insert(nameCard);
                     space.NameCardId = nameCard.Id;
                 }
                 else if (space.Type == SpaceType.SafeHaven)
                 {
                     var safeHavenCard = JsonConvert.DeserializeObject<SafeHavenCard>((string)this.Request.Form.SafeHavenCard);
+                    image = this.UpdateImage(pathProvider, image, imageFile);
+                    if (image != null)
+                    {
+                        safeHavenCard.ImageId = image.Id;
+                    }
                     Persistence.Connection.Insert(safeHavenCard);
                     space.SafeHavenCardId = safeHavenCard.Id;
+                }
+                else
+                {
+                    if (space.Type == SpaceType.Recall)
+                    {
+                        var recall = JsonConvert.DeserializeObject<BibleVerse>((string)this.Request.Form.Recall);
+                        Persistence.Connection.Insert(recall);
+                        space.BibleVerseId = recall.Id;
+
+                    }
+
+                    // delete unused image
+                    if (image != null)
+                    {
+                        image.DeleteImage(pathProvider.GetRootPath());
+                        Persistence.Connection.Delete(image);
+                    }
                 }
 
                 // add/update the space
@@ -217,6 +229,31 @@ namespace HavenWebApp
                 challenge.Delete();
                 return new HtmlResponse(HttpStatusCode.OK);
             };
+        }
+
+        private bool HasNewImage(Image image, HttpFile newImage)
+        {
+            return ((newImage != null) &&
+                (newImage.ContentType.StartsWith("image") &&
+                ((image == null) || (image.Filename != newImage.Name))));
+        }
+
+        private Image UpdateImage(IRootPathProvider pathProvider, Image image, HttpFile newImage)
+        {
+            if (this.HasNewImage(image, newImage))
+            {
+                // delete the image
+                image.DeleteImage(pathProvider.GetRootPath());
+                Persistence.Connection.Delete(image);
+
+                // add the new image
+                image = new Image() { Filename = newImage.Name };
+                Persistence.Connection.Insert(image);
+                image.SaveImage(pathProvider.GetRootPath(), "Uploads", newImage.Value);
+                Persistence.Connection.Update(image);
+            }
+
+            return image;
         }
     }
 }

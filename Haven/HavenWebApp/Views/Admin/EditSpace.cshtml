@@ -8,11 +8,13 @@
     var nameCardName = "";
     var nameCardDetails = "";
     var nameCardImage = "";
+    var nameCardImageName = "";
     var nameCardSelected = "display: none;";
     var nameCardEditType = "editType" + ((int)SpaceType.Challenge).ToString();
     var safeHavenCardName = "";
     var safeHavenCardDetails = "";
     var safeHavenCardImage = "";
+    var safeHavenCardImageName = "";
     var safeHavenCardSelected = "display: none;";
     var safeHavenCardEditType = "editType" + ((int)SpaceType.SafeHaven).ToString();
     SpaceType spaceType = @Model.Type;
@@ -26,12 +28,14 @@
     nameCardName = @Model.NameCard.Name;
     nameCardDetails = @Model.NameCard.Details;
     nameCardImage = @Model.NameCard.Image.Filepath;
+    nameCardImageName = @Model.NameCard.Image.Filename;
 }
 @if (@Model.SafeHavenCard != null)
 {
     safeHavenCardName = @Model.SafeHavenCard.Name;
     safeHavenCardDetails = @Model.SafeHavenCard.Details;
     safeHavenCardImage = @Model.SafeHavenCard.Image.Filepath;
+    safeHavenCardImageName = @Model.SafeHavenCard.Image.Filename;
 }
 @switch(spaceType)
 {
@@ -78,6 +82,26 @@
                 <div class="input-control text">
                     <input id="spaceOrder" name="Order" type="text" value="@Model.Order" />
                 </div>
+                <div class="additionalEdit @nameCardEditType" style="@nameCardSelected">
+                    <label for="nameCardIcon">Icon:<span id="nameCardIconDisplay" style="float: right;width: 70px; height: 70px; background-image: url('@nameCardImage'); background-size: cover; background-repeat: no-repeat; border-radius: 0px;" /></label>
+                    <br />
+                    <div id="nameCardIconFileInput" style="width: 350px;">
+                        <input id="nameCardIcon" name="Icon" value="@nameCardImageName" tabindex="-1" style="z-index: 0; display: none;" type="file" onchange="$('#nameCardIconSelectOverlay').val($(this).val()); PreviewImage(this, $('#nameCardIconDisplay'));">
+                        <div class="input-control text" data-role="input">
+                            <input id="nameCardIconSelectOverlay" style="padding-right: 62px;" type="text" readonly="" value="@nameCardImageName" onclick="$('#nameCardIcon').trigger('click');">
+                        </div>
+                    </div>
+                </div>
+                <div class="additionalEdit @safeHavenCardEditType" style="@safeHavenCardSelected">
+                    <label for="safeHavenCardIcon">Icon:<span id="safeHavenCardIconDisplay" style="float: right;width: 70px; height: 70px; background-image: url('@safeHavenCardImage'); background-size: cover; background-repeat: no-repeat; border-radius: 0px;" /></label>
+                    <br />
+                    <div id="safeHavenCardIconFileInput" style="width: 350px;">
+                        <input id="safeHavenCardIcon" name="Icon" value="@safeHavenCardImageName" tabindex="-1" style="z-index: 0; display: none;" type="file" onchange="$('#safeHavenCardIconSelectOverlay').val($(this).val()); PreviewImage(this, $('#safeHavenCardIconDisplay'));">
+                        <div class="input-control text" data-role="input">
+                            <input id="safeHavenCardIconSelectOverlay" style="padding-right: 62px;" type="text" readonly="" value="@safeHavenCardImageName" onclick="$('#safeHavenCardIcon').trigger('click');">
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="cell">
                 <div class="additionalEdit @recallEditType" style="@recallSelected">
@@ -99,10 +123,6 @@
                     <div class="input-control textarea">
                         <textarea id="spaceNameCardDetails" name="NameCardDetails">@nameCardDetails</textarea>
                     </div>
-                    <br />
-                    <div class="input-control text">
-                        <input id="spaceNameCardImage" name="NameCardImage" type="text" value="@nameCardImage" />
-                    </div>
                 </div>
                 <div class="additionalEdit @safeHavenCardEditType" style="@safeHavenCardSelected">
                     <label for="spaceSafeHavenCardName">Name:</label>
@@ -115,10 +135,6 @@
                     <br />
                     <div class="input-control textarea">
                         <textarea id="spaceSafeHavenCardDetails" name="SafeHavenCardDetails">@safeHavenCardDetails</textarea>
-                    </div>
-                    <br />
-                    <div class="input-control text">
-                        <input id="spaceSafeHavenCardImage" name="SafeHavenCardImage" type="text" value="@safeHavenCardImage" />
                     </div>
                 </div>
             </div>
