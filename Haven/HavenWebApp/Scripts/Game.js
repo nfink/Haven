@@ -68,8 +68,8 @@ function PerformAction(actionForm) {
         return false;
     }
 
-    // hide actions so the player can't try to perform multiple actions
-    $(".action").hide();
+    //// hide actions so the player can't try to perform multiple actions
+    //$(".action").hide();
 
     $.post("PerformAction", $(actionForm).serialize())
         .done(function (data) {
@@ -91,10 +91,7 @@ function PerformAction(actionForm) {
                 $("#cards").append(elements.filter("#cards").children());
 
                 // update actions
-                $("#actions").empty();
-                $("#actions").append(elements.filter("#actions").children());
-                PlayerNameSetup();
-                UpdateActionPasswords();
+                UpdateActions(elements.filter("#actions").children());
 
                 // retain player selection
                 $(".actionContainer[playerid=" + selectedPlayerId + "]").trigger("click");
@@ -106,6 +103,54 @@ function PerformAction(actionForm) {
         });
 
     return false;
+}
+
+function UpdateActions(actions) {
+    $.each(actions, function (index, value) {
+        var newActionContainer = $(value);
+        var playerId = newActionContainer.attr("playerid");
+        var actionContainer = $(".actionContainer[playerid=" + playerId + "]");
+
+        // add/remove passwordNotSet class as needed
+        if (newActionContainer.hasClass("passwordNotSet")) {
+            if (!actionContainer.hasClass("passwordNotSet")) {
+                actionContainer.addClass("passwordNotSet").addClass("bg-olive").removeClass("ribbed-olive");
+            }
+        }
+        else {
+            if (actionContainer.hasClass("passwordNotSet")) {
+                actionContainer.removeClass("passwordNotSet").addClass("ribbed-olive").removeClass("bg-olive");
+            }
+        }
+
+        // update name/icon if necessary
+        var currentName = actionContainer.find(".playerNameLabel").text();
+        var newName = newActionContainer.find(".playerNameLabel").text();
+        var currentIcon = actionContainer.find(".icon").attr("class");
+        var newIcon = newActionContainer.find(".icon").attr("class");
+        if ((currentName != newName) || (currentIcon != newIcon)) {
+            actionContainer.find(".playerName").parents("form").remove();
+            actionContainer.prepend(newActionContainer.find(".playerName").parents("form"));
+        }
+
+        // remove actions that no longer exist
+        $.each(actionContainer.find(".action"), function (j, action) {
+            var actionId = $(action).find("[name=Id]").val();
+            if (newActionContainer.find(".action").find("[name=Id][value=" + actionId + "]").length < 1) {
+                $(action).remove();
+            }
+        });
+
+        // add new actions
+        $.each($(value).find(".action"), function (j, action) {
+            var actionId = $(action).find("[name=Id]").val();
+            if (actionContainer.find(".action").find("[name=Id][value=" + actionId + "]").length < 1) {
+                actionContainer.append(action);
+            }
+        });
+    });
+
+    UpdateActionPasswords();
 }
 
 function UpdateActionPasswords()
