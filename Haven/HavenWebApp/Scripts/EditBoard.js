@@ -11,15 +11,11 @@ $(document).ready(function () {
 });
 
 function EditBoard(form) {
-    var formData = new FormData($(form)[0]);
+    var formData = new FormData(form);
     $.ajax({
         url: "/Admin/Board/Edit",
         type: 'POST',
-        xhr: function () {
-            return $.ajaxSettings.xhr();
-        },
         data: formData,
-        cache: false,
         contentType: false,
         processData: false
     });
@@ -101,33 +97,16 @@ function SelectSpace(space) {
 }
 
 function EditSpace(form) {
-    var spaceForm = $(form);
-
-    $.post("/Admin/Space/Edit",
-        {
-            Id: spaceForm.find("[name=Id]").val(),
-            BoardId: spaceForm.find("[name=BoardId]").val(),
-            Type: spaceForm.find("[name=Type]").val(),
-            Order: spaceForm.find("[name=Order]").val(),
-            X: spaceForm.find("[name=X]").val(),
-            Y: spaceForm.find("[name=Y]").val(),
-            Recall: JSON.stringify({
-                Text: spaceForm.find("[name=RecallText]").val(),
-            }),
-            NameCard: JSON.stringify({
-                Name: spaceForm.find("[name=NameCardName]").val(),
-                Details: spaceForm.find("[name=NameCardDetails]").val(),
-                Image: spaceForm.find("[name=NameCardImage]").val(),
-            }),
-            SafeHavenCard: JSON.stringify({
-                Name: spaceForm.find("[name=SafeHavenCardName]").val(),
-                Details: spaceForm.find("[name=SafeHavenCardDetails]").val(),
-                Image: spaceForm.find("[name=SafeHavenCardImage]").val(),
-            }),
-        },
-        function (data) {
+    var formData = new FormData(form);
+    $.ajax({
+        url: "/Admin/Space/Edit",
+        type: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false,
+    }).done(function (data) {
             // update the displayed space or add a new one if needed
-            var spaceId = spaceForm.find("[name=Id]").val();
+            var spaceId = $(form).find("[name=Id]").val();
             if (spaceId == 0) {
                 $("#spaces").append(data);
             }
@@ -141,8 +120,8 @@ function EditSpace(form) {
             // add click handler
             $("[spaceid=" + spaceId + "]").click(function () {
                 SelectSpace(this);
+            });
         });
-    });
 
     return false;
 }

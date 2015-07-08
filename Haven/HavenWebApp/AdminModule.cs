@@ -124,7 +124,7 @@ namespace HavenWebApp
                 // add any dependent records
                 if (space.Type == SpaceType.Challenge)
                 {
-                    var nameCard = JsonConvert.DeserializeObject<NameCard>((string)this.Request.Form.NameCard);
+                    var nameCard = new NameCard() { Name = (string)this.Request.Form.NameCardName, Details = (string)this.Request.Form.NameCardDetails };
                     image = this.UpdateImage(pathProvider, image, imageFile);
                     if (image != null)
                     {
@@ -135,7 +135,7 @@ namespace HavenWebApp
                 }
                 else if (space.Type == SpaceType.SafeHaven)
                 {
-                    var safeHavenCard = JsonConvert.DeserializeObject<SafeHavenCard>((string)this.Request.Form.SafeHavenCard);
+                    var safeHavenCard = new SafeHavenCard() { Name = (string)this.Request.Form.SafeHavenCardName, Details = (string)this.Request.Form.SafeHavenCardDetails };
                     image = this.UpdateImage(pathProvider, image, imageFile);
                     if (image != null)
                     {
@@ -148,7 +148,7 @@ namespace HavenWebApp
                 {
                     if (space.Type == SpaceType.Recall)
                     {
-                        var recall = JsonConvert.DeserializeObject<BibleVerse>((string)this.Request.Form.Recall);
+                        var recall = new BibleVerse() { Text = (string)this.Request.Form.RecallText };
                         Persistence.Connection.Insert(recall);
                         space.BibleVerseId = recall.Id;
 
