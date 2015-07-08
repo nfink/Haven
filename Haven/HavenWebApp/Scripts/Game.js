@@ -68,12 +68,14 @@ function PerformAction(actionForm) {
         return false;
     }
 
-    //// hide actions so the player can't try to perform multiple actions
-    //$(".action").hide();
-
     $.post("PerformAction", $(actionForm).serialize())
         .done(function (data) {
             var elements = $(data);
+
+            // update player details and remove used actions before moving pieces
+            var actions = elements.filter("#actions").children();
+            UpdatePlayerDetails(actions);
+            RemoveOldActions(actions);
 
             UpdatePieces(elements.filter("#pieces").children());
 
@@ -91,10 +93,10 @@ function PerformAction(actionForm) {
                 $("#cards").append(elements.filter("#cards").children());
 
                 // update actions
-                UpdateActions(elements.filter("#actions").children());
+                AddNewActions(actions);
 
-                // retain player selection
-                $(".actionContainer[playerid=" + selectedPlayerId + "]").trigger("click");
+                // update displayed details and messages
+                UpdateMessagesAndStatus(selectedPlayerId);
             });
         })
         .fail(function () {
@@ -105,7 +107,7 @@ function PerformAction(actionForm) {
     return false;
 }
 
-function UpdateActions(actions) {
+function UpdatePlayerDetails(actions) {
     $.each(actions, function (index, value) {
         var newActionContainer = $(value);
         var playerId = newActionContainer.attr("playerid");
@@ -132,6 +134,16 @@ function UpdateActions(actions) {
             actionContainer.find(".playerName").parents("form").remove();
             actionContainer.prepend(newActionContainer.find(".playerName").parents("form"));
         }
+    });
+
+    UpdateActionPasswords();
+}
+
+function RemoveOldActions(actions) {
+    $.each(actions, function (index, value) {
+        var newActionContainer = $(value);
+        var playerId = newActionContainer.attr("playerid");
+        var actionContainer = $(".actionContainer[playerid=" + playerId + "]");
 
         // remove actions that no longer exist
         $.each(actionContainer.find(".action"), function (j, action) {
@@ -140,6 +152,16 @@ function UpdateActions(actions) {
                 $(action).remove();
             }
         });
+    });
+
+    UpdateActionPasswords();
+}
+
+function AddNewActions(actions) {
+    $.each(actions, function (index, value) {
+        var newActionContainer = $(value);
+        var playerId = newActionContainer.attr("playerid");
+        var actionContainer = $(".actionContainer[playerid=" + playerId + "]");
 
         // add new actions
         $.each($(value).find(".action"), function (j, action) {
@@ -226,6 +248,10 @@ function SelectPlayer(actionsDiv) {
 
     // show cards and messages
     var playerId = $(actionsDiv).attr("playerid");
+    UpdateMessagesAndStatus(playerId);
+}
+
+function UpdateMessagesAndStatus(playerId) {
     $("#messagearea").empty();
     $("#messagearea").append($("#messages").find("[playerid=" + playerId + "]").clone());
     $("#statusarea").attr("playerid", playerId);

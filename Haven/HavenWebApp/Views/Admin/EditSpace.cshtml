@@ -54,32 +54,75 @@
     <input type="hidden" name="BoardId" value="@Model.BoardId" />
     <input type="hidden" name="X" value="@Model.X" />
     <input type="hidden" name="Y" value="@Model.Y" />
-    <div class="input-control select">
-        <select name="Type" onchange="TypeSelectionChange(this);">
-            @foreach (SpaceType type in Enum.GetValues(typeof(SpaceType)))
-            {
-                string selected = "";
-                if (@Model.Type == type)
-                {
-                    selected = "selected";
-                }
-                <option value="@Convert.ChangeType(type, type.GetTypeCode())" @selected>@type.ToString()</option>
-            }
-        </select>
-    </div>
-    <input name="Order" value="@Model.Order" />
-    <div class="additionalEdit @recallEditType" style="@recallSelected">
-        <input class="input-control text" name="RecallText" value="@recallText" />
-    </div>
-    <div class="additionalEdit @nameCardEditType" style="@nameCardSelected">
-        <input class="input-control text" name="NameCardName" value="@nameCardName" />
-        <textarea class="input-control textarea" name="NameCardDetails">@nameCardDetails</textarea>
-        <input class="input-control text" name="NameCardImage" value="@nameCardImage" />
-    </div>
-    <div class="additionalEdit @safeHavenCardEditType" style="@safeHavenCardSelected">
-        <input class="input-control text" name="SafeHavenCardName" value="@safeHavenCardName" />
-        <textarea class="input-control textarea" name="SafeHavenCardDetails">@safeHavenCardDetails</textarea>
-        <input class="input-control text" name="SafeHavenCardImage" value="@safeHavenCardImage" />
+    <div class="grid">
+        <div class="row cells2">
+            <div class="cell">
+                <label for="spaceType">Type:</label>
+                <br />
+                <div class="input-control select">
+                    <select id="spaceType" name="Type" onchange="TypeSelectionChange(this);">
+                        @foreach (SpaceType type in Enum.GetValues(typeof(SpaceType)))
+                        {
+                            string selected = "";
+                            if (@Model.Type == type)
+                            {
+                                selected = "selected";
+                            }
+                            <option value="@Convert.ChangeType(type, type.GetTypeCode())" @selected>@type.ToString()</option>
+                        }
+                    </select>
+                </div>
+                <br />
+                <label for="spaceOrder">Order:</label>
+                <br />
+                <div class="input-control text">
+                    <input id="spaceOrder" name="Order" type="text" value="@Model.Order" />
+                </div>
+            </div>
+            <div class="cell">
+                <div class="additionalEdit @recallEditType" style="@recallSelected">
+                    <label for="spaceRecallText">Text:</label>
+                    <br />
+                    <div class="input-control text">
+                        <input id="spaceRecallText" name="RecallText" type="text" value="@recallText" />
+                    </div>
+                </div>
+                <div class="additionalEdit @nameCardEditType" style="@nameCardSelected">
+                    <label for="spaceNameCardName">Name:</label>
+                    <br />
+                    <div class="input-control text">
+                        <input id="spaceNameCardName" name="NameCardName" type="text" value="@nameCardName" />
+                    </div>
+                    <br />
+                    <label for="spaceNameCardDetails">Details:</label>
+                    <br />
+                    <div class="input-control textarea">
+                        <textarea id="spaceNameCardDetails" name="NameCardDetails">@nameCardDetails</textarea>
+                    </div>
+                    <br />
+                    <div class="input-control text">
+                        <input id="spaceNameCardImage" name="NameCardImage" type="text" value="@nameCardImage" />
+                    </div>
+                </div>
+                <div class="additionalEdit @safeHavenCardEditType" style="@safeHavenCardSelected">
+                    <label for="spaceSafeHavenCardName">Name:</label>
+                    <br />
+                    <div class="input-control text">
+                        <input id="spaceSafeHavenCardName" name="SafeHavenCardName" type="text" value="@safeHavenCardName" />
+                    </div>
+                    <br />
+                    <label for="spaceSafeHavenCardDetails">Details:</label>
+                    <br />
+                    <div class="input-control textarea">
+                        <textarea id="spaceSafeHavenCardDetails" name="SafeHavenCardDetails">@safeHavenCardDetails</textarea>
+                    </div>
+                    <br />
+                    <div class="input-control text">
+                        <input id="spaceSafeHavenCardImage" name="SafeHavenCardImage" type="text" value="@safeHavenCardImage" />
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <button class="button primary" type="submit">Save</button>
