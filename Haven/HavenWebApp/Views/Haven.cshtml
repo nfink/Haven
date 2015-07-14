@@ -1,103 +1,34 @@
 ﻿<!DOCTYPE html>
-<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-<script type="text/javascript" src="/Scripts/Game.js"></script>
-<script type="text/javascript" src="/Scripts/Menu.js"></script>
+
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
     <link href="/Content/metro.css" rel="stylesheet">
     <link href="/Content/metro-icons.css" rel="stylesheet">
     <script src="/Scripts/metro.js"></script>
+    <script src="https://cdn.rawgit.com/visionmedia/page.js/master/page.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
     <link href="/Content/Game.css" rel="stylesheet">
     <link href="/Content/Haven.css" rel="stylesheet">
+    <script type="text/jsx" src="~/Scripts/Components/MainMenuTile.js"></script>
+    <script type="text/jsx" src="~/Scripts/Components/Game/MainMenu.js"></script>
+    <script type="text/jsx" src="~/Scripts/Components/SubMenuTile.js"></script>
+    <script type="text/jsx" src="~/Scripts/Components/Game/BoardsMenu.js"></script>
+    <script type="text/jsx" src="~/Scripts/Components/Game/NewGameDialog.js"></script>
+    <script type="text/jsx" src="~/Scripts/Components/Game/GamesMenu.js"></script>
+    <script type="text/jsx" src="~/Scripts/Menu.js"></script>
+    <script src="/Scripts/Game.js"></script>
     <meta name="viewport" content="width=device-width" />
     <title>Safe Haven</title>
-    <script>
-        $(document).ready(function () {
-            Init();
-        });
-    </script>
 </head>
 <body class="bg-grayLighter">
     <!--Back Button-->
     <div id="backButton" class="padding10" style="float: left;display: none;">
-        <button onclick="Back();" class="button mif-arrow-left mif-2x bd-gray bg-transparent bg-active-gray bg-hover-grayLight fg-gray fg-active-grayLighter fg-hover-gray" style="border-width: medium;border-radius: 50%;width: 56px;height: 56px;border-style: solid;"></button>
+        <button onclick="history.back()" class="button mif-arrow-left mif-2x bd-gray bg-transparent bg-active-gray bg-hover-grayLight fg-gray fg-active-grayLighter fg-hover-gray" style="border-width: medium;border-radius: 50%;width: 56px;height: 56px;border-style: solid;"></button>
     </div>
-
-    <!--Main Menu-->
-    <div id="mainMenu" class="tile-container padding10" style="width: 680px; margin: auto;">
-        <div class="tile-large" data-role="tile" onclick="ShowBoardMenu();">
-            <div class="tile-content">
-                <div class="image-container">
-                    <div class="frame">
-                        <img src="Content/Images/board_new_square.jpg">
-                    </div>
-                    <div class="image-overlay op-cyan">
-                        <h2>Start a new game</h2>
-                        <p></p>
-                    </div>
-                </div>
-                <div class="tile-label header fg-white">New Game</div>
-            </div>
-        </div>
-        <div class="tile-large" data-role="tile" onclick="ShowContinueMenu();">
-            <div class="tile-content">
-                <div class="image-container">
-                    <div class="frame">
-                        <img src="Content/Images/board_continue_square.jpg">
-                    </div>
-                    <div class="image-overlay op-cyan">
-                        <h2>Continue an unfinished game</h2>
-                        <p></p>
-                    </div>
-                </div>
-                <div class="tile-label header fg-white">Continue Game</div>
-            </div>
-        </div>
-    </div>
-
-    <!--Board Menu-->
-    <div id="boardMenu" class="tile-container padding10" style="width: 680px; margin: auto; display: none;"></div>
-
-    <!--New Game Dialog-->
-    <div id="newGameDialog"
-         class="dialog"
-         data-overlay="true"
-         data-overlay-color="op-dark"
-         data-close-button="true"
-         data-role="dialog">
-        <div id="newGameDialogBackground" style="width: 100%; height: 100%; position: absolute; background-size: cover; background-repeat: no-repeat;opacity: 0.25;"></div>
-        <div class="padding20">
-            <h2 id="newGameDialogHeader"></h2>
-            <p id="newGameDialogDescription"></p>
-            <form onsubmit="return NewGame(this);" method="get" action="NewGame">
-                <input id="newGameDialogBoardId" name="BoardId" value="" type="hidden" />
-                <input id="newGameDialogPlayers" name="NumberOfPlayers" value="4" type="hidden" />
-                <div>
-                    <label>Game name:</label>
-                    <div class="padding5 no-padding-left">
-                        <input id="newGameDialogName" name="Name" type="text" class="input-control text requiredField" />
-                    </div>
-                </div>
-                <div>
-                    <label>Number of players:</label>
-                    <div class="padding5 no-padding-left" data-role="group" data-group-type="one-state">
-                        <button class="button playerSelection playerSelectionDefault active" type="button" onclick="$('#newGameDialogPlayers').val(2);">2</button>
-                        <button class="button playerSelection" type="button" onclick="$('#newGameDialogPlayers').val(3);">3</button>
-                        <button class="button playerSelection" type="button" onclick="$('#newGameDialogPlayers').val(4);">4</button>
-                        <button class="button playerSelection" type="button" onclick="$('#newGameDialogPlayers').val(5);">5</button>
-                        <button class="button playerSelection" type="button" onclick="$('#newGameDialogPlayers').val(6);">6</button>
-                    </div>
-                </div>
-                <div>
-                    <button class="button" type="submit">Start Game</button>
-                    <button class="button" type="button" onclick="$('#newGameDialog').data('dialog').close();">Cancel</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!--Continue Game Menu-->
-    <div id="continueMenu" class="tile-container padding10" style="width: 680px; margin: auto; display: none;"></div>
 
     <!--Game-->
     <div id="game" style="display: none;"></div>

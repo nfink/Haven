@@ -29,34 +29,6 @@ namespace Haven
 
         public int Order { get; set; }
 
-        public string Name
-        {
-            get
-            {
-                switch (this.Type)
-                {
-                    case SpaceType.Recall:
-                        return this.BibleVerse.ToString();
-                    case SpaceType.Challenge:
-                        return this.NameCard.Name;
-                    case SpaceType.ExchangePlaces:
-                        return "Exchange Places";
-                    case SpaceType.OptionalTurnAround:
-                        return "Turn Around?";
-                    case SpaceType.RollToGo:
-                        return "Roll Again";
-                    case SpaceType.SafeHaven:
-                        return this.SafeHavenCard.Name;
-                    case SpaceType.TurnAround:
-                        return "Turn Around";
-                    case SpaceType.War:
-                        return "War!";
-                    default:
-                        return this.Type.ToString();
-                }
-            }
-        }
-
         public SpaceType Type { get; set; }
 
         public int BibleVerseId { get; set; }
@@ -102,6 +74,90 @@ namespace Haven
         public string BackgroundColor { get; set; }
 
         public string TextColor { get; set; }
+
+        public string Name
+        {
+            get
+            {
+                switch (this.Type)
+                {
+                    case SpaceType.Recall:
+                        return this.BibleVerse.ToString();
+                    case SpaceType.Challenge:
+                        return this.NameCard.Name;
+                    case SpaceType.ExchangePlaces:
+                        return "Exchange Places";
+                    case SpaceType.OptionalTurnAround:
+                        return "Turn Around?";
+                    case SpaceType.RollToGo:
+                        return "Roll Again";
+                    case SpaceType.SafeHaven:
+                        return this.SafeHavenCard.Name;
+                    case SpaceType.TurnAround:
+                        return "Turn Around";
+                    case SpaceType.War:
+                        return "War!";
+                    default:
+                        return this.Type.ToString();
+                }
+            }
+        }
+
+        public string Description
+        {
+            get
+            {
+                switch (this.Type)
+                {
+                    case SpaceType.Recall:
+                        return "Player landing here may read the text, or attempt to recite it. Reciting it accurately is rewarded with a bonus turn.";
+                    case SpaceType.Challenge:
+                        return "Player landing here must answer one of the challenge questions. If correct, the player is rewarded with a challenge card:\n\n" + this.NameCard.Name + "\n" + this.NameCard.Details;
+                    case SpaceType.ExchangePlaces:
+                        return "Player landing here must exchange places with another player of their choice.";
+                    case SpaceType.OptionalTurnAround:
+                        return "Player landing here may choose to change direction, moving around the board in the opposite direction.";
+                    case SpaceType.RollToGo:
+                        return "Player landing here must roll again. An even number and the player moves forward that number of spaces. An odd number and the player moves backward that number of spaces.";
+                    case SpaceType.SafeHaven:
+                        return "Player landing here is safe from war. If the player has collected all of the challenge cards, they are rewarded with a safe haven card:\n\n" + this.SafeHavenCard.Name + "\n" + this.SafeHavenCard.Details;
+                    case SpaceType.TurnAround:
+                        return "Player landing here must change direction, moving around the board in the opposite direction.";
+                    case SpaceType.War:
+                        return "Player landing here may choose to challenge another player to war, or decline and remain neutral. If another player is on the War space, the player may not remain neutral. Players on a safe haven may not be challenged.";
+                    default:
+                        return "No description.";
+                }
+            }
+        }
+
+        public string Image
+        {
+            get
+            {
+                switch (this.Type)
+                {
+                    case SpaceType.Recall:
+                        return "mif-books";
+                    case SpaceType.Challenge:
+                        return this.NameCard.Image.Filepath;
+                    case SpaceType.ExchangePlaces:
+                        return "mif-loop2";
+                    case SpaceType.OptionalTurnAround:
+                        return "mif-undo";
+                    case SpaceType.RollToGo:
+                        return "mif-dice";
+                    case SpaceType.SafeHaven:
+                        return this.SafeHavenCard.Image.Filepath;
+                    case SpaceType.TurnAround:
+                        return "mif-undo";
+                    case SpaceType.War:
+                        return "mife-fire";
+                    default:
+                        return this.Type.ToString();
+                }
+            }
+        }
 
         public void OnLand(Player player)
         {

@@ -84,12 +84,22 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Scripts\angular.js" />
-    <Content Include="Scripts\angular.min.js" />
-    <Content Include="Scripts\angular.min.js.map" />
     <None Include="Views\Actions.cshtml" />
     <Content Include="Content\Images\Rembrandt_Harmensz_square.jpg" />
-    <Content Include="Scripts\angular-mocks.js" />
+    <Content Include="Scripts\Components\Game\Board.js" />
+    <Content Include="Scripts\Components\Game\BoardsMenu.js" />
+    <Content Include="Scripts\Components\Game\Game.js" />
+    <Content Include="Scripts\Components\Game\GamesMenu.js" />
+    <Content Include="Scripts\Components\Game\MainMenu.js" />
+    <Content Include="Scripts\Components\Game\NewGameDialog.js" />
+    <Content Include="Scripts\Components\MainMenuTile.js" />
+    <Content Include="Scripts\Components\Space.js" />
+    <Content Include="Scripts\Components\SubMenuTile.js" />
+    <Content Include="Scripts\doT.js" />
+    <Content Include="Scripts\doT.min.js" />
+    <Content Include="Templates\Boards.js" />
+    <Content Include="Templates\MainMenu.html" />
+    <Content Include="Templates\Boards.html" />
     <Content Include="Uploads\Abraham.jpg" />
     <Content Include="Uploads\Asher.JPG" />
     <Content Include="Uploads\Benjamin.JPG" />
@@ -122,6 +132,7 @@
     <Content Include="Views\Admin\EditSpace.cshtml" />
     <Content Include="Views\Admin\EditChallenge.cshtml" />
     <Content Include="Views\Admin\Challenge.cshtml" />
+    <Content Include="Templates\Home.html" />
     <Content Include="Views\Space.cshtml" />
     <Content Include="Views\Admin\EditBoardDetails.cshtml" />
     <None Include="Views\BoardsMenu.cshtml" />

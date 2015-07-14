@@ -309,7 +309,6 @@ function EnterPassword(form) {
     $.post("Authenticate", $(form).serialize())
         .done(function (data) {
             AddPassword(playerId, password);
-            //$("#actions").find(".actionContainer[playerId=" + playerId + "]").append($(data).filter(".actions"));
             UpdateActionPasswords();
             $(form).find("[name=Password]").blur();
         })

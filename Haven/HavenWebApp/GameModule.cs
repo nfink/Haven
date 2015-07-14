@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using Nancy.Conventions;
 using Nancy.Responses;
 using Nancy.Security;
+using Newtonsoft.Json;
 
 namespace HavenWebApp
 {
@@ -18,17 +19,18 @@ namespace HavenWebApp
     {
         public GameModule()
         {
-            Post["/NewGame"] = parameters =>
+            Post["/Games"] = parameters =>
             {
                 var game = Game.NewGame((int)this.Request.Form.BoardId, (int)this.Request.Form.NumberOfPlayers);
                 game.Name = (string)this.Request.Form.Name;
                 Persistence.Connection.Update(game);
                 // remove actions that the user does not have access to
 
-                return View["Views/Game.cshtml", game];
+                //return View["Views/Game.cshtml", game];
+                return JsonConvert.SerializeObject(game);
             };
 
-            Get["/Game/{id}"] = parameters =>
+            Get["/Games/{id}"] = parameters =>
             {
                 var game = Persistence.Connection.Get<Game>((int)parameters.id);
                 // remove actions that the user does not have access to
@@ -36,7 +38,7 @@ namespace HavenWebApp
                 return View["Views/Game.cshtml", game];
             };
 
-            Get["/Game/{id}/Players"] = parameters =>
+            Get["/Games/{id}/Players"] = parameters =>
             {
                 var gameId = (int)parameters.id;
                 var players = Persistence.Connection.Table<Player>().Where(x => x.GameId == gameId);
@@ -59,13 +61,6 @@ namespace HavenWebApp
                 {
                     return new HtmlResponse(HttpStatusCode.Unauthorized);
                 }
-            };
-
-            Get["/test"] = parameters =>
-            {
-                this.RequiresAuthentication();
-
-                return this.Context.CurrentUser.UserName;
             };
         }
     }

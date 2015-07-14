@@ -33,12 +33,12 @@ namespace HavenWebApp
 
             Get["/Boards"] = parameters =>
             {
-                return View["Views/BoardsMenu.cshtml", Persistence.Connection.Table<Board>().Where(x => x.Active)];
+                return JsonConvert.SerializeObject(Persistence.Connection.Table<Board>().Where(x => x.Active));
             };
 
             Get["/Games"] = parameters =>
             {
-                return View["Views/GamesMenu.cshtml", Persistence.Connection.Table<Game>()];
+                return JsonConvert.SerializeObject(Persistence.Connection.Table<Game>());
             };
         }
     }

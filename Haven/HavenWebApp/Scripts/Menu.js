@@ -1,14 +1,60 @@
-﻿/// <reference path="https://code.jquery.com/jquery-1.11.3.min.js" />
+﻿/** @jsx React.DOM */
+/// <reference path="https://code.jquery.com/jquery-1.11.3.min.js" />
+/// <reference path="https://cdn.rawgit.com/visionmedia/page.js/master/page.js" />
+/// <reference path="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js" />
+/// <reference path="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js" />
 
-var previousScreen;
+$(function () {
+    // set up routing
+    // main menu
+    page('/', function () {
+        $("#backButton").hide();
+        React.render(<GameMainMenu />, document.body);
+    });
+    page.exit("/", function (ctx, next) {
+        React.unmountComponentAtNode(document.body);
+        next();
+    });
 
-function Init() {
-    
-}
+    // new game menu
+    page("/Boards", function () {
+        $("#backButton").show();
+        React.render(<BoardsMenu />, document.body);
+    });
+    page.exit("/Boards", function (ctx, next) {
+        React.unmountComponentAtNode(document.body);
+        next();
+    });
 
-function Back() {
-    previousScreen();
-}
+    // continue game menu
+    page("/Games", function () {
+        $("#backButton").show();
+        React.render(<GamesMenu />, document.body)
+    });
+    page.exit("/Games", function (ctx, next) {
+        React.unmountComponentAtNode(document.body);
+        next();
+    });
+
+    // game
+    page("/Games/:id", function (ctx, next) {
+        $("#backButton").show();
+        React.render(<Game id={ctx.params.id} />, document.body;)
+    });
+    page.exit("/Games/:id", function (ctx, next) {
+        React.unmountComponentAtNode(document.body);
+        next();
+    });
+
+    // fallback
+    page("*", function () {
+        alert("nothing found");
+    });
+
+    page({
+        hashbang: true
+    });
+});
 
 function FieldValidation(form) {
     var failures = $(form).find(".requiredField").filter(function (index, element) {
@@ -19,90 +65,4 @@ function FieldValidation(form) {
             return $(this).attr("name") + " is required";
         }).length;
     return failures == 0;
-}
-
-function ShowMainMenu() {
-    $("#backButton").hide();
-    $("#boardMenu").hide().empty();
-    $("#continueMenu").hide().empty();
-    $("#mainMenu").show();
-}
-
-function ShowBoardMenu() {
-    $("#mainMenu").hide();
-    $("#game").hide().empty();
-    $("#backButton").show();
-    $("#loading").show();
-
-    $.get("Boards", function (data) {
-        previousScreen = ShowMainMenu;
-        $("#loading").hide();
-        $("#boardMenu").append(data).show();
-        // add onclick handlers
-        $(document).ready(function() {
-            $(".board").click(function () {
-                NewGameDialog($(this));
-            });
-        });
-    });
-}
-
-function ShowContinueMenu() {
-    $("#mainMenu").hide();
-    $("#game").hide().empty();
-    $("#backButton").show();
-    $("#loading").show();
-    
-    $.get("Games", function (data) {
-        previousScreen = ShowMainMenu;
-        $("#loading").hide();
-        $("#continueMenu").append(data).show();
-    });
-}
-
-function NewGameDialog(boardTile) {
-    // set up dialog
-    $("#newGameDialogBoardId").val(boardTile.attr("boardId"));
-    $("#newGameDialogHeader").text(boardTile.attr("boardName"));
-    $("#newGameDialogBackground").css("background-image", "url('" + boardTile.attr("boardIcon") + "')");
-    $("#newGameDialogDescription").text(boardTile.attr("boardDescription"));
-    $("#newGameDialogName").val("");
-    $(".playerSelection").removeClass("active");
-    $(".playerSelectionDefault").trigger("click");
-    $("#newGameDialog").find(".requiredField").removeClass("error");
-
-    $("#newGameDialog").data("dialog").open();
-}
-
-function NewGame(newGameForm) {
-    if (FieldValidation(newGameForm)) {
-        $("#newGameDialog").data("dialog").close();
-        $("#mainMenu").hide();
-        $("#boardMenu").hide().empty();
-        $("#continueMenu").hide().empty();
-        $("#loading").show();
-
-        $.post("NewGame", $(newGameForm).serialize(), function (data) {
-            previousScreen = ShowContinueMenu;
-            SetupGame(data);
-            $("#loading").hide();
-            $("#game").show();
-        });
-    }
-
-    return false;
-}
-
-function LoadGame(gameId) {
-    $("#mainMenu").hide();
-    $("#boardMenu").hide().empty();
-    $("#continueMenu").hide().empty();
-    $("#loading").show();
-
-    $.get("Game/" + gameId, function (data) {
-        previousScreen = ShowContinueMenu;
-        SetupGame(data);
-        $("#loading").hide();
-        $("#game").show();
-    });
 }

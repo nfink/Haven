@@ -26,6 +26,11 @@ namespace HavenWebApp
 
             FormsAuthentication.Enable(this, formsAuthConfiguration);
 
+            Get["/Test"] = parameters =>
+            {
+                return View["Views/Admin/Home3.html"];
+            };
+
             Get["/"] = parameters =>
             {
                 return View["Views/Admin/Home.cshtml", Persistence.Connection.Table<Board>()];

@@ -20,6 +20,8 @@ namespace HavenWebApp
             nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("Admin/Content", @"Content"));
             nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("Admin/Fonts", @"Fonts"));
             nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("Admin/Scripts", @"Scripts"));
+            nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("Views", @"Views"));
+            nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("Templates", @"Templates"));
             base.ConfigureConventions(nancyConventions);
         }
 

@@ -3,7 +3,7 @@
 
 @foreach (Game game in @Model)
 {
-    <div class="tile fg-white bg-black" data-role="tile" onclick="LoadGame(@game.Id)">
+    <div class="tile fg-white bg-black" data-role="tile" onclick="page('/Games/' + @game.Id)">
         <div class="tile-content slide-down">
             <div class="slide">
                 <div style="width: 100%;" class="image-container image-format-square">
