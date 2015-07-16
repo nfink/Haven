@@ -16,7 +16,7 @@ namespace HavenWebApp
             string userGuid = identifier.ToString();
             var user = Persistence.Connection.Table<User>().Where(x => x.Guid == userGuid).FirstOrDefault();
 
-            return user == null ? null : new PlayerIdentity() { UserName = user.Username };
+            return user == null ? null : new PlayerIdentity() { UserName = user.Id.ToString() };
         }
 
         public static Guid? ValidateUser(string username, string password)

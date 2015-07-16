@@ -40,16 +40,10 @@ var NewGameDialog = React.createClass({
         return {numberOfPlayers: 2, numberOfPlayerOptions: [2, 3, 4, 5, 6], name: "", error: false};
     },
     open: function () {
-        // metro ui does something silly when creating so we have to wait for the dialog to be ready before opening
-        if ($(React.findDOMNode(this)).data('dialog') == undefined) {
-            window.setTimeout(this.open, 10);
-        }
-        else {
-            $(React.findDOMNode(this)).data('dialog').open();
-        }
+        OpenDialog(this);
     },
     close: function () {
-        $(React.findDOMNode(this)).data('dialog').close();
+        CloseDialog(this);
         this.setState(this.getInitialState());
     },
     selectPlayerCount: function (event) {

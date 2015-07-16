@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SQLite;
+using Newtonsoft.Json;
 
 namespace Haven
 {
@@ -16,7 +17,16 @@ namespace Haven
 
         public string Name { get; set; }
 
+        [JsonIgnore]
         public string Password { get; set; }
+
+        public bool PasswordSet
+        {
+            get
+            {
+                return this.Password != null;
+            }
+        }
 
         public int PieceId { get; set; }
 
@@ -64,11 +74,20 @@ namespace Haven
             }
         }
 
+        //[JsonIgnore]
+        //public IEnumerable<Message> Messages
+        //{
+        //    get
+        //    {
+        //        return Persistence.Connection.Table<Message>().Where(x => x.PlayerId == this.Id);
+        //    }
+        //}
+
         public IEnumerable<Message> Messages
         {
             get
             {
-                return Persistence.Connection.Table<Message>().Where(x => x.PlayerId == this.Id);
+                return this.RecentMessages(10);
             }
         }
 

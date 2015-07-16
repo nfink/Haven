@@ -8,41 +8,46 @@ $(function () {
     // set up routing
     // main menu
     page('/', function () {
-        $("#backButton").hide();
-        React.render(<GameMainMenu />, document.body);
+        React.render(<AdminHome />, document.getElementById("content"));
     });
     page.exit("/", function (ctx, next) {
-        React.unmountComponentAtNode(document.body);
+        React.unmountComponentAtNode(document.getElementById("content"));
         next();
     });
 
-    // new game menu
-    page("/Boards", function () {
-        $("#backButton").show();
-        React.render(<BoardsMenu />, document.body);
-    });
-    page.exit("/Boards", function (ctx, next) {
-        React.unmountComponentAtNode(document.body);
-        next();
-    });
-
-    // continue game menu
+    // games menu
     page("/Games", function () {
-        $("#backButton").show();
-        React.render(<GamesMenu />, document.body)
+        React.render(<AdminGames />, document.getElementById("content"))
     });
     page.exit("/Games", function (ctx, next) {
-        React.unmountComponentAtNode(document.body);
+        React.unmountComponentAtNode(document.getElementById("content"));
+        next();
+    });
+
+    // boards menu
+    page("/Boards", function () {
+        React.render(<AdminBoards />, document.getElementById("content"));
+    });
+    page.exit("/Boards", function (ctx, next) {
+        React.unmountComponentAtNode(document.getElementById("content"));
         next();
     });
 
     // game
     page("/Games/:id", function (ctx, next) {
-        $("#backButton").show();
-        React.render(<Game id={ctx.params.id} />, document.body;)
+        React.render(<Game id={ctx.params.id} />, document.getElementById("content"));
     });
     page.exit("/Games/:id", function (ctx, next) {
-        React.unmountComponentAtNode(document.body);
+        React.unmountComponentAtNode(document.getElementById("content"));
+        next();
+    });
+
+    // board editor
+    page("/Boards/:id", function (ctx, next) {
+        React.render(<EditBoard id={ctx.params.id} />, document.getElementById("content"));
+    });
+    page.exit("/Boards/:id", function (ctx, next) {
+        React.unmountComponentAtNode(document.getElementById("content"));
         next();
     });
 
@@ -54,6 +59,7 @@ $(function () {
     page({
         hashbang: true
     });
+    //page();
 });
 
 function FieldValidation(form) {

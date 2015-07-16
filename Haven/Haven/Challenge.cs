@@ -14,6 +14,8 @@ namespace Haven
 
         public int BoardId { get; set; }
 
+        public int ChallengeCategoryId { get; set; }
+
         public string Question { get; set; }
 
         public IEnumerable<ChallengeAnswer> Answers

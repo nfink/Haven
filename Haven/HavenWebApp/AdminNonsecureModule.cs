@@ -10,11 +10,11 @@ namespace HavenWebApp
 {
     public class AdminNonsecureModule : NancyModule
     {
-        public AdminNonsecureModule() : base("/Admin")
+        public AdminNonsecureModule()
         {
             Get["/Login"] = parameters =>
             {
-                return View["Views/Admin/Login.cshtml"];
+                return View["Views/Login.cshtml"];
             };
 
             Post["/Login"] = parameters =>
@@ -33,7 +33,7 @@ namespace HavenWebApp
 
             Get["/Logout"] = parameters =>
             {
-                return this.Logout("~/Admin/Login");
+                return this.Logout("~/Login");
             };
         }
     }

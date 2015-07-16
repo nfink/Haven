@@ -137,27 +137,49 @@ namespace Haven
             {
                 switch (this.Type)
                 {
-                    case SpaceType.Recall:
-                        return "mif-books";
                     case SpaceType.Challenge:
                         return this.NameCard.Image.Filepath;
-                    case SpaceType.ExchangePlaces:
-                        return "mif-loop2";
-                    case SpaceType.OptionalTurnAround:
-                        return "mif-undo";
-                    case SpaceType.RollToGo:
-                        return "mif-dice";
                     case SpaceType.SafeHaven:
                         return this.SafeHavenCard.Image.Filepath;
-                    case SpaceType.TurnAround:
-                        return "mif-undo";
-                    case SpaceType.War:
-                        return "mife-fire";
                     default:
-                        return this.Type.ToString();
+                        return null;
                 }
             }
         }
+
+        public string Icon
+        {
+            get
+            {
+                switch (this.Type)
+                {
+                    case SpaceType.Recall:
+                        return "mif-books";
+                    case SpaceType.Challenge:
+                        return "mif-question";
+                    case SpaceType.ExchangePlaces:
+                        return "mif-loop2";
+                    case SpaceType.OptionalTurnAround:
+                        return "mif-tab";
+                    case SpaceType.RollToGo:
+                        return "mif-dice";
+                    case SpaceType.SafeHaven:
+                        return "mif-home";
+                    case SpaceType.TurnAround:
+                        return "mif-undo";
+                    case SpaceType.War:
+                        return "mif-fire";
+                    default:
+                        return null;
+                }
+            }
+        }
+
+        [Ignore]
+        public Space PreviousSpace { get; set; }
+
+        [Ignore]
+        public Space NextSpace { get; set; }
 
         public void OnLand(Player player)
         {

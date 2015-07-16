@@ -11,12 +11,12 @@ var GamesMenu = React.createClass({
         }
         else {
             return (
-                <div className="tile-container padding10" style={{width: "680px", margin: "auto"}}>
+                <div className="tile-container padding10">
                     {this.state.games.length < 1 ?
                         <div className="header">No games in progress</div>
                         :
                         this.state.games.map(function(item, index){
-                            return <GamesMenu.Tile game={item} key={index} />;
+                            return <GamesMenu.Tile game={item} key={item.Id} />;
                         }, this)
                     }
                 </div>

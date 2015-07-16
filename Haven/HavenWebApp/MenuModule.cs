@@ -26,20 +26,30 @@ namespace HavenWebApp
                 DataLoad.LoadTables();
             }
 
-            Get["/"] = parameters =>
-            {
-                return View["Views/Haven.cshtml"];
-            };
+            //Get["/"] = parameters =>
+            //{
+            //    return View["Views/Haven.cshtml"];
+            //};
 
-            Get["/Boards"] = parameters =>
-            {
-                return JsonConvert.SerializeObject(Persistence.Connection.Table<Board>().Where(x => x.Active));
-            };
+            //Get["/Boards"] = parameters =>
+            //{
+            //    return JsonConvert.SerializeObject(Persistence.Connection.Table<Board>().Where(x => x.Active));
+            //};
 
-            Get["/Games"] = parameters =>
-            {
-                return JsonConvert.SerializeObject(Persistence.Connection.Table<Game>());
-            };
+            //Get["/Games"] = parameters =>
+            //{
+            //    return JsonConvert.SerializeObject(Persistence.Connection.Table<Game>());
+            //};
+
+            //Get["/Pieces"] = parameters =>
+            //{
+            //    return JsonConvert.SerializeObject(Piece.Pieces);
+            //};
+
+            //Get["/Colors"] = parameters =>
+            //{
+            //    return JsonConvert.SerializeObject(Color.Colors);
+            //};
         }
     }
 }

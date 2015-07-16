@@ -2,7 +2,7 @@
 /// <reference path="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js" />
 /// <reference path="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js" />
 
-var BoardsMenu = React.createClass({
+var NewGameMenu = React.createClass({
     render: function () {
         if (this.state.boards === null) {
             return (
@@ -12,9 +12,9 @@ var BoardsMenu = React.createClass({
         else {
             return (
                 <div>
-                    <div className="tile-container padding10" style={{width: "680px", margin: "auto"}}>
+                    <div className="tile-container padding10">
                         {this.state.boards.map(function(item, index){
-                            return <BoardsMenu.Tile board={item} key={index} />;
+                            return <NewGameMenu.Tile board={item} key={item.Id} />;
                         }, this)}
                     </div>
                     <div id="newGameDialog"></div>
@@ -32,14 +32,14 @@ var BoardsMenu = React.createClass({
     },
 });
 
-BoardsMenu.Tile = React.createClass({
+NewGameMenu.Tile = React.createClass({
     render: function () {
         return (
-            <SubMenuTile title={this.props.board.Name} description={this.props.board.Description} image={this.props.board.Image.Filepath} onClick={this.newGameDialog} />
+            <SubMenuTile title={this.props.board.Name} description={this.props.board.Description} image={this.props.board.Image.Filepath} disabled={!this.props.board.Active} onClick={this.newGameDialog} />
         );
     },
     newGameDialog: function () {
         var dialog = React.render(<NewGameDialog title={this.props.board.Name} description={this.props.board.Description} image={this.props.board.Image.Filepath} boardId={this.props.board.Id} />, document.getElementById("newGameDialog"));
-    dialog.open();
+        dialog.open();
     },
 });

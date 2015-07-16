@@ -14,42 +14,101 @@ namespace HavenWebApp
 {
     public class AdminModule : NancyModule
     {
-        public AdminModule(IRootPathProvider pathProvider) : base("/Admin")
+        public AdminModule(IRootPathProvider pathProvider)
         {
 
             var formsAuthConfiguration =
                 new FormsAuthenticationConfiguration()
                 {
-                    RedirectUrl = "~/Admin/Login",
+                    RedirectUrl = "~/Login",
                     UserMapper = new UserMapper(),
                 };
 
             FormsAuthentication.Enable(this, formsAuthConfiguration);
 
-            Get["/Test"] = parameters =>
-            {
-                return View["Views/Admin/Home3.html"];
-            };
-
             Get["/"] = parameters =>
             {
-                return View["Views/Admin/Home.cshtml", Persistence.Connection.Table<Board>()];
+                return View["Views/Haven.cshtml"];
             };
 
-            Get["/Board/{id}"] = parameters =>
+            Get["/Pieces"] = parameters =>
+            {
+                return JsonConvert.SerializeObject(Piece.Pieces);
+            };
+
+            Get["/Colors"] = parameters =>
+            {
+                return JsonConvert.SerializeObject(Color.Colors);
+            };
+
+            Get["/Games"] = parameters =>
+            {
+                var userId = int.Parse(this.Context.CurrentUser.UserName);
+                return JsonConvert.SerializeObject(Persistence.Connection.Table<Game>().Where(x => x.OwnerId == userId));
+            };
+
+            Post["/Games"] = parameters =>
+            {
+                var game = Game.NewGame((int)this.Request.Form.BoardId, (int)this.Request.Form.NumberOfPlayers);
+                game.Name = (string)this.Request.Form.Name;
+                Persistence.Connection.Update(game);
+                return JsonConvert.SerializeObject(game);
+            };
+
+            Get["/Boards"] = parameters =>
+            {
+                var userId = int.Parse(this.Context.CurrentUser.UserName);
+                return JsonConvert.SerializeObject(Persistence.Connection.Table<Board>().Where(x => x.OwnerId == userId));
+            };
+
+            Get["/Boards/{id}"] = parameters =>
+            {
+                var userId = int.Parse(this.Context.CurrentUser.UserName);
+                var boardId = (int)parameters.id;
+                var board = Persistence.Connection.Table<Board>().Where(x => (x.Id == boardId) && (x.OwnerId == userId)).FirstOrDefault();
+                if (board != null)
+                {
+                    return JsonConvert.SerializeObject(board);
+                }
+                else
+                {
+                    return new HtmlResponse(HttpStatusCode.NotFound);
+                }
+            };
+
+            Get["/Boards/{id}/Validation"] = parameters =>
+            {
+                var userId = int.Parse(this.Context.CurrentUser.UserName);
+                var boardId = (int)parameters.id;
+                var board = Persistence.Connection.Table<Board>().Where(x => (x.Id == boardId) && (x.OwnerId == userId)).FirstOrDefault();
+                if (board != null)
+                {
+                    return JsonConvert.SerializeObject(board.Validate());
+                }
+                else
+                {
+                    return new HtmlResponse(HttpStatusCode.NotFound);
+                }
+            };
+
+
+
+
+
+            Get["/{username}/Boards/{id}"] = parameters =>
             {
                 var board = Persistence.Connection.Get<Board>((int)parameters.id);
                 return View["Views/Admin/BoardDialog.cshtml", board];
             };
 
-            Get["/Board/Edit"] = parameters =>
+            Get["/{username}/Boards/{id}/Edit"] = parameters =>
             {
                 var boardId = (int)this.Request.Query.BoardId;
                 var board = Persistence.Connection.Get<Board>(boardId);
                 return View["Views/Admin/EditBoard.cshtml", board];
             };
 
-            Post["/Board/Edit"] = parameters =>
+            Post["/{username}/Boards/{id}/Edit"] = parameters =>
             {
                 var boardId = (int)this.Request.Form.Id;
                 var board = Persistence.Connection.Get<Board>(boardId);
@@ -66,13 +125,13 @@ namespace HavenWebApp
                 return View["Views/Admin/EditBoardDetails.cshtml", board];
             };
 
-            Post["/Board/New"] = parameters =>
+            Post["/{username}/Boards"] = parameters =>
             {
                 var board = new Board() { Active = false };
                 return View["Views/Admin/EditBoard.cshtml", board];
             };
 
-            Delete["/Board"] = parameters =>
+            Delete["/{username}/Boards/{id}"] = parameters =>
             {
                 var boardId = (int)this.Request.Query.BoardId;
                 var board = Persistence.Connection.Get<Board>(boardId);
@@ -80,7 +139,7 @@ namespace HavenWebApp
                 return new HtmlResponse(HttpStatusCode.OK);
             };
 
-            Get["/Space/Edit"] = parameters =>
+            Get["/{username}/Spaces/{id}/Edit"] = parameters =>
             {
                 var spaceId = (int)this.Request.Query.SpaceId;
                 Space space;
@@ -99,7 +158,7 @@ namespace HavenWebApp
                 return View["Views/Admin/EditSpace.cshtml", space];
             };
 
-            Post["/Space/Edit"] = parameters =>
+            Post["/{username}/Spaces/{id}/Edit"] = parameters =>
             {
                 var space = this.Bind<Space>();
 
@@ -180,14 +239,14 @@ namespace HavenWebApp
                 return View["Views/Space.cshtml", space];
             };
 
-            Delete["/Space/{id}"] = parameters =>
+            Delete["/{username}/Spaces/{id}"] = parameters =>
             {
                 var space = Persistence.Connection.Get<Space>((int)parameters.id);
                 space.Delete();
                 return new HtmlResponse(HttpStatusCode.OK);
             };
 
-            Get["/Challenge/Edit"] = parameters =>
+            Get["/{username}/Challenges/{id}/Edit"] = parameters =>
             {
                 var challengeId = (int)this.Request.Query.ChallengeId;
                 Challenge challenge;
@@ -205,7 +264,7 @@ namespace HavenWebApp
                 return View["Views/Admin/EditChallenge.cshtml", challenge];
             };
 
-            Post["/Challenge/Edit"] = parameters =>
+            Post["/{username}/Challenges/{id}/Edit"] = parameters =>
             {
                 var challenge = this.Bind<Challenge>();
                 if (challenge.Id == 0)
@@ -228,7 +287,7 @@ namespace HavenWebApp
                 return View["Views/Admin/Challenge.cshtml", challenge];
             };
 
-            Delete["/Challenge/{id}"] = parameters =>
+            Delete["/{username}/Challenges/{id}"] = parameters =>
             {
                 var challenge = Persistence.Connection.Get<Challenge>((int)parameters.id);
                 challenge.Delete();

@@ -53,7 +53,7 @@ namespace Haven.Data
         public void LoadBoard()
         {
             this.Connection.CreateTable<Board>();
-            this.Connection.Insert(new Board() { Id = 1, Name = "Genesis", Description = "Covers the book of Genesis", ImageId = 17, Active = true,
+            this.Connection.Insert(new Board() { Id = 1, OwnerId = 1, Name = "Genesis", Description = "Covers the book of Genesis", ImageId = 17, Active = true,
                 MessageAreaWidth = 7, MessageAreaHeight = 3, MessageAreaX = 2, MessageAreaY = 2,
                 StatusAreaWidth = 7, StatusAreaHeight = 4, StatusAreaX = 2, StatusAreaY = 5});
         }
@@ -61,9 +61,16 @@ namespace Haven.Data
         public void LoadChallenge()
         {
             this.Connection.CreateTable<Challenge>();
-            this.Connection.Insert(new Challenge() { Id = 1, Question = "Test Question 1", BoardId = 1 });
-            this.Connection.Insert(new Challenge() { Id = 2, Question = "Test Question 2", BoardId = 1 });
-            this.Connection.Insert(new Challenge() { Id = 3, Question = "Test Question 3", BoardId = 1 });
+            this.Connection.Insert(new Challenge() { Id = 1, Question = "Test Question 1", BoardId = 1, ChallengeCategoryId = 1 });
+            this.Connection.Insert(new Challenge() { Id = 2, Question = "Test Question 2", BoardId = 1, ChallengeCategoryId = 1 });
+            this.Connection.Insert(new Challenge() { Id = 3, Question = "Test Question 3", BoardId = 1, ChallengeCategoryId = 2 });
+        }
+
+        public void LoadChallengeCategory()
+        {
+            this.Connection.CreateTable<ChallengeCategory>();
+            this.Connection.Insert(new ChallengeCategory() { Id = 1, Name = "Category 1", OwnerId = 1 });
+            this.Connection.Insert(new ChallengeCategory() { Id = 2, Name = "Category 2", OwnerId = 1 });
         }
 
         public void LoadChallengeAnswer()
@@ -283,7 +290,7 @@ namespace Haven.Data
         public void LoadUser()
         {
             this.Connection.CreateTable<User>();
-            var testUser = new User() { Username = "test", Guid = Guid.NewGuid().ToString() };
+            var testUser = new User() { Id = 1, Username = "test", Guid = Guid.NewGuid().ToString() };
             testUser.SetPassword("password");
             this.Connection.Insert(testUser);
         }

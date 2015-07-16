@@ -12,6 +12,8 @@ namespace Haven
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
+        public int OwnerId { get; set; }
+
         public string Name { get; set; }
 
         public IEnumerable<Player> Players
@@ -40,6 +42,7 @@ namespace Haven
         {
             var game = new Game();
             game.BoardId = boardId;
+            game.OwnerId = Persistence.Connection.Get<Board>(boardId).OwnerId;
             Persistence.Connection.Insert(game);
 
             int firstSpaceId = Persistence.Connection.Query<Space>("select [Id] from [Space] where [Order]=(select min([Order]) from [Space] where BoardId=?) and BoardId=?", game.BoardId, game.BoardId).First().Id;

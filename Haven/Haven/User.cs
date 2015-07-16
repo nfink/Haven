@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SQLite;
+using Newtonsoft.Json;
 
 namespace Haven
 {
@@ -16,6 +17,7 @@ namespace Haven
 
         public string Username { get; set; }
 
+        [JsonIgnore]
         public string Password { get; set; }
 
         public void SetPassword(string password)

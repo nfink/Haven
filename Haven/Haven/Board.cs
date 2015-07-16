@@ -12,6 +12,8 @@ namespace Haven
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
+        public int OwnerId { get; set; }
+
         public string Name { get; set; }
 
         public string Description { get; set; }
@@ -47,6 +49,22 @@ namespace Haven
                 return Persistence.Connection.Table<Space>().Where(x => x.BoardId == this.Id);
             }
         }
+
+        //public IEnumerable<Space> Spaces
+        //{
+        //    get
+        //    {
+        //        var spaces = Persistence.Connection.Table<Space>().Where(x => x.BoardId == this.Id);
+        //        var orderedSpaces = spaces.OrderBy(x => x.Order).ToList();
+        //        for (int i = 0; i < orderedSpaces.Count; i++)
+        //        {
+        //            orderedSpaces[i].NextSpace = orderedSpaces[(i + 1) % orderedSpaces.Count];
+        //            orderedSpaces[i].PreviousSpace = (i > 0 ? orderedSpaces[(i - 1) % (orderedSpaces.Count - 1)] : orderedSpaces[orderedSpaces.Count - 1]);
+                    
+        //        }
+        //        return orderedSpaces;
+        //    }
+        //}
 
         public IEnumerable<NameCard> NameCards
         {
@@ -97,6 +115,28 @@ namespace Haven
             int endLocation = (((startLocation + movement) % spaces.Count) + spaces.Count) % spaces.Count;
             return spaces[endLocation];
         }
+
+        //public IEnumerable<Space> GetMovementSequence(int startSpaceId, int spacesToMove, bool direction)
+        //{
+        //    var spaceSequence = new List<Space>();
+        //    var spaces = this.Spaces;
+        //    var space = spaces.Where(x => x.Id == startSpaceId).First();
+
+        //    for (int i = 0; i < spacesToMove; i++ )
+        //    {
+        //        if (direction)
+        //        {
+        //            space = space.NextSpace;
+        //        }
+        //        else
+        //        {
+        //            space = space.PreviousSpace;
+        //        }
+        //        spaceSequence.Add(space);
+        //    }
+
+        //    return spaceSequence;
+        //}
 
         public void Delete()
         {
@@ -203,7 +243,7 @@ namespace Haven
             var challengesWithoutCorrectAnswer = challenges.Where(x => x.Answers.Where(y => y.Correct).Count() < 1);
             if (challengesWithoutCorrectAnswer.Count() > 0)
             {
-                validation.Errors.Add(string.Format("{0}/{1} challenges with a correct anwser", challenges.Count() - challengesWithoutCorrectAnswer.Count(), challenges.Count()));
+                validation.Errors.Add(string.Format("{0}/{1} challenges with a correct answer", challenges.Count() - challengesWithoutCorrectAnswer.Count(), challenges.Count()));
             }
             // warn if there aren't very many challenges
             var recommendedChallenges = 10 + (challengeSpaces.Count() * 5);

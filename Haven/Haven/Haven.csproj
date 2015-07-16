@@ -62,6 +62,7 @@
     <Compile Include="Actions\ReadRecallAction.cs" />
     <Compile Include="Challenge.cs" />
     <Compile Include="ChallengeAnswer.cs" />
+    <Compile Include="ChallengeCategory.cs" />
     <Compile Include="Color.cs" />
     <Compile Include="Data\DataLoad.cs" />
     <Compile Include="Actions\ReciteRecallAction.cs" />
