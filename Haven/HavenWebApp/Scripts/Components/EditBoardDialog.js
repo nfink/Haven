@@ -10,13 +10,14 @@ var OpenBoardDialog = React.createClass({
                 <div className="padding20">
                     <h2>{this.props.board.Name}</h2>
                     <p>{this.props.board.Description}</p>
-                    <form onSubmit={this.editBoard} method="get" action="Admin/Board/Edit">
+                    <form onSubmit={this.editBoard}>
                         <div className="padding10">
                             {this.errors()}
                             {this.warnings()}
                         </div>
                         <div>
                             <button className="button" type="submit">Edit</button>
+                            <button className="button" type="button">Delete</button>
                             <button className="button" type="button" onClick={this.close}>Cancel</button>
                         </div>
                     </form>
@@ -36,18 +37,7 @@ var OpenBoardDialog = React.createClass({
     errors: function () {
         if ((this.state.validation != null) && (this.state.validation.Errors.length > 0)) {
             return (
-                <div className="panel alert">
-                    <div className="heading">
-                        <span className="title">Error</span>
-                    </div>
-                    <div className="content">
-                        <ul className="simple-list">
-                            {this.state.validation.Errors.map(function(item, index){
-                                return <li key={index}>{item}</li>
-                            }, this)}
-                        </ul>
-                    </div>
-                </div>
+                <ErrorPanel errors={this.state.validation.Errors} />
             );
         }
         else {
@@ -57,18 +47,7 @@ var OpenBoardDialog = React.createClass({
     warnings: function () {
         if ((this.state.validation != null) && (this.state.validation.Warnings.length > 0)) {
             return (
-                <div className="panel warning">
-                    <div className="heading">
-                        <span className="title">Warning</span>
-                    </div>
-                    <div className="content">
-                        <ul className="simple-list">
-                            {this.state.validation.Warnings.map(function(item, index){
-                                return <li key={index}>{item}</li>
-                            }, this)}
-                        </ul>
-                    </div>
-                </div>
+                <WarningPanel warnings={this.state.validation.Warnings} />
             );
         }
         else {

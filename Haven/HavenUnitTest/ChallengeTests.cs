@@ -21,7 +21,7 @@ namespace HavenUnitTest
         }
 
         [Test]
-        public void Delete()
+        public void DeleteChallenge()
         {
             // add test challenges
             var challenge1 = new Challenge() { Question = "Test Question 1" };

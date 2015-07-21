@@ -24,6 +24,7 @@ namespace Haven.Data
             this.LoadNameCard();
             this.LoadSafeHavenCard();
             this.LoadBibleVerse();
+            this.LoadChallengeCategory();
             this.LoadChallenge();
             this.LoadChallengeAnswer();
             this.LoadColor();
@@ -61,16 +62,9 @@ namespace Haven.Data
         public void LoadChallenge()
         {
             this.Connection.CreateTable<Challenge>();
-            this.Connection.Insert(new Challenge() { Id = 1, Question = "Test Question 1", BoardId = 1, ChallengeCategoryId = 1 });
-            this.Connection.Insert(new Challenge() { Id = 2, Question = "Test Question 2", BoardId = 1, ChallengeCategoryId = 1 });
-            this.Connection.Insert(new Challenge() { Id = 3, Question = "Test Question 3", BoardId = 1, ChallengeCategoryId = 2 });
-        }
-
-        public void LoadChallengeCategory()
-        {
-            this.Connection.CreateTable<ChallengeCategory>();
-            this.Connection.Insert(new ChallengeCategory() { Id = 1, Name = "Category 1", OwnerId = 1 });
-            this.Connection.Insert(new ChallengeCategory() { Id = 2, Name = "Category 2", OwnerId = 1 });
+            this.Connection.Insert(new Challenge() { Id = 1, Question = "Test Question 1", BoardId = 1, ChallengeCategoryId = 1, OwnerId = 1 });
+            this.Connection.Insert(new Challenge() { Id = 2, Question = "Test Question 2", BoardId = 1, ChallengeCategoryId = 1, OwnerId = 1 });
+            this.Connection.Insert(new Challenge() { Id = 3, Question = "Test Question 3", BoardId = 1, ChallengeCategoryId = 2, OwnerId = 1 });
         }
 
         public void LoadChallengeAnswer()
@@ -88,6 +82,13 @@ namespace Haven.Data
             this.Connection.Insert(new ChallengeAnswer() { Answer = "Test Answer 3b", Correct = true, ChallengeId = 3 });
             this.Connection.Insert(new ChallengeAnswer() { Answer = "Test Answer 3c", Correct = false, ChallengeId = 3 });
             this.Connection.Insert(new ChallengeAnswer() { Answer = "Test Answer 3d", Correct = false, ChallengeId = 3 });
+        }
+
+        public void LoadChallengeCategory()
+        {
+            this.Connection.CreateTable<ChallengeCategory>();
+            this.Connection.Insert(new ChallengeCategory() { Id = 1, Name = "Category 1", OwnerId = 1 });
+            this.Connection.Insert(new ChallengeCategory() { Id = 2, Name = "Category 2", OwnerId = 1 });
         }
 
         public void LoadColor()

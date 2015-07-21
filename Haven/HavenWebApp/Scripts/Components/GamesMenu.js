@@ -13,7 +13,7 @@ var GamesMenu = React.createClass({
             return (
                 <div className="tile-container padding10">
                     {this.state.games.length < 1 ?
-                        <div className="header">No games in progress</div>
+                        <div>No games in progress</div>
                         :
                         this.state.games.map(function(item, index){
                             return <GamesMenu.Tile game={item} key={item.Id} />;

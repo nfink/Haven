@@ -10,7 +10,7 @@ var PlayerPanel = React.createClass({
 
         return (
             <div className={"tile padding5" + (this.state.passwordEntered ? " bg-olive" : " ribbed-olive") + (this.props.selected ? " element-selected" : "")} onClick={this.selectPlayer} style={{width: "auto", height: "auto"}}>
-                <form onSubmit={this.enterPassword} method="post" action="Authenticate">
+                <form onSubmit={this.enterPassword}>
                     <div className={"playerName password iconic" + (this.state.error ? " error" : "")} data-role="input">
                         <input type="password" ref="passwordField" value={this.state.passwordEntered ? "" : this.state.password} onChange={this.handlePasswordChange} style={{display: (this.state.passwordEntered ? "none" : "block" )}} />
                         <span className="playerNameLabel">{name}</span>

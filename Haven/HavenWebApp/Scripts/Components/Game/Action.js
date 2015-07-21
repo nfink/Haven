@@ -10,7 +10,7 @@ var Action = React.createClass({
     render: function () {
         return (
             <div className="padding5" style={{display: (this.props.password === null ? "none" : "block")}}>
-                <form onSubmit={this.performAction} method="post" action="PerformAction">
+                <form onSubmit={this.performAction}>
                     {this.renderInput()}
                 </form>
             </div>

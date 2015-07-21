@@ -13,9 +13,13 @@ var NewGameMenu = React.createClass({
             return (
                 <div>
                     <div className="tile-container padding10">
-                        {this.state.boards.map(function(item, index){
-                            return <NewGameMenu.Tile board={item} key={item.Id} />;
-                        }, this)}
+                        {this.state.boards.length < 1 ?
+                            <div>No boards have been created</div>
+                            :
+                            this.state.boards.map(function(item, index){
+                                return <NewGameMenu.Tile board={item} key={item.Id} />;
+                            }, this)
+                        }
                     </div>
                     <div id="newGameDialog"></div>
                 </div>

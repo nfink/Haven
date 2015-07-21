@@ -24,15 +24,6 @@ $(function () {
         next();
     });
 
-    // boards menu
-    page("/Boards", function () {
-        React.render(<AdminBoards />, document.getElementById("content"));
-    });
-    page.exit("/Boards", function (ctx, next) {
-        React.unmountComponentAtNode(document.getElementById("content"));
-        next();
-    });
-
     // game
     page("/Games/:id", function (ctx, next) {
         React.render(<Game id={ctx.params.id} />, document.getElementById("content"));
@@ -42,11 +33,29 @@ $(function () {
         next();
     });
 
+    // boards menu
+    page("/Boards", function () {
+        React.render(<AdminBoards />, document.getElementById("content"));
+    });
+    page.exit("/Boards", function (ctx, next) {
+        React.unmountComponentAtNode(document.getElementById("content"));
+        next();
+    });
+
     // board editor
     page("/Boards/:id", function (ctx, next) {
         React.render(<EditBoard id={ctx.params.id} />, document.getElementById("content"));
     });
     page.exit("/Boards/:id", function (ctx, next) {
+        React.unmountComponentAtNode(document.getElementById("content"));
+        next();
+    });
+
+    // questions menu
+    page("/Questions", function () {
+        React.render(<AdminQuestions />, document.getElementById("content"));
+    });
+    page.exit("/Questions", function (ctx, next) {
         React.unmountComponentAtNode(document.getElementById("content"));
         next();
     });

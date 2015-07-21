@@ -10,7 +10,7 @@ var NewGameDialog = React.createClass({
                 <div className="padding20">
                     <h2>{this.props.title}</h2>
                     <p>{this.props.description}</p>
-                    <form onSubmit={this.newGame} method="get" action="NewGame">
+                    <form onSubmit={this.newGame}>
                         <input name="BoardId" value={this.props.boardId} type="hidden" />
                         <input name="NumberOfPlayers" value={this.state.numberOfPlayers} type="hidden" />
                         <div>

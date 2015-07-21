@@ -28,7 +28,7 @@ namespace HavenUnitTest
         }
 
         [Test]
-        public void Delete()
+        public void DeleteGame()
         {
             // create games with players and used challenges
             var game1 = CreateGameData();

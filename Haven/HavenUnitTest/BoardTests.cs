@@ -23,7 +23,7 @@ namespace HavenUnitTest
         }
 
         [Test]
-        public void Delete()
+        public void DeleteBoard()
         {
             // create some boards and associated data
             var board1 = CreateBoardData();

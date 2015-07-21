@@ -7,7 +7,7 @@ using SQLite;
 
 namespace Haven
 {
-    public class ChallengeCategory
+    public class ChallengeCategory : IDeletable
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
@@ -15,5 +15,14 @@ namespace Haven
         public string Name { get; set; }
 
         public int OwnerId { get; set; }
+
+        public void Delete()
+        {
+            // delete category
+            Persistence.Connection.Delete<Challenge>(this.Id);
+
+            // remove links from any challeneges
+            Persistence.Connection.Execute("update Challenge set ChallengeCategoryId=0 where ChallengeCategoryId=?", this.Id);
+        }
     }
 }

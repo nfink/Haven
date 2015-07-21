@@ -21,7 +21,7 @@ namespace HavenUnitTest
         }
 
         [Test]
-        public void Delete()
+        public void DeleteSpace()
         {
             // create spaces
             var space1 = new Space();

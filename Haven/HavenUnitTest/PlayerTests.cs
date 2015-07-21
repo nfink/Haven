@@ -44,7 +44,7 @@ namespace HavenUnitTest
         }
 
         [Test]
-        public void Delete()
+        public void DeletePlayer()
         {
             // create players with actions, cards, and messages
             var player1 = CreatePlayerData();

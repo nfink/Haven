@@ -91,6 +91,53 @@ namespace HavenWebApp
                 }
             };
 
+            Post["/Boards/{id}/Edit"] = parameters =>
+            {
+                var userId = int.Parse(this.Context.CurrentUser.UserName);
+                var boardId = (int)parameters.id;
+                var board = Persistence.Connection.Table<Board>().Where(x => (x.Id == boardId) && (x.OwnerId == userId)).FirstOrDefault();
+                if (board != null)
+                {
+                    board.Name = (string)this.Request.Form.Name;
+                    board.Description = (string)this.Request.Form.Description;
+                    var imageFile = this.Request.Files.FirstOrDefault();
+                    var image = this.UpdateImage(pathProvider, board.Image, imageFile);
+                    if (image != null)
+                    {
+                        board.ImageId = image.Id;
+                    }
+                    Persistence.Connection.Update(board);
+
+                    return JsonConvert.SerializeObject(board);
+                }
+                else
+                {
+                    return new HtmlResponse(HttpStatusCode.NotFound);
+                }
+            };
+
+            Get["/Challenges"] = parameters =>
+            {
+                var userId = int.Parse(this.Context.CurrentUser.UserName);
+                return JsonConvert.SerializeObject(Persistence.Connection.Table<Challenge>().Where(x => x.OwnerId == userId));
+            };
+
+
+            Delete["/Challenges/{id}"] = parameters =>
+            {
+                var challenge = Persistence.Connection.Get<Challenge>((int)parameters.id);
+                challenge.Delete();
+                return new HtmlResponse(HttpStatusCode.OK);
+            };
+
+
+            Get["/ChallengeCategories"] = parameters =>
+            {
+                var userId = int.Parse(this.Context.CurrentUser.UserName);
+                return JsonConvert.SerializeObject(Persistence.Connection.Table<ChallengeCategory>().Where(x => x.OwnerId == userId));
+            };
+
+
 
 
 

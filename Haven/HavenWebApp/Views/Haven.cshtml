@@ -14,7 +14,10 @@
     <link href="/Content/Game.css" rel="stylesheet">
     <link href="/Content/Haven.css" rel="stylesheet">
     <script type="text/jsx" src="~/Scripts/Components/Dialog.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/DeleteDialog.js"></script>
+    <script type="text/jsx" src="~/Scripts/Components/ConfirmationDialog.js"></script>
+    <script type="text/jsx" src="~/Scripts/Components/ErrorPanel.js"></script>
+    <script type="text/jsx" src="~/Scripts/Components/WarningPanel.js"></script>
+    <script type="text/jsx" src="~/Scripts/Components/LoadingButton.js"></script>
     <script type="text/jsx" src="~/Scripts/Components/MainMenuTile.js"></script>
     <script type="text/jsx" src="~/Scripts/Components/MainMenu.js"></script>
     <script type="text/jsx" src="~/Scripts/Components/SubMenuTile.js"></script>
@@ -26,6 +29,7 @@
     <script type="text/jsx" src="~/Scripts/Components/EditBoardDialog.js"></script>
     <script type="text/jsx" src="~/Scripts/Components/IconSelector.js"></script>
     <script type="text/jsx" src="~/Scripts/Components/ColorSelector.js"></script>
+    <script type="text/jsx" src="~/Scripts/Components/ImageSelector.js"></script>
     <script type="text/jsx" src="~/Scripts/Components/Game/Space.js"></script>
     <script type="text/jsx" src="~/Scripts/Components/Game/Board.js"></script>
     <script type="text/jsx" src="~/Scripts/Components/Game/Game.js"></script>
@@ -38,6 +42,8 @@
     <script type="text/jsx" src="~/Scripts/Components/Admin/AdminGames.js"></script>
     <script type="text/jsx" src="~/Scripts/Components/Admin/AdminBoards.js"></script>
     <script type="text/jsx" src="~/Scripts/Components/Board/EditBoard.js"></script>
+    <script type="text/jsx" src="~/Scripts/Components/Admin/AdminQuestions.js"></script>
+    <!--<script type="text/jsx" src="~/Scripts/Components/Board/EditSpace.js"></script>-->
     <script type="text/jsx" src="~/Scripts/Menu.js"></script>
     <script src="/Scripts/Game.js"></script>
     <meta name="viewport" content="width=device-width" />
@@ -52,7 +58,7 @@
             <li><a href="/Games">Games</a></li>
             <li><a href="">Statistics</a></li>
             <li><a href="/Boards">Boards</a></li>
-            <li><a href="">Questions</a></li>
+            <li><a href="/Questions">Questions</a></li>
         </ul>
         <ul class="app-bar-menu place-right">
             <li>
@@ -64,6 +70,7 @@
             </li>
         </ul>
     </div>
+    <div class="padding10"></div>
     <div id="content"></div>
 </body>
 </html>
