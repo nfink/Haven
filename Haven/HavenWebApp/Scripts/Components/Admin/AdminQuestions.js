@@ -18,6 +18,7 @@ var AdminQuestions = React.createClass({
                         <div className="row cells2">
                             <div className="cell">
                                 <div className="listview-outlook" data-role="listview">
+                                    {this.uncategorizedQuestions()}
                                     {this.state.categories.map(function(item, index){
                                         return (
                                             <div className="list-group" key={item.Id}>
@@ -62,6 +63,22 @@ var AdminQuestions = React.createClass({
                 <AdminQuestions.QuestionListItem challenge={item} categories={this.state.categories} updateCallback={this.componentDidMount.bind(this)} key={item.Id} />
             );
         }, this);
+    },
+    uncategorizedQuestions () {
+        var uncategorized = this.questionsInCategory(0, this.state.challenges);
+        if (uncategorized.length > 0) {
+            return (
+                <div className="list-group">
+                    <span className="list-group-toggle">Uncategorized</span>
+                    <div className="list-group-content">
+		                {uncategorized}
+	                </div>
+                </div>
+            );
+        }
+        else {
+            return null;
+        }
     },
     addCategory: function () {
     
@@ -124,7 +141,7 @@ AdminQuestions.EditChallenge = React.createClass({
                 <div>
                     {this.state.answers.map(function(item, index){
                         return (
-                            <AdminQuestions.EditAnswer answer={item.Answer} correct={item.Correct} key={item.Id} id={item.Id} onRemove={this.removeAnswer} />
+                            <AdminQuestions.EditAnswer answer={item} key={item.Id} onRemove={this.removeAnswer} />
                         );
                     }, this)}
                 </div>
@@ -147,8 +164,44 @@ AdminQuestions.EditChallenge = React.createClass({
     save: function (event) {
         event.preventDefault();
         this.refs.saveButton.showLoading();
-        // ajax stuff
-        // saveButton.hideLoading();
+
+        if (this.props.challenge.Id) {
+            $.ajax({
+                url: "/Challenges/" + this.props.challenge.Id,
+                method: "PUT",
+                data:
+                {
+                    Name: this.state.name,
+                    ChallengeCategoryId: this.state.category,
+                    Question: this.state.question,
+                    Answers: JSON.stringify(this.state.answers),
+                },
+                success: function () {
+                    this.refs.saveButton.hideLoading();
+                    this.props.updateCallback();
+                }.bind(this)
+            })
+            .fail(function (data) {
+                this.refs.saveButton.hideLoading();
+            });
+        }
+        else {
+            $.post("/Challenges",
+                {
+                    Name: this.state.name,
+                    ChallengeCategoryId: this.state.category,
+                    Question: this.state.question,
+                    Answers: JSON.stringify(this.state.answers),
+                },
+                function (data) {
+                    this.refs.saveButton.hideLoading();
+                    this.props.updateCallback();
+                }.bind(this)
+            )
+            .fail(function (data) {
+                this.refs.saveButton.hideLoading();
+            });
+        }
     },
     handleDelete: function () {
         var dialog = React.render(<DeleteDialog action={this.deleteChallenge} />, document.getElementById("deleteDialog"));
@@ -206,10 +259,10 @@ AdminQuestions.EditAnswer = React.createClass({
                     <span className="mif-minus"></span>
                 </button>
                 <div className="input-control text" style={{marginLeft: 5}}>
-                    <input type="text" value={this.state.answer} placeholder="Enter answer here..." onChange={this.handleAnswerInput} />
+                    <input type="text" value={this.state.answer.Answer} placeholder="Enter answer here..." onChange={this.handleAnswerInput} />
                 </div>
                 <label className="input-control checkbox" style={{marginLeft: 5}}>
-                    <input type="checkbox" checked={this.state.correct} onChange={this.handleCorrectInput} />
+                    <input type="checkbox" checked={this.state.answer.Correct} onChange={this.handleCorrectInput} />
                     <span className="check"></span>
                     <span className="caption">Correct</span>
                 </label>
@@ -217,15 +270,17 @@ AdminQuestions.EditAnswer = React.createClass({
         );
     },
     getInitialState: function () {
-        return {answer: this.props.answer ? this.props.answer : "", correct: this.props.correct ? this.props.correct : false };
+        return {answer: this.props.answer};
     },
     onRemove: function () {
         this.props.onRemove(this.props.id);
     },
     handleAnswerInput: function (event) {
-        this.setState({answer: event.target.value});
+        this.state.answer.Answer = event.target.value;
+        this.setState({answer: answer});
     },
     handleCorrectInput: function (event) {
-        this.setState({correct: !this.state.correct});
+        this.state.answer.Correct = !this.state.answer.Correct;
+        this.setState({answer: answer});
     }
 });
