@@ -40,3 +40,10 @@
 .colorSelect:hover {
     border-color: #787878;
 }
+.comboBoxItem:hover {
+    background-color: #F0F0F0;
+    cursor: pointer;
+}
+.comboBoxItem.selected {
+    background-color: #F0F0F0;
+}

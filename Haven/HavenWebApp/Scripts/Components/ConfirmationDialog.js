@@ -29,7 +29,7 @@ var ConfirmationDialog = React.createClass({
 var DeleteDialog = React.createClass({
     render: function () {
         return (
-            <ConfirmationDialog text="Are you sure you want to delete?" action={this.props.action} />
+            <ConfirmationDialog text={this.props.text ? this.props.text : "Are you sure you want to delete?"} action={this.props.action} />
         );
     },
     open: function () {

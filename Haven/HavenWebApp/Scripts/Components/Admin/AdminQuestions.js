@@ -12,8 +12,7 @@ var AdminQuestions = React.createClass({
         else {
             return (
                 <div className="container page-content">
-                    <button className="image-button primary" onClick={this.addCategory}>Add new category<span className="icon mif-folder-plus bg-darkCobalt"></span></button>
-                    <button className="image-button primary" onClick={this.addQuestion} style={{marginLeft: 10}}>Add new question<span className="icon mif-plus bg-darkCobalt"></span></button>
+                    <button className="image-button primary" onClick={this.addQuestion}>Add new question<span className="icon mif-plus bg-darkCobalt"></span></button>
                     <div className="grid padding10 bg-white">
                         <div className="row cells2">
                             <div className="cell">
@@ -22,9 +21,13 @@ var AdminQuestions = React.createClass({
                                     {this.state.categories.map(function(item, index){
                                         return (
                                             <div className="list-group" key={item.Id}>
-                                                <span className="list-group-toggle">{item.Name}</span>
+                                                <div className="list-group-toggle" >
+                                                    <span >{item.Name}</span>
+                                                </div>
+                                                <button onClick={function () {this.handleDeleteCategory(item.Id);}.bind(this)} className="cycle-button mini-button" type="button" style={{position: "absolute", width: "1.2rem", height: "1.2rem", top: -1, right: 10}}><span className="mif-cross fg-red"></span></button>
+                                                <button onClick={function () {this.handleEditCategory(item.Id);}.bind(this)} className="cycle-button mini-button" type="button" style={{position: "absolute", width: "1.2rem", height: "1.2rem", top: -1, right: 34}}><span className="mif-pencil"></span></button>
                                                 <div className="list-group-content">
-			                                        {this.questionsInCategory(item.Id, this.state.challenges)}
+			                                        {this.questionsInCategory(item.Id)}
 		                                        </div>
                                             </div>
                                         );
@@ -54,8 +57,8 @@ var AdminQuestions = React.createClass({
             this.setState({categories: categories});
         }.bind(this));
     },
-    questionsInCategory (categoryId, challenges) {
-        return challenges.filter(function (value) {
+    questionsInCategory (categoryId) {
+        return this.state.challenges.filter(function (value) {
             return value.ChallengeCategoryId === categoryId;
         })
         .map(function (item, index) {
@@ -65,7 +68,7 @@ var AdminQuestions = React.createClass({
         }, this);
     },
     uncategorizedQuestions () {
-        var uncategorized = this.questionsInCategory(0, this.state.challenges);
+        var uncategorized = this.questionsInCategory(0);
         if (uncategorized.length > 0) {
             return (
                 <div className="list-group">
@@ -80,8 +83,29 @@ var AdminQuestions = React.createClass({
             return null;
         }
     },
-    addCategory: function () {
-    
+    handleEditCategory: function (categoryId) {
+        alert("not implemented");
+    },
+    handleDeleteCategory: function (categoryId) {
+        var dialogMessage;
+        if (this.questionsInCategory(categoryId).length > 0) {
+            dialogMessage = "All questions in this category will become uncategorized. Are you sure you want to delete?";
+        }
+        var dialog = React.render(<DeleteDialog action={function () {this.deleteCategory(categoryId)}.bind(this)} text={dialogMessage} />, document.getElementById("deleteDialog"));
+        dialog.open();
+    },
+    deleteCategory: function (categoryId) {
+        React.unmountComponentAtNode(document.getElementById("deleteDialog"));
+        $.ajax({
+            url: "/ChallengeCategories/" + categoryId,
+            method: "DELETE",
+            success: function () {
+                this.componentDidMount();
+            }.bind(this)
+        })
+        .fail(function (data) {
+            alert("failed to delete");
+        });
     },
     addQuestion: function () {
         React.unmountComponentAtNode(document.getElementById("editChallenge"));
@@ -120,18 +144,7 @@ AdminQuestions.EditChallenge = React.createClass({
                     <input id="challengeName" type="text" value={this.state.name} placeholder="Enter name here..." onChange={this.handleNameChange} />
                 </div>
                 <br />
-                <label htmlFor="challengeCategory">Category:</label>
-                <div className="input-control select" style={{marginLeft: 5}}>
-                    <select id="challengeCategory" value={this.state.category} onChange={this.handleCategoryChange}>
-                        <option value="0" key="0">None</option>
-                        {this.props.categories.map(function(item, index){
-                            return (
-                                <option value={item.Id} key={item.Id}>{item.Name}</option>
-                            );
-                        }, this)}
-                    </select>
-                </div>
-                <br />
+                <ComboBox ref="challengeCategory" label="Category:" value={this.state.category} options={this.categories()} />
                 <label htmlFor="challengeQuestion">Question:</label>
                 <div className="input-control text" style={{marginLeft: 5}}>
                     <input id="challengeQuestion" type="text" value={this.state.question} placeholder="Enter question here..." onChange={this.handleQuestionChange} />
@@ -159,7 +172,18 @@ AdminQuestions.EditChallenge = React.createClass({
             item.Id = answerId;
             answerId++;
         });
-        return {name: challenge ? challenge.Name : "", category: challenge ? challenge.ChallengeCategoryId : 0, question: challenge ? challenge.Question : "", answers: challenge ? challenge.Answers : [], nextAnswerId: answerId};
+        // determine category name
+        var category = this.props.categories.filter(function(value) {
+                return value.Id === challenge.ChallengeCategoryId;
+            })
+            .map(function (item, index) {
+                return item.Name;
+            })[0];
+
+        return {name: challenge ? challenge.Name : "", category: category, question: challenge ? challenge.Question : "", answers: challenge ? challenge.Answers : [], nextAnswerId: answerId};
+    },
+    categories: function () {
+        return this.props.categories.map(function(item, index){return item.Name;});
     },
     save: function (event) {
         event.preventDefault();
@@ -172,7 +196,7 @@ AdminQuestions.EditChallenge = React.createClass({
                 data:
                 {
                     Name: this.state.name,
-                    ChallengeCategoryId: this.state.category,
+                    Category: this.refs.challengeCategory.value(),
                     Question: this.state.question,
                     Answers: JSON.stringify(this.state.answers),
                 },
@@ -183,13 +207,13 @@ AdminQuestions.EditChallenge = React.createClass({
             })
             .fail(function (data) {
                 this.refs.saveButton.hideLoading();
-            });
+            }.bind(this));
         }
         else {
             $.post("/Challenges",
                 {
                     Name: this.state.name,
-                    ChallengeCategoryId: this.state.category,
+                    Category: this.refs.challengeCategory.value(),
                     Question: this.state.question,
                     Answers: JSON.stringify(this.state.answers),
                 },
@@ -200,7 +224,7 @@ AdminQuestions.EditChallenge = React.createClass({
             )
             .fail(function (data) {
                 this.refs.saveButton.hideLoading();
-            });
+            }.bind(this));
         }
     },
     handleDelete: function () {
@@ -242,9 +266,6 @@ AdminQuestions.EditChallenge = React.createClass({
     },
     handleNameChange: function (event) {
         this.setState({name: event.target.value});
-    },
-    handleCategoryChange: function (event) {
-        this.setState({category: event.target.value});
     },
     handleQuestionChange: function (event) {
         this.setState({question: event.target.value});

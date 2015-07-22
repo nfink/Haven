@@ -19,7 +19,7 @@ namespace Haven
         public void Delete()
         {
             // delete category
-            Persistence.Connection.Delete<Challenge>(this.Id);
+            Persistence.Connection.Delete<ChallengeCategory>(this.Id);
 
             // remove links from any challeneges
             Persistence.Connection.Execute("update Challenge set ChallengeCategoryId=0 where ChallengeCategoryId=?", this.Id);

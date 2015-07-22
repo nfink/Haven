@@ -97,6 +97,7 @@
     <Content Include="Scripts\Components\Board\EditBoardDetails.js" />
     <Content Include="Scripts\Components\Board\EditSpace.js" />
     <Content Include="Scripts\Components\ColorSelector.js" />
+    <Content Include="Scripts\Components\ComboBox.js" />
     <Content Include="Scripts\Components\ConfirmationDialog.js" />
     <Content Include="Scripts\Components\Dialog.js" />
     <Content Include="Scripts\Components\EditBoardDialog.js" />

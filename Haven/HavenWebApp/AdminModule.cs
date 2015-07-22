@@ -126,6 +126,7 @@ namespace HavenWebApp
             {
                 var challenge = this.Bind<Challenge>();
                 challenge.OwnerId = int.Parse(this.Context.CurrentUser.UserName);
+                challenge.ChallengeCategoryId = this.GetCategoryId((string)this.Request.Form.Category);
                 Persistence.Connection.Insert(challenge);
 
                 var answers = JsonConvert.DeserializeObject<IEnumerable<ChallengeAnswer>>((string)this.Request.Form.Answers);
@@ -143,9 +144,9 @@ namespace HavenWebApp
                 var challengeId = (int)parameters.id;
                 var challenge = Persistence.Connection.Get<Challenge>(challengeId);
                 challenge.Name = (string)this.Request.Form.Name;
-                challenge.ChallengeCategoryId = (int)this.Request.Form.ChallengeCategoryId;
                 challenge.Question = (string)this.Request.Form.Question;
                 challenge.OwnerId = int.Parse(this.Context.CurrentUser.UserName);
+                challenge.ChallengeCategoryId = this.GetCategoryId((string)this.Request.Form.Category);
                 Persistence.Connection.Update(challenge);
                 Persistence.Connection.Execute("delete from ChallengeAnswer where ChallengeId=?", challenge.Id);
 
@@ -173,6 +174,12 @@ namespace HavenWebApp
                 return JsonConvert.SerializeObject(Persistence.Connection.Table<ChallengeCategory>().Where(x => x.OwnerId == userId));
             };
 
+            Delete["/ChallengeCategories/{id}"] = parameters =>
+            {
+                var challengeCategory = Persistence.Connection.Get<ChallengeCategory>((int)parameters.id);
+                challengeCategory.Delete();
+                return new HtmlResponse(HttpStatusCode.OK);
+            };
 
 
 
@@ -401,6 +408,29 @@ namespace HavenWebApp
             }
 
             return image;
+        }
+
+        private int GetCategoryId(string categoryName)
+        {
+            if (string.IsNullOrWhiteSpace(categoryName))
+            {
+                return 0;
+            }
+            else
+            {
+                var userId = int.Parse(this.Context.CurrentUser.UserName);
+                var category = Persistence.Connection.Table<ChallengeCategory>().Where(x => (x.OwnerId == userId) && (x.Name == categoryName)).FirstOrDefault();
+                if (category == null)
+                {
+                    category = new ChallengeCategory() { Name = categoryName, OwnerId = userId };
+                    Persistence.Connection.Insert(category);
+                    return category.Id;
+                }
+                else
+                {
+                    return category.Id;
+                }
+            }
         }
     }
 }
