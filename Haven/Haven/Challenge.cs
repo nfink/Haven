@@ -16,8 +16,6 @@ namespace Haven
 
         public int OwnerId { get; set; }
 
-        public string Name { get; set; }
-
         public int ChallengeCategoryId { get; set; }
 
         public string Question { get; set; }

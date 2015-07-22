@@ -12,7 +12,7 @@ var AdminQuestions = React.createClass({
         else {
             return (
                 <div className="container page-content">
-                    <button className="image-button primary" onClick={this.addQuestion}>Add new question<span className="icon mif-plus bg-darkCobalt"></span></button>
+                    <button className="image-button primary" onClick={this.addCategory}>Add new category<span className="icon mif-folder-plus bg-darkCobalt"></span></button>
                     <div className="grid padding10 bg-white">
                         <div className="row cells2">
                             <div className="cell">
@@ -24,8 +24,8 @@ var AdminQuestions = React.createClass({
                                                 <div className="list-group-toggle" >
                                                     <span >{item.Name}</span>
                                                 </div>
-                                                <button onClick={function () {this.handleDeleteCategory(item.Id);}.bind(this)} className="cycle-button mini-button" type="button" style={{position: "absolute", width: "1.2rem", height: "1.2rem", top: -1, right: 10}}><span className="mif-cross fg-red"></span></button>
-                                                <button onClick={function () {this.handleEditCategory(item.Id);}.bind(this)} className="cycle-button mini-button" type="button" style={{position: "absolute", width: "1.2rem", height: "1.2rem", top: -1, right: 34}}><span className="mif-pencil"></span></button>
+                                                <button onClick={function () {this.handleEditCategory(item);}.bind(this)} className="cycle-button mini-button" type="button" style={{position: "absolute", width: "1.2rem", height: "1.2rem", top: -1, right: 10}}><span className="mif-pencil"></span></button>
+                                                <button onClick={function () {this.addQuestion(item.Id);}.bind(this)} className="cycle-button mini-button" type="button" style={{position: "absolute", width: "1.2rem", height: "1.2rem", top: -1, right: 34}}><span className="mif-plus"></span></button>
                                                 <div className="list-group-content">
 			                                        {this.questionsInCategory(item.Id)}
 		                                        </div>
@@ -73,6 +73,7 @@ var AdminQuestions = React.createClass({
             return (
                 <div className="list-group">
                     <span className="list-group-toggle">Uncategorized</span>
+                    <button onClick={function () {this.addQuestion(0);}.bind(this)} className="cycle-button mini-button" type="button" style={{position: "absolute", width: "1.2rem", height: "1.2rem", top: -1, right: 10}}><span className="mif-plus"></span></button>
                     <div className="list-group-content">
 		                {uncategorized}
 	                </div>
@@ -83,34 +84,19 @@ var AdminQuestions = React.createClass({
             return null;
         }
     },
-    handleEditCategory: function (categoryId) {
-        alert("not implemented");
-    },
-    handleDeleteCategory: function (categoryId) {
-        var dialogMessage;
-        if (this.questionsInCategory(categoryId).length > 0) {
-            dialogMessage = "All questions in this category will become uncategorized. Are you sure you want to delete?";
-        }
-        var dialog = React.render(<DeleteDialog action={function () {this.deleteCategory(categoryId)}.bind(this)} text={dialogMessage} />, document.getElementById("deleteDialog"));
-        dialog.open();
-    },
-    deleteCategory: function (categoryId) {
-        React.unmountComponentAtNode(document.getElementById("deleteDialog"));
-        $.ajax({
-            url: "/ChallengeCategories/" + categoryId,
-            method: "DELETE",
-            success: function () {
-                this.componentDidMount();
-            }.bind(this)
-        })
-        .fail(function (data) {
-            alert("failed to delete");
-        });
-    },
-    addQuestion: function () {
+    handleEditCategory: function (category) {
         React.unmountComponentAtNode(document.getElementById("editChallenge"));
-        var challenge = { Id: 0, Name: "", ChallengeCategoryId: 0, Question: "", Answers: []}
+        React.render(<AdminQuestions.EditCategory category={category} updateCallback={this.componentDidMount.bind(this)} />, document.getElementById("editChallenge"));
+    },
+    addQuestion: function (categoryId) {
+        React.unmountComponentAtNode(document.getElementById("editChallenge"));
+        var challenge = { Id: 0, Name: "", ChallengeCategoryId: categoryId, Question: "", Answers: []}
         React.render(<AdminQuestions.EditChallenge challenge={challenge} categories={this.state.categories} updateCallback={this.componentDidMount.bind(this)} />, document.getElementById("editChallenge"));
+    },
+    addCategory: function () {
+        React.unmountComponentAtNode(document.getElementById("editChallenge"));
+        var category = { Id: 0, Name: "" };
+        React.render(<AdminQuestions.EditCategory category={category} updateCallback={this.componentDidMount.bind(this)} />, document.getElementById("editChallenge"));
     }
 });
 
@@ -120,8 +106,8 @@ AdminQuestions.QuestionListItem = React.createClass({
         return (
             <div className="list" onClick={this.select}>
                 <div className="list-content">
-                    <span className="list-title">{this.props.challenge.Name}</span>
-                    <span className="list-subtitle">{this.props.challenge.Question}</span>
+                    <span className="list-title">{this.props.challenge.Question}</span>
+                    <span className="list-subtitle"></span>
                     {this.props.challenge.Answers.map(function(item, index){
                         return (<span className="list-remark" key={item.Id}>{"• " + item.Answer}</span>);
                     })}
@@ -139,11 +125,6 @@ AdminQuestions.EditChallenge = React.createClass({
     render: function () {
         return (
             <form onSubmit={this.save}>
-                <label htmlFor="challengeName">Name:</label>
-                <div className="input-control text" style={{marginLeft: 5}}>
-                    <input id="challengeName" type="text" value={this.state.name} placeholder="Enter name here..." onChange={this.handleNameChange} />
-                </div>
-                <br />
                 <ComboBox ref="challengeCategory" label="Category:" value={this.state.category} options={this.categories()} />
                 <label htmlFor="challengeQuestion">Question:</label>
                 <div className="input-control text" style={{marginLeft: 5}}>
@@ -180,7 +161,7 @@ AdminQuestions.EditChallenge = React.createClass({
                 return item.Name;
             })[0];
 
-        return {name: challenge ? challenge.Name : "", category: category, question: challenge ? challenge.Question : "", answers: challenge ? challenge.Answers : [], nextAnswerId: answerId};
+        return {category: category, question: challenge ? challenge.Question : "", answers: challenge ? challenge.Answers : [], nextAnswerId: answerId};
     },
     categories: function () {
         return this.props.categories.map(function(item, index){return item.Name;});
@@ -195,7 +176,6 @@ AdminQuestions.EditChallenge = React.createClass({
                 method: "PUT",
                 data:
                 {
-                    Name: this.state.name,
                     Category: this.refs.challengeCategory.value(),
                     Question: this.state.question,
                     Answers: JSON.stringify(this.state.answers),
@@ -212,7 +192,6 @@ AdminQuestions.EditChallenge = React.createClass({
         else {
             $.post("/Challenges",
                 {
-                    Name: this.state.name,
                     Category: this.refs.challengeCategory.value(),
                     Question: this.state.question,
                     Answers: JSON.stringify(this.state.answers),
@@ -298,10 +277,85 @@ AdminQuestions.EditAnswer = React.createClass({
     },
     handleAnswerInput: function (event) {
         this.state.answer.Answer = event.target.value;
-        this.setState({answer: answer});
+        this.setState({answer: this.state.answer});
     },
     handleCorrectInput: function (event) {
         this.state.answer.Correct = !this.state.answer.Correct;
-        this.setState({answer: answer});
+        this.setState({answer: this.state.answer});
     }
+});
+
+AdminQuestions.EditCategory = React.createClass({
+    render: function () {
+        return (
+            <form onSubmit={this.save}>
+                <label htmlFor="categoryName">Name:</label>
+                <div className="input-control text" style={{marginLeft: 5}}>
+                    <input id="categoryName" type="text" value={this.state.name} placeholder="Enter category name here..." onChange={this.handleNameChange} />
+                </div>
+                <br />
+                <LoadingButton text="Save" ref="saveButton" />
+                {this.props.category.Id ? <LoadingButton text="Delete" ref="deleteButton" type="button" onClick={this.handleDelete} style={{marginLeft: 5}} /> : null}
+                <button className="button primary" type="button" onClick={this.close} style={{marginLeft: 5}}>Close</button>
+            </form>
+        );
+    },
+    getInitialState: function () {
+        return {name: this.props.category.Name};
+    },
+    close: function() {
+        React.unmountComponentAtNode(document.getElementById("editChallenge"));
+    },
+    handleNameChange: function (event) {
+        this.setState({name: event.target.value});
+    },
+    save: function (event) {
+        event.preventDefault();
+        this.refs.saveButton.showLoading();
+
+        if (this.props.category.Id) {
+            $.ajax({
+                url: "/ChallengeCategories/" + this.props.category.Id,
+                method: "PUT",
+                data:
+                {
+                    Name: this.state.name,
+                },
+                success: function () {
+                    this.refs.saveButton.hideLoading();
+                    this.props.updateCallback();
+                }.bind(this)
+            });
+        }
+        else {
+            $.post("/ChallengeCategories",
+                {
+                    Name: this.state.name,
+                },
+                function (data) {
+                    this.refs.saveButton.hideLoading();
+                    this.props.updateCallback();
+                }.bind(this)
+            );
+        }
+    },
+    handleDelete: function () {
+        var dialogMessage = "Any questions in this category will become uncategorized. Are you sure you want to delete?";
+        var dialog = React.render(<DeleteDialog action={function () {this.deleteCategory()}.bind(this)} text={dialogMessage} />, document.getElementById("deleteDialog"));
+        dialog.open();
+    },
+    deleteCategory: function () {
+        React.unmountComponentAtNode(document.getElementById("deleteDialog"));
+        $.ajax({
+            url: "/ChallengeCategories/" + this.props.category.Id,
+            method: "DELETE",
+            success: function () {
+                this.close();
+                this.props.updateCallback();
+            }.bind(this)
+        })
+        .fail(function (data) {
+            alert("failed to delete");
+        });
+    },
 });

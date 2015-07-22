@@ -5,7 +5,7 @@
 var AdminGames = React.createClass({
     render: function () {
         return (
-            <div className="container page-content">
+            <div className="container page-content bg-white padding10">
                 <div className="header">Games in progress</div>
                 <GamesMenu />
                 <div className="header">Create new game</div>

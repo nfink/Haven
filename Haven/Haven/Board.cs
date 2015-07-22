@@ -146,11 +146,8 @@ namespace Haven
                 space.Delete();
             }
 
-            // delete challenges
-            foreach (Challenge challenge in this.Challenges)
-            {
-                challenge.Delete();
-            }
+            // delete challenge links
+            Persistence.Connection.Execute("delete from BoardChallenge where BoardId=?", this.Id);
 
             // delete image
             if (this.ImageId != 0)

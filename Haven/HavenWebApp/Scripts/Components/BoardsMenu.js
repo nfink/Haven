@@ -47,11 +47,16 @@ var BoardsMenu = React.createClass({
 BoardsMenu.Tile = React.createClass({
     render: function () {
         return (
-            <SubMenuTile title={this.props.board.Name} description={this.props.board.Description} image={this.props.board.Image? this.props.board.Image.Filepath : null} onClick={this.editBoardDialog} />
+            <SubMenuTile title={this.props.board.Name} description={this.props.board.Description} image={this.props.board.Image? this.props.board.Image.Filepath : null} onClick={this.editBoard} />
         );
+    },
+    editBoard: function () {
+        $.get("Boards/" + this.props.board.Id, function (data) {
+            page("/Boards/" + JSON.parse(data).Id);
+        });
     },
     editBoardDialog: function () {
         var dialog = React.render(<OpenBoardDialog board={this.props.board} />, document.getElementById("editBoardDialog"));
         dialog.open();
-    },
+    }
 });

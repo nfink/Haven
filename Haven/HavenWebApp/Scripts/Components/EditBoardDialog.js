@@ -17,11 +17,12 @@ var OpenBoardDialog = React.createClass({
                         </div>
                         <div>
                             <button className="button" type="submit">Edit</button>
-                            <button className="button" type="button">Delete</button>
+                            <button className="button" type="button" onClick={this.handleDelete}>Delete</button>
                             <button className="button" type="button" onClick={this.close}>Cancel</button>
                         </div>
                     </form>
                 </div>
+                <div id="deleteBoardDialog"></div>
             </div>
         );
     },
@@ -68,4 +69,11 @@ var OpenBoardDialog = React.createClass({
             page("/Boards/" + JSON.parse(data).Id);
         });
     },
+    handleDelete: function () {
+        var dialog = React.render(<DeleteDialog action={this.deleteBoard} />, document.getElementById("deleteBoardDialog"));
+        dialog.open();
+    },
+    deleteBoard: function () {
+        alert('not implemented');
+    }
 });

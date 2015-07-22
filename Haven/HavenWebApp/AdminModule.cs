@@ -110,6 +110,22 @@ namespace HavenWebApp
                 }
             };
 
+            Delete["/Boards/{id}"] = parameters =>
+            {
+                var boardId = (int)parameters.id;
+                var userId = int.Parse(this.Context.CurrentUser.UserName);
+                var board = Persistence.Connection.Table<Board>().Where(x => (x.Id == boardId) && (x.OwnerId == userId)).FirstOrDefault();
+                if (board != null)
+                {
+                    board.Delete();
+                    return new HtmlResponse(HttpStatusCode.OK);
+                }
+                else
+                {
+                    return new HtmlResponse(HttpStatusCode.NotFound);
+                }
+            };
+
             Post["/Boards/{id}/Challenges"] = parameters =>
             {
                 var userId = int.Parse(this.Context.CurrentUser.UserName);
@@ -179,7 +195,6 @@ namespace HavenWebApp
                 var challenge = Persistence.Connection.Table<Challenge>().Where(x => (x.Id == challengeId) && (x.OwnerId == userId)).FirstOrDefault();
                 if (challenge != null)
                 {
-                    challenge.Name = (string)this.Request.Form.Name;
                     challenge.Question = (string)this.Request.Form.Question;
                     challenge.OwnerId = userId;
                     challenge.ChallengeCategoryId = this.GetCategoryId((string)this.Request.Form.Category);
@@ -223,6 +238,31 @@ namespace HavenWebApp
                 return JsonConvert.SerializeObject(Persistence.Connection.Table<ChallengeCategory>().Where(x => x.OwnerId == userId));
             };
 
+            Post["/ChallengeCategories"] = parameters =>
+            {
+                var challengeCategory = this.Bind<ChallengeCategory>();
+                challengeCategory.OwnerId = int.Parse(this.Context.CurrentUser.UserName);
+                Persistence.Connection.Insert(challengeCategory);
+                return JsonConvert.SerializeObject(challengeCategory);
+            };
+
+            Put["/ChallengeCategories/{id}"] = parameters =>
+            {
+                var challengeCategoryId = (int)parameters.id;
+                var userId = int.Parse(this.Context.CurrentUser.UserName);
+                var challengeCategory = Persistence.Connection.Table<ChallengeCategory>().Where(x => (x.Id == challengeCategoryId) && (x.OwnerId == userId)).FirstOrDefault();
+                if (challengeCategory != null)
+                {
+                    challengeCategory.Name = (string)this.Request.Form.Name;
+                    Persistence.Connection.Update(challengeCategory);
+                    return JsonConvert.SerializeObject(challengeCategory);
+                }
+                else
+                {
+                    return new HtmlResponse(HttpStatusCode.NotFound);
+                }
+            };
+
             Delete["/ChallengeCategories/{id}"] = parameters =>
             {
                 var challengeCategoryId = (int)parameters.id;
@@ -242,50 +282,6 @@ namespace HavenWebApp
 
 
 
-
-            Get["/{username}/Boards/{id}"] = parameters =>
-            {
-                var board = Persistence.Connection.Get<Board>((int)parameters.id);
-                return View["Views/Admin/BoardDialog.cshtml", board];
-            };
-
-            Get["/{username}/Boards/{id}/Edit"] = parameters =>
-            {
-                var boardId = (int)this.Request.Query.BoardId;
-                var board = Persistence.Connection.Get<Board>(boardId);
-                return View["Views/Admin/EditBoard.cshtml", board];
-            };
-
-            Post["/{username}/Boards/{id}/Edit"] = parameters =>
-            {
-                var boardId = (int)this.Request.Form.Id;
-                var board = Persistence.Connection.Get<Board>(boardId);
-                board.Name = (string)this.Request.Form.Name;
-                board.Description = (string)this.Request.Form.Description;
-                var imageFile = this.Request.Files.FirstOrDefault();
-                var image = this.UpdateImage(pathProvider, board.Image, imageFile);
-                if (image != null)
-                {
-                    board.ImageId = image.Id;
-                }
-
-                Persistence.Connection.Update(board);
-                return View["Views/Admin/EditBoardDetails.cshtml", board];
-            };
-
-            Post["/{username}/Boards"] = parameters =>
-            {
-                var board = new Board() { Active = false };
-                return View["Views/Admin/EditBoard.cshtml", board];
-            };
-
-            Delete["/{username}/Boards/{id}"] = parameters =>
-            {
-                var boardId = (int)this.Request.Query.BoardId;
-                var board = Persistence.Connection.Get<Board>(boardId);
-                board.Delete();
-                return new HtmlResponse(HttpStatusCode.OK);
-            };
 
             Get["/{username}/Spaces/{id}/Edit"] = parameters =>
             {
@@ -381,7 +377,7 @@ namespace HavenWebApp
                 }
                 else
                 {
-                    Persistence.Connection.Update(space); 
+                    Persistence.Connection.Update(space);
                 }
 
                 return View["Views/Space.cshtml", space];
@@ -391,54 +387,6 @@ namespace HavenWebApp
             {
                 var space = Persistence.Connection.Get<Space>((int)parameters.id);
                 space.Delete();
-                return new HtmlResponse(HttpStatusCode.OK);
-            };
-
-            Get["/{username}/Challenges/{id}/Edit"] = parameters =>
-            {
-                var challengeId = (int)this.Request.Query.ChallengeId;
-                Challenge challenge;
-                if (challengeId == 0)
-                {
-                    var boardId = (int)this.Request.Query.BoardId;
-                    challenge = new Challenge() { BoardId = boardId };
-                }
-                else
-                {
-                    challenge = Persistence.Connection.Get<Challenge>(challengeId);
-                    
-                }
-
-                return View["Views/Admin/EditChallenge.cshtml", challenge];
-            };
-
-            Post["/{username}/Challenges/{id}/Edit"] = parameters =>
-            {
-                var challenge = this.Bind<Challenge>();
-                if (challenge.Id == 0)
-                {
-                    Persistence.Connection.Insert(challenge);
-                }
-                else
-                {
-                    Persistence.Connection.Update(challenge);
-                    Persistence.Connection.Execute("delete from ChallengeAnswer where ChallengeId=?", challenge.Id);
-                }
-
-                var answers = JsonConvert.DeserializeObject<IEnumerable<ChallengeAnswer>>((string)this.Request.Form.Answers);
-
-                foreach(ChallengeAnswer answer in answers)
-                {
-                    Persistence.Connection.Insert(new ChallengeAnswer() { ChallengeId = challenge.Id, Answer = answer.Answer, Correct = answer.Correct });
-                }
-
-                return View["Views/Admin/Challenge.cshtml", challenge];
-            };
-
-            Delete["/{username}/Challenges/{id}"] = parameters =>
-            {
-                var challenge = Persistence.Connection.Get<Challenge>((int)parameters.id);
-                challenge.Delete();
                 return new HtmlResponse(HttpStatusCode.OK);
             };
         }
@@ -493,5 +441,20 @@ namespace HavenWebApp
                 }
             }
         }
+
+        //private T GetObject<T>(int id)
+        //{
+        //    var userId = int.Parse(this.Context.CurrentUser.UserName);
+        //    var matchingObject = Persistence.Connection.Table<T>().Where(x => (x.Id == id) && (x.OwnerId == userId)).FirstOrDefault();
+        //    return matchingObject;
+        //    //    if (matchingObject != null)
+        //    //    {
+        //    //        return matchingObject;
+        //    //    }
+        //    //    else
+        //    //    {
+        //    //        return new HtmlResponse(HttpStatusCode.NotFound);
+        //    //    }
+        //}
     }
 }

@@ -71,9 +71,9 @@ namespace Haven.Data
         public void LoadChallenge()
         {
             this.Connection.CreateTable<Challenge>();
-            this.Connection.Insert(new Challenge() { Id = 1, Name = "Question 1", Question = "Test Question 1?", BoardId = 1, ChallengeCategoryId = 1, OwnerId = 1 });
-            this.Connection.Insert(new Challenge() { Id = 2, Name = "Question 2", Question = "Test Question 2?", BoardId = 1, ChallengeCategoryId = 1, OwnerId = 1 });
-            this.Connection.Insert(new Challenge() { Id = 3, Name = "Question 3", Question = "Test Question 3?", BoardId = 1, ChallengeCategoryId = 2, OwnerId = 1 });
+            this.Connection.Insert(new Challenge() { Id = 1, Question = "Test Question 1?", BoardId = 1, ChallengeCategoryId = 1, OwnerId = 1 });
+            this.Connection.Insert(new Challenge() { Id = 2, Question = "Test Question 2?", BoardId = 1, ChallengeCategoryId = 1, OwnerId = 1 });
+            this.Connection.Insert(new Challenge() { Id = 3, Question = "Test Question 3?", BoardId = 1, ChallengeCategoryId = 2, OwnerId = 1 });
         }
 
         public void LoadChallengeAnswer()

@@ -39,6 +39,7 @@ var EditBoard = React.createClass({
                                         </div>
                                         <br />
                                         <LoadingButton text="Save" ref="saveBoardButton" />
+                                        <LoadingButton text="Delete" className="button danger" type="button" onClick={this.handleDeleteBoard} ref="deleteBoardButton" style={{marginLeft: 5}}/>
                                     </form>
                                 </div>
                             </div>
@@ -55,6 +56,7 @@ var EditBoard = React.createClass({
                         </div>
                         <div className="padding10"></div>
                         <div id="editPane"></div>
+                        <div ref="dialog"></div>
                     </div>
                 </div>
             );
@@ -94,17 +96,21 @@ var EditBoard = React.createClass({
         return <div>{dummySpaces}</div>;
     },
     challengesList: function () {
+        var uncategorized = this.questionsInCategory(0);
         return (
             <form onSubmit={this.saveChallenges}>
                 <div className="treeview" data-role="treeview" ref="challengesTree">
                     <ul>
-                        <li className="node collapsed" data-mode="checkbox" key="0">
-                            <span className="leaf">Uncategorized</span>
-                            <span className="node-toggle"></span>
-                            <ul>
-                                {this.questionsInCategory(0)}
-                            </ul>
-                        </li>
+                        {uncategorized.length > 0 ?
+                            <li className="node collapsed" data-mode="checkbox" key="0">
+                                <span className="leaf">Uncategorized</span>
+                                <span className="node-toggle"></span>
+                                <ul>
+                                    {uncategorized}
+                                </ul>
+                            </li>
+                            :
+                            null}
                         {this.state.challengeCategories.map(function(item, index){
                             return (
                                 <li className="node collapsed" data-mode="checkbox" key={item.Id}>
@@ -130,7 +136,7 @@ var EditBoard = React.createClass({
 	    .map(function (item, index) {
 		    return (
 			    <li data-mode="checkbox" data-name={"challenge" + item.Id} data-checked={item.Id in this.state.boardChallenges} key={item.Id}>
-                    <span className="leaf">{item.Name}</span>
+                    <span className="leaf">{item.Question}</span>
                 </li>
 		    );
 	    }, this);
@@ -190,7 +196,7 @@ var EditBoard = React.createClass({
         }
         $.ajax({
             url: "/Boards/" + this.props.id,
-            type: 'PUT',
+            type: "PUT",
             data: formData,
             contentType: false,
             processData: false
@@ -212,6 +218,22 @@ var EditBoard = React.createClass({
                 this.refs.saveChallengesButton.hideLoading();
                 this.validate();
             }.bind(this));
+    },
+    handleDeleteBoard: function () {
+        var dialog = React.render(<DeleteDialog action={this.deleteBoard} />, React.findDOMNode(this.refs.dialog));
+        dialog.open();
+    },
+    deleteBoard: function () {
+        React.unmountComponentAtNode(React.findDOMNode(this.refs.dialog));
+        this.refs.deleteBoardButton.showLoading();
+        $.ajax({
+            url: "/Boards/" + this.props.id,
+            method: "DELETE",
+        })
+        .done(function () {
+            this.refs.saveBoardButton.hideLoading();
+            page("/Boards");
+        }.bind(this));
     }
 });
 
