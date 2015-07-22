@@ -87,6 +87,7 @@
     <None Include="Views\Actions.cshtml" />
     <Content Include="Content\Images\Go_Board_Empty_Square.jpg" />
     <Content Include="Content\Images\Go_Board_Full_Square.jpg" />
+    <Content Include="Content\Images\no_image.png" />
     <Content Include="Content\Images\Rembrandt_Harmensz_square.jpg" />
     <Content Include="Scripts\Components\Admin\AdminBoards.js" />
     <Content Include="Scripts\Components\Admin\AdminGames.js" />
@@ -94,7 +95,6 @@
     <Content Include="Scripts\Components\BoardsMenu.js" />
     <Content Include="Scripts\Components\Admin\AdminQuestions.js" />
     <Content Include="Scripts\Components\Board\EditBoard.js" />
-    <Content Include="Scripts\Components\Board\EditBoardDetails.js" />
     <Content Include="Scripts\Components\Board\EditSpace.js" />
     <Content Include="Scripts\Components\ColorSelector.js" />
     <Content Include="Scripts\Components\ComboBox.js" />

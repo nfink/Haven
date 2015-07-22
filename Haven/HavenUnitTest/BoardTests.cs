@@ -17,6 +17,7 @@ namespace HavenUnitTest
             // create necessary tables
             Persistence.Connection.CreateTable<Challenge>();
             Persistence.Connection.CreateTable<ChallengeAnswer>();
+            Persistence.Connection.CreateTable<BoardChallenge>();
             Persistence.Connection.CreateTable<Space>();
             Persistence.Connection.CreateTable<Image>();
             Persistence.Connection.CreateTable<Board>();
@@ -37,14 +38,14 @@ namespace HavenUnitTest
 
             // verify that associated data is deleted
             Assert.IsEmpty(Persistence.Connection.Table<Image>().Where(x => x.Id == board1.ImageId));
-            Assert.IsEmpty(Persistence.Connection.Table<Challenge>().Where(x => x.BoardId == board1.Id));
-            Assert.IsEmpty(Persistence.Connection.Table<Space>().Where(x => x.BoardId == board1.Id));
+            Assert.IsEmpty(board1.Challenges);
+            Assert.IsEmpty(board1.Spaces);
 
             // verify that other board data is not deleted
             Assert.IsNotEmpty(Persistence.Connection.Table<Board>().Where(x => x.Id == board2.Id));
             Assert.IsNotEmpty(Persistence.Connection.Table<Image>().Where(x => x.Id == board2.ImageId));
-            Assert.IsNotEmpty(Persistence.Connection.Table<Challenge>().Where(x => x.BoardId == board2.Id));
-            Assert.IsNotEmpty(Persistence.Connection.Table<Space>().Where(x => x.BoardId == board2.Id));
+            Assert.IsNotEmpty(board2.Challenges);
+            Assert.IsNotEmpty(board2.Spaces);
         }
 
         [Test]
@@ -136,8 +137,11 @@ namespace HavenUnitTest
             Persistence.Connection.Insert(board);
             Persistence.Connection.Insert(new Space() { BoardId = board.Id });
             Persistence.Connection.Insert(new Space() { BoardId = board.Id });
-            Persistence.Connection.Insert(new Challenge() { BoardId = board.Id });
-            Persistence.Connection.Insert(new Challenge() { BoardId = board.Id });
+            var challenge1 = new Challenge();
+            var challenge2 = new Challenge();
+            Persistence.Connection.InsertAll(new Challenge[] { challenge1, challenge2 });
+            Persistence.Connection.Insert(new BoardChallenge() { BoardId = board.Id, ChallengeId = challenge1.Id });
+            Persistence.Connection.Insert(new BoardChallenge() { BoardId = board.Id, ChallengeId = challenge2.Id });
             return board;
         }
     }

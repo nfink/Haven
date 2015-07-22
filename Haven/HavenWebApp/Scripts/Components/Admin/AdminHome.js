@@ -6,7 +6,7 @@ var AdminHome = React.createClass({
     render: function () {
         return (
             <div className="container page-content">
-                <div className="header">Welcome to Haven</div>
+                <div>not implemented</div>
             </div>
         );
     },

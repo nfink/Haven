@@ -94,7 +94,7 @@ namespace Haven
         {
             get
             {
-                return Persistence.Connection.Table<Challenge>().Where(x => x.BoardId == this.Id);
+                return Persistence.Connection.Query<Challenge>("select Challenge.* from Challenge join BoardChallenge on Challenge.Id=BoardChallenge.ChallengeId where BoardChallenge.BoardId=?", this.Id);
             }
         }
 

@@ -45,6 +45,7 @@ var NewGameDialog = React.createClass({
     close: function () {
         CloseDialog(this);
         this.setState(this.getInitialState());
+        React.unmountComponentAtNode(document.getElementById("newGameDialog"));
     },
     selectPlayerCount: function (event) {
         this.setState({numberOfPlayers: $(event.target).text()});

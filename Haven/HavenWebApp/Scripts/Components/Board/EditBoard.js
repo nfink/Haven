@@ -15,7 +15,7 @@ var EditBoard = React.createClass({
                     <div style={{width: 780, height: 780}}>
                         {this.dummySpaces()}
                         {this.state.board.Spaces.map(function(item, index){
-                            return <Board.Space space={item} key={index} />;
+                            return <EditBoard.Space space={item} key={index} />;
                         }, this)}
                     </div>
                     <div className="padding5" style={{flexGrow: 1}}>
@@ -23,7 +23,7 @@ var EditBoard = React.createClass({
                             <div className="frame">
                                 <div className="heading">Board<span className="icon mif-widgets"></span></div>
                                 <div className="content">
-                                    <form onSubmit={this.save}>
+                                    <form onSubmit={this.saveBoard}>
                                         <ImageSelector ref="imageSelector" image={(this.state.board.Image ? this.state.board.Image.Filepath : null)} />
                                         <br />
                                         <label htmlFor="boardName">Name:</label>
@@ -38,17 +38,19 @@ var EditBoard = React.createClass({
                                             <textarea id="boardDescription" value={this.state.description} onChange={this.handleDescriptionChange} />
                                         </div>
                                         <br />
-                                        <LoadingButton text="Save" ref="saveButton" />
+                                        <LoadingButton text="Save" ref="saveBoardButton" />
                                     </form>
                                 </div>
                             </div>
                             <div className="frame">
                                 <div className="heading">Challenges<span className="icon mif-question"></span></div>
-                                <div className="content">Frame content</div>
+                                <div className="content">
+                                    {(this.state.challenges !== null && this.state.challengeCategories !== null) ? this.challengesList() : <div data-role="preloader" data-type="metro" data-style="dark"></div>}
+                                </div>
                             </div>
                             <div className="frame">
                                 <div className="heading">Errors & Warnings<span className="icon mif-warning"></span></div>
-                                <div className="content">{this.validations()}</div>
+                                <div className="content">{this.state.validation !== null ? this.validations() : null}</div>
                             </div>
                         </div>
                         <div className="padding10"></div>
@@ -59,13 +61,25 @@ var EditBoard = React.createClass({
         }
     },
     getInitialState: function () {
-        return {board: null, validation: null, name: null, description: null};
+        return {board: null, validation: null, name: null, description: null, challenges: null, challengeCategories: null, boardChallenges: null};
     },
     componentDidMount: function () {
         $.get("Boards/" + this.props.id, function (data) {
             var board = JSON.parse(data);
-            this.setState({board: board, name: board.Name, description: board.Description});
+            var boardChallenges = {};
+            board.Challenges.forEach(function(item, index) {
+                boardChallenges[item.Id] = item;
+            });
+            this.setState({board: board, name: board.Name, description: board.Description, boardChallenges: boardChallenges});
             this.validate();
+        }.bind(this));
+        $.get("Challenges", function (data) {
+            var challenges = JSON.parse(data);
+            this.setState({challenges: challenges});
+        }.bind(this));
+        $.get("ChallengeCategories", function (data) {
+            var categories = JSON.parse(data);
+            this.setState({challengeCategories: categories});
         }.bind(this));
     },
     dummySpaces: function () {
@@ -79,26 +93,83 @@ var EditBoard = React.createClass({
         }
         return <div>{dummySpaces}</div>;
     },
+    challengesList: function () {
+        return (
+            <form onSubmit={this.saveChallenges}>
+                <div className="treeview" data-role="treeview" ref="challengesTree">
+                    <ul>
+                        <li className="node collapsed" data-mode="checkbox" key="0">
+                            <span className="leaf">Uncategorized</span>
+                            <span className="node-toggle"></span>
+                            <ul>
+                                {this.questionsInCategory(0)}
+                            </ul>
+                        </li>
+                        {this.state.challengeCategories.map(function(item, index){
+                            return (
+                                <li className="node collapsed" data-mode="checkbox" key={item.Id}>
+                                    <span className="leaf">{item.Name}</span>
+                                    <span className="node-toggle"></span>
+                                    <ul>
+                                        {this.questionsInCategory(item.Id)}
+                                    </ul>
+                                </li>
+                                );
+                        }, this)
+                        }
+                    </ul>
+                </div>
+                <LoadingButton text="Save" ref="saveChallengesButton" />
+            </form>
+        );
+    },
+    questionsInCategory (categoryId) {
+	    return this.state.challenges.filter(function (value) {
+		    return value.ChallengeCategoryId === categoryId;
+	    })
+	    .map(function (item, index) {
+		    return (
+			    <li data-mode="checkbox" data-name={"challenge" + item.Id} data-checked={item.Id in this.state.boardChallenges} key={item.Id}>
+                    <span className="leaf">{item.Name}</span>
+                </li>
+		    );
+	    }, this);
+    },
+    getSelectedChallenges: function () {
+        var challengesTree = $(React.findDOMNode(this.refs.challengesTree));
+        var challengeCheckboxes = challengesTree.find("[name^='challenge']");
+        var selectedChallengeIds = [];
+        $.each(challengeCheckboxes, function (index, value) {
+            if ($(value).prop("checked")) {
+                selectedChallengeIds.push($(value).attr("name").replace("challenge", ""));
+            }
+        });
+        var challenges = {};
+        this.state.challenges.forEach(function(item, index) {
+            challenges[item.Id] = item;
+        });
+        var selectedChallenges = selectedChallengeIds.map(function (item, index) {
+            return challenges[item];
+        }, this);
+        return selectedChallenges;
+    },
     validate: function () {
         $.get("Boards/" + this.props.id + "/Validation", function (data) {
             this.setState({validation: JSON.parse(data)});
         }.bind(this));
     },
     validations: function () {
-        if (this.state.validation) {
-            var errors = "";
-            var warnings = "";
-            if (this.state.validation.Errors.length > 0) {
-                var errors = <ErrorPanel errors={this.state.validation.Errors} />
-            }
-            if (this.state.validation.Warnings.length > 0) {
-                warnings = <WarningPanel warnings={this.state.validation.Warnings} />
-            }
-            return (
-                <div>{errors}{warnings}</div>  
-            );
+        var errors = "";
+        var warnings = "";
+        if (this.state.validation.Errors.length > 0) {
+            errors = <ErrorPanel errors={this.state.validation.Errors} />;
         }
-        return "None";
+        if (this.state.validation.Warnings.length > 0) {
+            warnings = <WarningPanel warnings={this.state.validation.Warnings} />;
+        }
+        return (
+            <div>{errors}{warnings}</div>  
+        );
     },
     handleNameChange: function (event) {
         this.setState({name: event.target.value});
@@ -106,9 +177,9 @@ var EditBoard = React.createClass({
     handleDescriptionChange: function (event) {
         this.setState({description: event.target.value});
     },
-    save: function (event) {
+    saveBoard: function (event) {
         event.preventDefault();
-        this.refs.saveButton.showLoading();
+        this.refs.saveBoardButton.showLoading();
         var formData = new FormData();
         formData.append("Id", this.props.id);
         formData.append("Name", this.state.name);
@@ -118,15 +189,29 @@ var EditBoard = React.createClass({
             formData.append("Image", file, this.refs.imageSelector.filename());
         }
         $.ajax({
-            url: "/Boards/" + this.props.id + "/Edit",
-            type: 'POST',
+            url: "/Boards/" + this.props.id,
+            type: 'PUT',
             data: formData,
             contentType: false,
             processData: false
         })
         .done(function () {
-            this.refs.saveButton.hideLoading();
+            this.refs.saveBoardButton.hideLoading();
+            this.validate();
         }.bind(this));
+    },
+    saveChallenges: function (event) {
+        event.preventDefault();
+        this.refs.saveChallengesButton.showLoading();
+        var challenges = {};
+        $.post("/Boards/" + this.props.id + "/Challenges",
+            {
+                Challenges: JSON.stringify(this.getSelectedChallenges())
+            },
+            function (data) {
+                this.refs.saveChallengesButton.hideLoading();
+                this.validate();
+            }.bind(this));
     }
 });
 
@@ -136,7 +221,7 @@ EditBoard.Space = React.createClass({
         var left = AdjustCoordinate(this.props.space.X, 70);
         var top = AdjustCoordinate(this.props.space.Y, 70);
         return (
-            <Space name={this.props.space.Name} image={this.props.space.Image} icon={this.props.space.Icon} style={{position: "absolute", left: left, top: top}} />
+            <Space onClick={function() {alert("not implemented")}} name={this.props.space.Name} image={this.props.space.Image} icon={this.props.space.Icon} style={{position: "absolute", left: left, top: top}} />
         );
     }
 });
@@ -147,7 +232,7 @@ EditBoard.DummySpace = React.createClass({
         var left = AdjustCoordinate(this.props.x, 70);
         var top = AdjustCoordinate(this.props.y, 70);
         return (
-            <div className="tile-small bg-white fg-black bd-black" style={{position: "absolute", left: left, top: top, borderWidth: 1, borderStyle: "solid"}}>
+            <div onClick={function() {alert("not implemented")}} className="tile-small bg-white fg-black bd-black" style={{position: "absolute", left: left, top: top, borderWidth: 1, borderStyle: "solid"}}>
                 <div className="padding5">Add...</div>
             </div>
         );

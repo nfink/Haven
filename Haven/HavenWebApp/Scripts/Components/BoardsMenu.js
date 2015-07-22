@@ -47,7 +47,7 @@ var BoardsMenu = React.createClass({
 BoardsMenu.Tile = React.createClass({
     render: function () {
         return (
-            <SubMenuTile title={this.props.board.Name} description={this.props.board.Description} image={this.props.board.Image.Filepath} onClick={this.editBoardDialog} />
+            <SubMenuTile title={this.props.board.Name} description={this.props.board.Description} image={this.props.board.Image? this.props.board.Image.Filepath : null} onClick={this.editBoardDialog} />
         );
     },
     editBoardDialog: function () {

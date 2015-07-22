@@ -27,6 +27,7 @@ namespace Haven.Data
             this.LoadChallengeCategory();
             this.LoadChallenge();
             this.LoadChallengeAnswer();
+            this.LoadBoardChallenge();
             this.LoadColor();
             this.LoadImage();
             this.LoadSpace();
@@ -59,12 +60,20 @@ namespace Haven.Data
                 StatusAreaWidth = 7, StatusAreaHeight = 4, StatusAreaX = 2, StatusAreaY = 5});
         }
 
+        public void LoadBoardChallenge()
+        {
+            this.Connection.CreateTable<BoardChallenge>();
+            this.Connection.Insert(new BoardChallenge() { BoardId = 1, ChallengeId = 1 });
+            this.Connection.Insert(new BoardChallenge() { BoardId = 1, ChallengeId = 2 });
+            this.Connection.Insert(new BoardChallenge() { BoardId = 1, ChallengeId = 3 });
+        }
+
         public void LoadChallenge()
         {
             this.Connection.CreateTable<Challenge>();
-            this.Connection.Insert(new Challenge() { Id = 1, Question = "Test Question 1", BoardId = 1, ChallengeCategoryId = 1, OwnerId = 1 });
-            this.Connection.Insert(new Challenge() { Id = 2, Question = "Test Question 2", BoardId = 1, ChallengeCategoryId = 1, OwnerId = 1 });
-            this.Connection.Insert(new Challenge() { Id = 3, Question = "Test Question 3", BoardId = 1, ChallengeCategoryId = 2, OwnerId = 1 });
+            this.Connection.Insert(new Challenge() { Id = 1, Name = "Question 1", Question = "Test Question 1?", BoardId = 1, ChallengeCategoryId = 1, OwnerId = 1 });
+            this.Connection.Insert(new Challenge() { Id = 2, Name = "Question 2", Question = "Test Question 2?", BoardId = 1, ChallengeCategoryId = 1, OwnerId = 1 });
+            this.Connection.Insert(new Challenge() { Id = 3, Name = "Question 3", Question = "Test Question 3?", BoardId = 1, ChallengeCategoryId = 2, OwnerId = 1 });
         }
 
         public void LoadChallengeAnswer()

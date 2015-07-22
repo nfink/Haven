@@ -19,24 +19,12 @@ namespace HavenWebApp
     {
         public GameModule()
         {
-            //Post["/Games"] = parameters =>
-            //{
-            //    var game = Game.NewGame((int)this.Request.Form.BoardId, (int)this.Request.Form.NumberOfPlayers);
-            //    game.Name = (string)this.Request.Form.Name;
-            //    Persistence.Connection.Update(game);
-            //    // remove actions that the user does not have access to
-
-            //    //return View["Views/Game.cshtml", game];
-            //    return JsonConvert.SerializeObject(game);
-            //};
-
             Get["/Games/{id}"] = parameters =>
             {
                 var game = Persistence.Connection.Get<Game>((int)parameters.id);
                 // remove actions that the user does not have access to
 
                 return JsonConvert.SerializeObject(game);
-                //return View["Views/Game.cshtml", game];
             };
 
             Get["/Games/{id}/Players"] = parameters =>

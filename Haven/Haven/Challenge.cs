@@ -37,6 +37,9 @@ namespace Haven
 
             // delete any answers
             Persistence.Connection.Execute("delete from ChallengeAnswer where ChallengeId=?", this.Id);
+
+            // delete any uses by boards
+            Persistence.Connection.Execute("delete from BoardChallenge where ChallengeId=?", this.Id);
         }
     }
 }

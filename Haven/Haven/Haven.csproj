@@ -60,6 +60,7 @@
     <Compile Include="Actions\SelectPieceAction.cs" />
     <Compile Include="Actions\RollToGoAction.cs" />
     <Compile Include="Actions\ReadRecallAction.cs" />
+    <Compile Include="BoardChallenge.cs" />
     <Compile Include="Challenge.cs" />
     <Compile Include="ChallengeAnswer.cs" />
     <Compile Include="ChallengeCategory.cs" />

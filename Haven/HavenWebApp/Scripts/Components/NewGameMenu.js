@@ -39,11 +39,11 @@ var NewGameMenu = React.createClass({
 NewGameMenu.Tile = React.createClass({
     render: function () {
         return (
-            <SubMenuTile title={this.props.board.Name} description={this.props.board.Description} image={this.props.board.Image.Filepath} disabled={!this.props.board.Active} onClick={this.newGameDialog} />
+            <SubMenuTile title={this.props.board.Name} description={this.props.board.Description} image={this.props.board.Image ? this.props.board.Image.Filepath : null} disabled={!this.props.board.Active} disabledText="(Incomplete)" onClick={this.newGameDialog} />
         );
     },
     newGameDialog: function () {
-        var dialog = React.render(<NewGameDialog title={this.props.board.Name} description={this.props.board.Description} image={this.props.board.Image.Filepath} boardId={this.props.board.Id} />, document.getElementById("newGameDialog"));
+        var dialog = React.render(<NewGameDialog title={this.props.board.Name} description={this.props.board.Description} image={this.props.board.Image ? this.props.board.Image.Filepath : null} boardId={this.props.board.Id} />, document.getElementById("newGameDialog"));
         dialog.open();
     },
 });

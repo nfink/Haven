@@ -16,10 +16,12 @@ var NewBoardMenu = React.createClass({
         );
     },
     newBoard: function () {
-
+        $.post("Boards", function (data) {
+            page("/Boards/" + JSON.parse(data).Id);
+        });
     },
     copyBoard: function () {
-
+        alert("not implemented");
     }
 });
 

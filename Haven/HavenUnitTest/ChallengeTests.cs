@@ -18,6 +18,7 @@ namespace HavenUnitTest
             // create tables
             Persistence.Connection.CreateTable<Challenge>();
             Persistence.Connection.CreateTable<ChallengeAnswer>();
+            Persistence.Connection.CreateTable<BoardChallenge>();
         }
 
         [Test]

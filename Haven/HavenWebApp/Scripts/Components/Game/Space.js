@@ -15,7 +15,7 @@ var Space = React.createClass({
             var content = <div className={this.props.icon + " mif-2x"} style={textStyle} />;
         }
         return (
-            <div className="tile-small bg-taupe fg-white" style={this.props.style}>
+            <div className="tile-small bg-taupe fg-white" onClick={this.props.onClick} style={this.props.style}>
                 <div className="tile-content" style={{textAlign: "center"}}>{content}</div>
             </div>
         );

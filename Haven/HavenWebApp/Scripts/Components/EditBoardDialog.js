@@ -6,10 +6,10 @@ var OpenBoardDialog = React.createClass({
     render: function () {
         return (
             <div className="dialog" data-overlay="true" data-overlay-color="op-dark" data-close-button="true" data-role="dialog">
-                <div style={{backgroundImage: "url('" + this.props.board.Image.Filepath + "')", width: "100%", height: "100%", position: "absolute", backgroundSize: "cover", backgroundRepeat: "no-repeat", opacity: 0.25}}></div>
+                <div style={{backgroundImage: "url('" + (this.props.board.Image ? this.props.board.Image.Filepath : "") + "')", width: "100%", height: "100%", position: "absolute", backgroundSize: "cover", backgroundRepeat: "no-repeat", opacity: 0.25}}></div>
                 <div className="padding20">
-                    <h2>{this.props.board.Name}</h2>
-                    <p>{this.props.board.Description}</p>
+                    <h2>{this.props.board.Name ? this.props.board.Name : "(Unnamed board)"}</h2>
+                    <p>{this.props.board.Description ? this.props.board.Description : "(no description)"}</p>
                     <form onSubmit={this.editBoard}>
                         <div className="padding10">
                             {this.errors()}
@@ -59,6 +59,7 @@ var OpenBoardDialog = React.createClass({
     },
     close: function () {
         CloseDialog(this);
+        React.unmountComponentAtNode(document.getElementById("editBoardDialog"));
     },
     editBoard: function (event) {
         event.preventDefault();
