@@ -1,77 +1,25 @@
-﻿<!DOCTYPE html>
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
-    <meta content="utf-8" http-equiv="encoding">
-    <script src="https://cdn.rawgit.com/visionmedia/page.js/master/page.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
-    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-    <link href="/Content/metro.css" rel="stylesheet">
-    <link href="/Content/metro-icons.css" rel="stylesheet">
-    <script src="/Scripts/metro.js"></script>
-    <link href="/Content/Game.css" rel="stylesheet">
-    <link href="/Content/Haven.css" rel="stylesheet">
-    <script type="text/jsx" src="~/Scripts/Components/Dialog.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/ConfirmationDialog.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/ErrorPanel.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/WarningPanel.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/LoadingButton.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/ComboBox.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/MainMenuTile.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/MainMenu.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/SubMenuTile.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/NewGameMenu.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/NewGameDialog.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/GamesMenu.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/BoardsMenu.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/NewBoardMenu.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/EditBoardDialog.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/IconSelector.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/ColorSelector.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/ImageSelector.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/Game/Space.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/Game/Board.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/Game/Game.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/Game/MessageArea.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/Game/StatusArea.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/Game/Action.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/Game/PlayerPanel.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/Game/Piece.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/Admin/AdminHome.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/Admin/AdminGames.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/Admin/AdminBoards.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/Board/EditBoard.js"></script>
-    <script type="text/jsx" src="~/Scripts/Components/Admin/AdminQuestions.js"></script>
-    <!--<script type="text/jsx" src="~/Scripts/Components/Board/EditSpace.js"></script>-->
-    <script type="text/jsx" src="~/Scripts/Menu.js"></script>
-    <script src="/Scripts/Game.js"></script>
-    <meta name="viewport" content="width=device-width" />
-    <title>Safe Haven</title>
-</head>
-<body class="bg-grayLighter">
-    <div class="app-bar bg-cyan" data-role="appbar">
-        <a class="app-bar-element" href="/">
-            <span class="mif-home mif-2x"></span>
-        </a>
-        <ul class="app-bar-menu">
-            <li><a href="/Games">Games</a></li>
-            <li><a href="">Statistics</a></li>
-            <li><a href="/Boards">Boards</a></li>
-            <li><a href="/Questions">Questions</a></li>
-        </ul>
-        <ul class="app-bar-menu place-right">
-            <li>
-                 <a class="dropdown-toggle fg-white"><span class="mif-cog"></span></a>
-                 <ul class="d-menu place-right" data-role="dropdown" data-no-close="true">
-                    <li><a class="bg-hover-cyan fg-hover-white" href="">Profile</a></li>
-                    <li><a class="bg-hover-cyan fg-hover-white" href="/Logout">Logout</a></li>
-                </ul>
-            </li>
-        </ul>
-    </div>
-    <div class="padding10"></div>
-    <div id="content"></div>
-</body>
-</html>
+﻿@{
+    Layout = "Views/_Layout.cshtml";
+}
+<div class="app-bar bg-cyan" data-role="appbar">
+    <a class="app-bar-element" href="/">
+        <span class="mif-home mif-2x"></span>
+    </a>
+    <ul class="app-bar-menu">
+        <li><a href="/Games">Games</a></li>
+        <li><a href="">Statistics</a></li>
+        <li><a href="/Boards">Boards</a></li>
+        <li><a href="/Questions">Questions</a></li>
+    </ul>
+    <ul class="app-bar-menu place-right">
+        <li>
+                <a class="dropdown-toggle fg-white"><span class="mif-cog"></span></a>
+                <ul class="d-menu place-right" data-role="dropdown" data-no-close="true">
+                <li><a class="bg-hover-cyan fg-hover-white" href="">Profile</a></li>
+                <li><a class="bg-hover-cyan fg-hover-white" href="/Logout">Logout</a></li>
+            </ul>
+        </li>
+    </ul>
+</div>
+<div class="padding10"></div>
+<div id="content"></div>

@@ -7,6 +7,8 @@ using Nancy.Bootstrapper;
 using Nancy.Conventions;
 using Nancy.TinyIoc;
 using Nancy.Authentication.Forms;
+using System.Web.Optimization;
+using System.Web.Optimization.React;
 
 namespace HavenWebApp
 {
@@ -17,11 +19,6 @@ namespace HavenWebApp
             nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("Fonts", @"Fonts"));
             nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("Scripts", @"Scripts"));
             nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("Uploads", @"Uploads"));
-            nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("Admin/Content", @"Content"));
-            nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("Admin/Fonts", @"Fonts"));
-            nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("Admin/Scripts", @"Scripts"));
-            nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("Views", @"Views"));
-            nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("Templates", @"Templates"));
             base.ConfigureConventions(nancyConventions);
         }
 
@@ -42,22 +39,47 @@ namespace HavenWebApp
             container.Register<IUserMapper, UserMapper>();
         }
 
-        //protected override void RequestStartup(TinyIoCContainer requestContainer, IPipelines pipelines, NancyContext context)
-        //{
-        //    // At request startup we modify the request pipelines to
-        //    // include forms authentication - passing in our now request
-        //    // scoped user name mapper.
-        //    //
-        //    // The pipelines passed in here are specific to this request,
-        //    // so we can add/remove/update items in them as we please.
-        //    var formsAuthConfiguration =
-        //        new FormsAuthenticationConfiguration()
-        //        {
-        //            DisableRedirect = true,
-        //            UserMapper = requestContainer.Resolve<IUserMapper>(),
-        //        };
+        protected override void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)
+        {
+            var reactBundle = new ScriptBundle("~/Scripts/react", "https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js")
+                .Include("~/Scripts/react/react-{version}.js");
 
-        //    FormsAuthentication.Enable(pipelines, formsAuthConfiguration);
-        //}
+            var jsxTransformerBundle = new ScriptBundle("~/Scripts/jsxtransformer", "https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js")
+                .Include("~/Scripts/react/JSXTransformer-{version}.js");
+
+            var jqueryBundle = new ScriptBundle("~/Scripts/jquery", "https://code.jquery.com/jquery-1.11.3.min.js")
+                .Include("~/Scripts/jquery-{version}.js");
+            
+            var pageBundle = new ScriptBundle("~/Scripts/page", "https://cdn.rawgit.com/visionmedia/page.js/master/page.js")
+                .Include("~/Scripts/page.js");
+
+            var metroBundle = new ScriptBundle("~/Scripts/metro")
+                .Include("~/Scripts/metro.js");
+
+            var scriptBundle = new JsxBundle("~/Scripts/bundle")
+                .IncludeDirectory("~/Scripts/Components/Admin", "*.js")
+                .Include("~/Scripts/Components/Board/EditBoard.js")
+                .IncludeDirectory("~/Scripts/Components/Game", "*.js")
+                .IncludeDirectory("~/Scripts/Components", "*.js")
+                .Include("~/Scripts/Menu.js")
+                .Include("~/Scripts/Game.js");
+
+            var styleBundle = new StyleBundle("~/Content/bundle")
+                .Include("~/Content/Game.css")
+                .Include("~/Content/Haven.css")
+                .Include("~/Content/metro-icons.css")
+                .Include("~/Content/metro.css");
+
+            BundleTable.Bundles.UseCdn = true;
+            BundleTable.Bundles.Add(reactBundle);
+            BundleTable.Bundles.Add(jsxTransformerBundle);
+            BundleTable.Bundles.Add(jqueryBundle);
+            BundleTable.Bundles.Add(pageBundle);
+            BundleTable.Bundles.Add(metroBundle);
+            BundleTable.Bundles.Add(scriptBundle);
+            BundleTable.Bundles.Add(styleBundle);
+
+            BundleTable.EnableOptimizations = false;
+        }
     }
 }

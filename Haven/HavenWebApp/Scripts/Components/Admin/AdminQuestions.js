@@ -16,7 +16,7 @@ var AdminQuestions = React.createClass({
                     <div className="grid padding10 bg-white">
                         <div className="row cells2">
                             <div className="cell">
-                                <div className="listview-outlook" data-role="listview">
+                                <div className="listview-outlook" data-role="listview" ref="challengesList">
                                     {this.uncategorizedQuestions()}
                                     {this.state.categories.map(function(item, index){
                                         return (
@@ -90,6 +90,7 @@ var AdminQuestions = React.createClass({
     },
     addQuestion: function (categoryId) {
         React.unmountComponentAtNode(document.getElementById("editChallenge"));
+        this.clearActive();
         var challenge = { Id: 0, Name: "", ChallengeCategoryId: categoryId, Question: "", Answers: []}
         React.render(<AdminQuestions.EditChallenge challenge={challenge} categories={this.state.categories} updateCallback={this.componentDidMount.bind(this)} />, document.getElementById("editChallenge"));
     },
@@ -97,6 +98,9 @@ var AdminQuestions = React.createClass({
         React.unmountComponentAtNode(document.getElementById("editChallenge"));
         var category = { Id: 0, Name: "" };
         React.render(<AdminQuestions.EditCategory category={category} updateCallback={this.componentDidMount.bind(this)} />, document.getElementById("editChallenge"));
+    },
+    clearActive: function () {
+        $(React.findDOMNode(this.refs.challengesList)).find(".active").removeClass("active");
     }
 });
 
@@ -140,7 +144,7 @@ AdminQuestions.EditChallenge = React.createClass({
                     }, this)}
                 </div>
                 <LoadingButton text="Save" ref="saveButton" />
-                {this.props.challenge.Id ? <LoadingButton text="Delete" ref="deleteButton" type="button" onClick={this.handleDelete} style={{marginLeft: 5}} /> : null}
+                {this.state.id ? <LoadingButton text="Delete" ref="deleteButton" type="button" onClick={this.handleDelete} style={{marginLeft: 5}} /> : null}
                 <button className="button primary" type="button" onClick={this.close} style={{marginLeft: 5}}>Close</button>
             </form>
         );
@@ -161,7 +165,7 @@ AdminQuestions.EditChallenge = React.createClass({
                 return item.Name;
             })[0];
 
-        return {category: category, question: challenge ? challenge.Question : "", answers: challenge ? challenge.Answers : [], nextAnswerId: answerId};
+        return {id: challenge.Id, category: category, question: challenge ? challenge.Question : "", answers: challenge ? challenge.Answers : [], nextAnswerId: answerId};
     },
     categories: function () {
         return this.props.categories.map(function(item, index){return item.Name;});
@@ -170,9 +174,9 @@ AdminQuestions.EditChallenge = React.createClass({
         event.preventDefault();
         this.refs.saveButton.showLoading();
 
-        if (this.props.challenge.Id) {
+        if (this.state.id) {
             $.ajax({
-                url: "/Challenges/" + this.props.challenge.Id,
+                url: "/Challenges/" + this.state.id,
                 method: "PUT",
                 data:
                 {
@@ -198,6 +202,7 @@ AdminQuestions.EditChallenge = React.createClass({
                 },
                 function (data) {
                     this.refs.saveButton.hideLoading();
+                    this.setState({id: JSON.parse(data).Id});
                     this.props.updateCallback();
                 }.bind(this)
             )
@@ -214,7 +219,7 @@ AdminQuestions.EditChallenge = React.createClass({
         React.unmountComponentAtNode(document.getElementById("deleteDialog"));
         this.refs.deleteButton.showLoading();
         $.ajax({
-            url: "/Challenges/" + this.props.challenge.Id,
+            url: "/Challenges/" + this.state.id,
             method: "DELETE",
             success: function () {
                 this.refs.deleteButton.hideLoading();

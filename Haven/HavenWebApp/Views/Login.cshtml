@@ -1,15 +1,20 @@
-﻿<!DOCTYPE html>
-<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+﻿@using System.Web.Optimization
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
 <html>
 <head>
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
     <meta content="utf-8" http-equiv="encoding">
-    <link href="/Content/metro.css" rel="stylesheet">
-    <link href="/Content/metro-icons.css" rel="stylesheet">
-    <link href="/Content/Haven.css" rel="stylesheet">
-    <script src="/Scripts/metro.js"></script>
     <meta name="viewport" content="width=device-width" />
-    <title>Login</title>
+    <title>Haven</title>
+    @Html.Raw(Scripts.Render("~/Scripts/jquery").ToString())
+    @Html.Raw(Scripts.Render("~/Scripts/metro").ToString())
+    @Html.Raw(Styles.Render("~/Content/bundle").ToString())
+
 </head>
 <body class="bg-grayLighter">
     <div class="login-form padding20 block-shadow">

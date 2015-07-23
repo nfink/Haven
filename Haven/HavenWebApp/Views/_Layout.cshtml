@@ -1,0 +1,26 @@
+﻿@using System.Web.Optimization
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    <meta name="viewport" content="width=device-width" />
+    <title>Haven</title>
+    @Html.Raw(Scripts.Render("~/Scripts/react").ToString())
+    @Html.Raw(Scripts.Render("~/Scripts/jsxtransformer").ToString())
+    @Html.Raw(Scripts.Render("~/Scripts/jquery").ToString())
+    @Html.Raw(Scripts.Render("~/Scripts/page").ToString())
+    @Html.Raw(Scripts.Render("~/Scripts/metro").ToString())
+    @Html.Raw(Scripts.RenderFormat("<script type=\"text/jsx\" src=\"{0}\"></script>", "~/Scripts/bundle").ToString())
+    @Html.Raw(Styles.Render("~/Content/bundle").ToString())
+
+</head>
+<body class="bg-grayLighter">
+    @RenderBody()
+</body>
+</html>
