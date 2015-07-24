@@ -163,6 +163,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\jquery-1.11.1.intellisense.js" />
+    <None Include="Scripts\Components\Admin\AdminProfile.jsx" />
     <Content Include="Scripts\jquery-1.11.1.js" />
     <Content Include="Scripts\jquery-1.11.1.min.js" />
     <Content Include="Scripts\jquery-1.11.1.min.map" />

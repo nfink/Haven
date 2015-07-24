@@ -52,6 +52,22 @@ namespace HavenWebApp
                 return JsonConvert.SerializeObject(types);
             };
 
+            Get["/User"] = parameters =>
+            {
+                var userId = int.Parse(this.Context.CurrentUser.UserName);
+                var user = Persistence.Connection.Get<User>(userId);
+                return JsonConvert.SerializeObject(user);
+            };
+
+            Put["/User"] = parameters =>
+            {
+                var userId = int.Parse(this.Context.CurrentUser.UserName);
+                var user = Persistence.Connection.Get<User>(userId);
+                user.Username = (string)this.Request.Form.Username;
+                Persistence.Connection.Update(user);
+                return JsonConvert.SerializeObject(user);
+            };
+
             Get["/Games"] = parameters =>
             {
                 var userId = int.Parse(this.Context.CurrentUser.UserName);
@@ -490,110 +506,6 @@ namespace HavenWebApp
                 {
                     return new HtmlResponse(HttpStatusCode.NotFound);
                 }
-            };
-
-
-
-
-
-            Get["/{username}/Spaces/{id}/Edit"] = parameters =>
-            {
-                var spaceId = (int)this.Request.Query.SpaceId;
-                Space space;
-                if (spaceId == 0)
-                {
-                    var boardId = (int)this.Request.Query.BoardId;
-                    var x = (int)this.Request.Query.X;
-                    var y = (int)this.Request.Query.Y;
-                    space = new Space() { BoardId = boardId, X = x, Y = y };
-                }
-                else
-                {
-                    space = Persistence.Connection.Get<Space>(spaceId);
-                }
-
-                return View["Views/Admin/EditSpace.cshtml", space];
-            };
-
-            Post["/{username}/Spaces/{id}/Edit"] = parameters =>
-            {
-                var space = this.Bind<Space>();
-
-                var imageFile = this.Request.Files.FirstOrDefault();
-                Image image = null;
-
-                // clean up any dependent records
-                if (space.Id != 0)
-                {
-                    var existingSpace = Persistence.Connection.Get<Space>(space.Id);
-                    if (existingSpace.BibleVerseId != 0)
-                    {
-                        Persistence.Connection.Delete<BibleVerse>(existingSpace.BibleVerseId);
-                    }
-                    if (existingSpace.NameCardId != 0)
-                    {
-                        image = existingSpace.NameCard.Image;
-                        Persistence.Connection.Delete<NameCard>(existingSpace.NameCardId);
-                    }
-                    if (existingSpace.SafeHavenCardId != 0)
-                    {
-                        image = existingSpace.SafeHavenCard.Image;
-                        Persistence.Connection.Delete<SafeHavenCard>(existingSpace.SafeHavenCardId);
-                    }
-                }
-
-                // add any dependent records
-                if (space.Type == Haven.SpaceType.Challenge)
-                {
-                    var nameCard = new NameCard() { Name = (string)this.Request.Form.NameCardName, Details = (string)this.Request.Form.NameCardDetails };
-                    image = this.UpdateImage(pathProvider, image, imageFile);
-                    if (image != null)
-                    {
-                        nameCard.ImageId = image.Id;
-                    }
-                    Persistence.Connection.Insert(nameCard);
-                    space.NameCardId = nameCard.Id;
-                }
-                else if (space.Type == Haven.SpaceType.SafeHaven)
-                {
-                    var safeHavenCard = new SafeHavenCard() { Name = (string)this.Request.Form.SafeHavenCardName, Details = (string)this.Request.Form.SafeHavenCardDetails };
-                    image = this.UpdateImage(pathProvider, image, imageFile);
-                    if (image != null)
-                    {
-                        safeHavenCard.ImageId = image.Id;
-                    }
-                    Persistence.Connection.Insert(safeHavenCard);
-                    space.SafeHavenCardId = safeHavenCard.Id;
-                }
-                else
-                {
-                    if (space.Type == Haven.SpaceType.Recall)
-                    {
-                        var recall = new BibleVerse() { Text = (string)this.Request.Form.RecallText };
-                        Persistence.Connection.Insert(recall);
-                        space.BibleVerseId = recall.Id;
-
-                    }
-
-                    // delete unused image
-                    if (image != null)
-                    {
-                        image.DeleteImage(pathProvider.GetRootPath());
-                        Persistence.Connection.Delete(image);
-                    }
-                }
-
-                // add/update the space
-                if (space.Id == 0)
-                {
-                    Persistence.Connection.Insert(space);
-                }
-                else
-                {
-                    Persistence.Connection.Update(space);
-                }
-
-                return View["Views/Space.cshtml", space];
             };
         }
 

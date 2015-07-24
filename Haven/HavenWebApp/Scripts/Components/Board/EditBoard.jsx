@@ -12,11 +12,14 @@ var EditBoard = React.createClass({
         else {
             return (
                 <div style={{display: "flex", flexWrap: "wrap"}}>
-                    <div style={{width: 770, height: 775}}>
-                        {this.dummySpaces()}
-                        {this.state.board.Spaces.map(function(item, index){
-                            return <EditBoard.Space space={item} updateCallback={this.loadBoard} key={item.Id} />;
-                        }, this)}
+                    <div>
+                        <div className=""></div>
+                        <div style={{width: 770, height: 775}}>
+                            {this.dummySpaces()}
+                            {this.state.board.Spaces.map(function(item, index){
+                                return <EditBoard.Space space={item} updateCallback={this.loadBoard} key={item.Id} />;
+                            }, this)}
+                        </div>
                     </div>
                     <div className="padding5" style={{flexGrow: 1}}>
                         <div className="accordion bg-white padding5" data-role="accordion">
@@ -166,7 +169,7 @@ var EditBoard = React.createClass({
     },
     validate: function () {
         $.get("Boards/" + this.props.id + "/Validation", function (data) {
-            this.setState({validation: JSON.parse(data)});
+            this.setState({ validation: JSON.parse(data) });
         }.bind(this));
     },
     validations: function () {
@@ -423,6 +426,7 @@ EditBoard.EditSpace = React.createClass({
             })
             .done(function (data) {
                 this.refs.saveButton.hideLoading();
+                this.setState({ space: JSON.parse(data) });
                 this.props.updateCallback();
             }.bind(this));
         }
@@ -436,6 +440,7 @@ EditBoard.EditSpace = React.createClass({
             })
             .done(function (data) {
                 this.refs.saveButton.hideLoading();
+                this.setState({ space: JSON.parse(data) });
                 this.props.updateCallback();
             }.bind(this));
         }
@@ -497,12 +502,12 @@ EditBoard.EditSpace = React.createClass({
     },
     initNameCard: function () {
         if (!this.state.space.NameCard) {
-            this.state.space.NameCard = {};
+            this.state.space.NameCard = { Name: null, Details: null };
         }
     },
     initSafeHavenCard: function () {
         if (!this.state.space.SafeHavenCard) {
-            this.state.space.SafeHavenCard = {};
+            this.state.space.SafeHavenCard = { Name: null, Details: null };
         }
     },
     handleNameCardNameChange: function(event) {

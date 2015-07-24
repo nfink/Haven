@@ -60,6 +60,15 @@ $(function () {
         next();
     });
 
+    // profile page
+    page("/Profile", function () {
+        React.render(<AdminProfile />, document.getElementById("content"));
+    });
+    page.exit("/Profile", function (ctx, next) {
+        React.unmountComponentAtNode(document.getElementById("content"));
+        next();
+    });
+
     // fallback
     page("*", function () {
         alert("nothing found");

@@ -13,6 +13,7 @@ namespace Haven
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
+        [JsonIgnore]
         public string Guid { get; set; }
 
         public string Username { get; set; }

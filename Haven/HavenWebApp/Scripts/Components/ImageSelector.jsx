@@ -6,7 +6,7 @@ var ImageSelector = React.createClass({
     render: function () {
         return (
             <div className="tile-container">
-                <input ref="imageInput" value={this.state.image ? this.state.image : ""} tabIndex="-1" style={{zIndex: 0, display: "none"}} type="file" onChange={this.handleImageChange} />
+                <input ref="imageInput" tabIndex="-1" style={{zIndex: 0, display: "none"}} type="file" onChange={this.handleImageChange} />
                 <div className="tile bg-white fg-black bd-black" data-role="tile" onClick={this.selectImage} style={{borderWidth: 1, borderStyle: "solid"}}>
                     {this.state.image ? null : (<div className="padding5">{this.props.description ? this.props.description : "Select an image..."}</div>)}
                     <div className="tile-content">

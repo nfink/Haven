@@ -94,12 +94,15 @@ namespace Haven
             {
                 if (this.ImageId == 0)
                 {
+                    Image image;
                     switch (this.Type)
                     {
                         case SpaceType.Challenge:
-                            return this.NameCard.Image.Filepath;
+                            image = this.NameCard.Image;
+                            return image == null ? image.Filepath : null;
                         case SpaceType.SafeHaven:
-                            return this.SafeHavenCard.Image.Filepath;
+                            image = this.SafeHavenCard.Image;
+                            return image == null ? image.Filepath : null;
                         default:
                             return null;
                     }
