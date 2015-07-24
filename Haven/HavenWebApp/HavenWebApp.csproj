@@ -23,6 +23,7 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -132,8 +133,8 @@
       <HintPath>..\packages\System.Web.Optimization.React.1.5.2\lib\net40\System.Web.Optimization.React.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.Razor.2.0.30506.0\lib\net40\System.Web.Razor.dll</HintPath>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -183,38 +184,37 @@
     <Content Include="Content\Images\no_image.png" />
     <Content Include="Content\Images\Rembrandt_Harmensz_square.jpg" />
     <Content Include="readme.txt" />
-    <Content Include="Scripts\Components\Admin\AdminBoards.js" />
-    <Content Include="Scripts\Components\Admin\AdminGames.js" />
-    <Content Include="Scripts\Components\Admin\AdminHome.js" />
-    <Content Include="Scripts\Components\BoardsMenu.js" />
-    <Content Include="Scripts\Components\Admin\AdminQuestions.js" />
-    <Content Include="Scripts\Components\Board\EditBoard.js" />
-    <Content Include="Scripts\Components\Board\EditSpace.js" />
-    <Content Include="Scripts\Components\ColorSelector.js" />
-    <Content Include="Scripts\Components\ComboBox.js" />
-    <Content Include="Scripts\Components\ConfirmationDialog.js" />
-    <Content Include="Scripts\Components\Dialog.js" />
-    <Content Include="Scripts\Components\EditBoardDialog.js" />
-    <Content Include="Scripts\Components\ErrorPanel.js" />
-    <Content Include="Scripts\Components\Game\Action.js" />
-    <Content Include="Scripts\Components\Game\Board.js" />
-    <Content Include="Scripts\Components\ImageSelector.js" />
-    <Content Include="Scripts\Components\LoadingButton.js" />
-    <Content Include="Scripts\Components\NewBoardMenu.js" />
-    <Content Include="Scripts\Components\NewGameMenu.js" />
-    <Content Include="Scripts\Components\Game\Game.js" />
-    <Content Include="Scripts\Components\GamesMenu.js" />
-    <Content Include="Scripts\Components\Game\Piece.js" />
-    <Content Include="Scripts\Components\Game\PlayerPanel.js" />
-    <Content Include="Scripts\Components\IconSelector.js" />
-    <Content Include="Scripts\Components\MainMenu.js" />
-    <Content Include="Scripts\Components\NewGameDialog.js" />
-    <Content Include="Scripts\Components\MainMenuTile.js" />
-    <Content Include="Scripts\Components\Game\MessageArea.js" />
-    <Content Include="Scripts\Components\Game\Space.js" />
-    <Content Include="Scripts\Components\Game\StatusArea.js" />
-    <Content Include="Scripts\Components\SubMenuTile.js" />
-    <Content Include="Scripts\Components\WarningPanel.js" />
+    <None Include="Scripts\Components\Admin\AdminBoards.jsx" />
+    <None Include="Scripts\Components\Admin\AdminGames.jsx" />
+    <None Include="Scripts\Components\Admin\AdminHome.jsx" />
+    <None Include="Scripts\Components\BoardsMenu.jsx" />
+    <None Include="Scripts\Components\Admin\AdminQuestions.jsx" />
+    <None Include="Scripts\Components\Board\EditBoard.jsx" />
+    <None Include="Scripts\Components\ColorSelector.jsx" />
+    <None Include="Scripts\Components\ComboBox.jsx" />
+    <None Include="Scripts\Components\ConfirmationDialog.jsx" />
+    <None Include="Scripts\Components\Dialog.jsx" />
+    <None Include="Scripts\Components\EditBoardDialog.jsx" />
+    <None Include="Scripts\Components\ErrorPanel.jsx" />
+    <None Include="Scripts\Components\Game\Action.jsx" />
+    <None Include="Scripts\Components\Game\Board.jsx" />
+    <None Include="Scripts\Components\ImageSelector.jsx" />
+    <None Include="Scripts\Components\LoadingButton.jsx" />
+    <None Include="Scripts\Components\NewBoardMenu.jsx" />
+    <None Include="Scripts\Components\NewGameMenu.jsx" />
+    <None Include="Scripts\Components\Game\Game.jsx" />
+    <None Include="Scripts\Components\GamesMenu.jsx" />
+    <None Include="Scripts\Components\Game\Piece.jsx" />
+    <None Include="Scripts\Components\Game\PlayerPanel.jsx" />
+    <None Include="Scripts\Components\IconSelector.jsx" />
+    <None Include="Scripts\Components\MainMenu.jsx" />
+    <None Include="Scripts\Components\NewGameDialog.jsx" />
+    <None Include="Scripts\Components\MainMenuTile.jsx" />
+    <None Include="Scripts\Components\Game\MessageArea.jsx" />
+    <None Include="Scripts\Components\Game\Space.jsx" />
+    <None Include="Scripts\Components\Game\StatusArea.jsx" />
+    <None Include="Scripts\Components\SubMenuTile.jsx" />
+    <None Include="Scripts\Components\WarningPanel.jsx" />
     <Content Include="Scripts\page.js" />
     <Content Include="Scripts\react\JSXTransformer-0.13.1.js" />
     <Content Include="Scripts\react\react-0.13.1.js" />
@@ -295,7 +295,7 @@
     <Content Include="Views\Messages.cshtml" />
     <Content Include="Views\Login.cshtml" />
     <None Include="Views\Players.cshtml" />
-    <Content Include="Scripts\Menu.js" />
+    <None Include="Scripts\Menu.jsx" />
     <Content Include="Scripts\metro.js" />
     <Content Include="Scripts\metro.min.js" />
     <Content Include="Web.config" />

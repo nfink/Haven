@@ -57,11 +57,8 @@ namespace HavenWebApp
                 .Include("~/Scripts/metro.js");
 
             var scriptBundle = new JsxBundle("~/Scripts/bundle")
-                .IncludeDirectory("~/Scripts/Components/Admin", "*.js")
-                .Include("~/Scripts/Components/Board/EditBoard.js")
-                .IncludeDirectory("~/Scripts/Components/Game", "*.js")
-                .IncludeDirectory("~/Scripts/Components", "*.js")
-                .Include("~/Scripts/Menu.js")
+                .IncludeDirectory("~/Scripts/Components", "*.jsx", true)
+                .Include("~/Scripts/Menu.jsx")
                 .Include("~/Scripts/Game.js");
 
             var styleBundle = new StyleBundle("~/Content/bundle")
@@ -78,8 +75,6 @@ namespace HavenWebApp
             BundleTable.Bundles.Add(metroBundle);
             BundleTable.Bundles.Add(scriptBundle);
             BundleTable.Bundles.Add(styleBundle);
-
-            BundleTable.EnableOptimizations = false;
         }
     }
 }

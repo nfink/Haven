@@ -186,53 +186,56 @@ namespace Haven
 
         public void PerformAction(Object input)
         {
-            switch (this.Type)
+            Persistence.Connection.RunInTransaction(() =>
             {
-                case (ActionType.AnswerChallenge):
-                    AnswerChallengeAction(input);
-                    break;
-                case (ActionType.AnswerWarChallenge):
-                    AnswerWarChallengeAction(input);
-                    break;
-                case (ActionType.DeclareWar):
-                    DeclareWarAction(input);
-                    break;
-                case (ActionType.DeclineWar):
-                    DeclineWarAction(input);
-                    break;
-                case (ActionType.EndTurn):
-                    EndTurnAction(input);
-                    break;
-                case (ActionType.EnterName):
-                    EnterNameAction(input);
-                    break;
-                case (ActionType.EnterPassword):
-                    EnterPasswordAction(input);
-                    break;
-                case (ActionType.ExchangePlaces):
-                    ExchangePlacesAction(input);
-                    break;
-                case (ActionType.ReadBibleVerse):
-                    ReadRecallAction(input);
-                    break;
-                case (ActionType.ReciteBibleVerse):
-                    ReciteRecallAction(input);
-                    break;
-                case (ActionType.Roll):
-                    RollAction(input);
-                    break;
-                case (ActionType.RollToGo):
-                    RollToGoAction(input);
-                    break;
-                case (ActionType.SelectPiece):
-                    SelectPieceAction(input);
-                    break;
-                case (ActionType.TurnAround):
-                    TurnAroundAction(input);
-                    break;
-                default:
-                    throw new Exception("Action has no Type");
-            }
+                switch (this.Type)
+                {
+                    case (ActionType.AnswerChallenge):
+                        AnswerChallengeAction(input);
+                        break;
+                    case (ActionType.AnswerWarChallenge):
+                        AnswerWarChallengeAction(input);
+                        break;
+                    case (ActionType.DeclareWar):
+                        DeclareWarAction(input);
+                        break;
+                    case (ActionType.DeclineWar):
+                        DeclineWarAction(input);
+                        break;
+                    case (ActionType.EndTurn):
+                        EndTurnAction(input);
+                        break;
+                    case (ActionType.EnterName):
+                        EnterNameAction(input);
+                        break;
+                    case (ActionType.EnterPassword):
+                        EnterPasswordAction(input);
+                        break;
+                    case (ActionType.ExchangePlaces):
+                        ExchangePlacesAction(input);
+                        break;
+                    case (ActionType.ReadBibleVerse):
+                        ReadRecallAction(input);
+                        break;
+                    case (ActionType.ReciteBibleVerse):
+                        ReciteRecallAction(input);
+                        break;
+                    case (ActionType.Roll):
+                        RollAction(input);
+                        break;
+                    case (ActionType.RollToGo):
+                        RollToGoAction(input);
+                        break;
+                    case (ActionType.SelectPiece):
+                        SelectPieceAction(input);
+                        break;
+                    case (ActionType.TurnAround):
+                        TurnAroundAction(input);
+                        break;
+                    default:
+                        throw new Exception("Action has no Type");
+                }
+            });
         }
 
         public override string ToString()

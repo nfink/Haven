@@ -41,6 +41,17 @@ namespace HavenWebApp
                 return JsonConvert.SerializeObject(Color.Colors);
             };
 
+            Get["/SpaceTypes"] = parameters =>
+            {
+                var types = new List<AdminModule.SpaceType>();
+                foreach (Haven.SpaceType type in Enum.GetValues(typeof(Haven.SpaceType)))
+                {
+                    types.Add(new AdminModule.SpaceType(type));
+                }
+
+                return JsonConvert.SerializeObject(types);
+            };
+
             Get["/Games"] = parameters =>
             {
                 var userId = int.Parse(this.Context.CurrentUser.UserName);
@@ -280,6 +291,208 @@ namespace HavenWebApp
             };
 
 
+            Post["/Spaces"] = parameters =>
+            {
+                var space = this.Bind<Space>();
+
+                var imageFile = this.Request.Files.FirstOrDefault();
+                Image image = null;
+
+                // add any dependent records
+                if (space.Type == Haven.SpaceType.Challenge)
+                {
+                    var nameCard = new NameCard() { Name = (string)this.Request.Form.CardName, Details = (string)this.Request.Form.CardDetails };
+                    image = this.UpdateImage(pathProvider, image, imageFile);
+                    if (image != null)
+                    {
+                        nameCard.ImageId = image.Id;
+                    }
+                    Persistence.Connection.Insert(nameCard);
+                    space.NameCardId = nameCard.Id;
+                }
+                else if (space.Type == Haven.SpaceType.SafeHaven)
+                {
+                    var safeHavenCard = new SafeHavenCard() { Name = (string)this.Request.Form.CardName, Details = (string)this.Request.Form.CardDetails };
+                    image = this.UpdateImage(pathProvider, image, imageFile);
+                    if (image != null)
+                    {
+                        safeHavenCard.ImageId = image.Id;
+                    }
+                    Persistence.Connection.Insert(safeHavenCard);
+                    space.SafeHavenCardId = safeHavenCard.Id;
+                }
+                else
+                {
+                    if (space.Type == Haven.SpaceType.Recall)
+                    {
+                        var recall = new BibleVerse() { Text = (string)this.Request.Form.Text };
+                        Persistence.Connection.Insert(recall);
+                        space.BibleVerseId = recall.Id;
+
+                    }
+                }
+
+                Persistence.Connection.Insert(space);
+
+                return JsonConvert.SerializeObject(space);
+            };
+
+            Put["/Spaces/{id}"] = parameters =>
+            {
+                var spaceId = (int)parameters.id;
+                var userId = int.Parse(this.Context.CurrentUser.UserName);
+                var space = Persistence.Connection.Query<Space>("select Space.* from Space join Board on Space.BoardId=Board.Id where Space.Id=? and Board.OwnerId=?", spaceId, userId).FirstOrDefault();
+                if (space != null)
+                {
+                    // update fields
+                    space.Type = (Haven.SpaceType)((int)this.Request.Form.Type);
+                    space.Order = (int)this.Request.Form.Order;
+                    space.BackgroundColorId = (int)this.Request.Form.BackgroundColorId;
+                    space.TextColorId = (int)this.Request.Form.TextColorId;
+
+                    var imageFile = this.Request.Files.FirstOrDefault();
+
+                    // add/update any dependent records
+                    if (space.Type == Haven.SpaceType.Challenge)
+                    {
+                        // delete other records
+                        if (space.BibleVerseId != 0)
+                        {
+                            Persistence.Connection.Delete<BibleVerse>(space.BibleVerseId);
+                            space.BibleVerseId = 0;
+                        }
+                        if (space.SafeHavenCardId != 0)
+                        {
+                            Persistence.Connection.Delete<SafeHavenCard>(space.SafeHavenCardId);
+                            space.SafeHavenCardId = 0;
+                        }
+
+                        // add/update name card record
+                        NameCard nameCard = space.NameCard;
+                        if (nameCard == null)
+                        {
+                            nameCard = new NameCard() { Name = (string)this.Request.Form.CardName, Details = (string)this.Request.Form.CardDetails };
+                            Persistence.Connection.Insert(nameCard);
+                        }
+                        else
+                        {
+                            nameCard.Name = (string)this.Request.Form.CardName;
+                            nameCard.Details = (string)this.Request.Form.CardDetails;
+                        }
+
+                        var image = nameCard.Image;
+                        image = this.UpdateImage(pathProvider, image, imageFile);
+                        if (image != null)
+                        {
+                            nameCard.ImageId = image.Id;
+                        }
+
+                        Persistence.Connection.Update(nameCard);
+                        space.NameCardId = nameCard.Id;
+                    }
+                    else if (space.Type == Haven.SpaceType.SafeHaven)
+                    {
+                        // delete other records
+                        if (space.BibleVerseId != 0)
+                        {
+                            Persistence.Connection.Delete<BibleVerse>(space.BibleVerseId);
+                            space.BibleVerseId = 0;
+                        }
+                        if (space.NameCardId != 0)
+                        {
+                            Persistence.Connection.Delete<NameCard>(space.NameCardId);
+                            space.NameCardId = 0;
+                        }
+
+                        // add/update safe haven card record
+                        SafeHavenCard safeHavenCard = space.SafeHavenCard;
+                        if (safeHavenCard == null)
+                        {
+                            safeHavenCard = new SafeHavenCard() { Name = (string)this.Request.Form.CardName, Details = (string)this.Request.Form.CardDetails };
+                            Persistence.Connection.Insert(safeHavenCard);
+                        }
+                        else
+                        {
+                            safeHavenCard.Name = (string)this.Request.Form.CardName;
+                            safeHavenCard.Details = (string)this.Request.Form.CardDetails;
+                        }
+
+                        var image = safeHavenCard.Image;
+                        image = this.UpdateImage(pathProvider, image, imageFile);
+                        if (image != null)
+                        {
+                            safeHavenCard.ImageId = image.Id;
+                        }
+
+                        Persistence.Connection.Update(safeHavenCard);
+                        space.SafeHavenCardId = safeHavenCard.Id;
+                    }
+                    else
+                    {
+                        // delete unused records
+                        if (space.NameCardId != 0)
+                        {
+                            if (space.NameCard.Image != null)
+                            {
+                                space.NameCard.Image.DeleteImage(pathProvider.GetRootPath());
+                                Persistence.Connection.Delete(space.NameCard.Image);
+                            }
+                            Persistence.Connection.Delete<NameCard>(space.NameCardId);
+                            space.NameCardId = 0;
+                        }
+                        if (space.SafeHavenCardId != 0)
+                        {
+                            if (space.SafeHavenCard.Image != null)
+                            {
+                                space.SafeHavenCard.Image.DeleteImage(pathProvider.GetRootPath());
+                                Persistence.Connection.Delete(space.SafeHavenCard.Image);
+                            }
+                            Persistence.Connection.Delete<SafeHavenCard>(space.SafeHavenCardId);
+                            space.SafeHavenCardId = 0;
+                        }
+                        if (space.BibleVerseId != 0)
+                        {
+                            Persistence.Connection.Delete<BibleVerse>(space.BibleVerseId);
+                            space.BibleVerseId = 0;
+                        }
+
+                        // re-create recall record for each edit
+                        if (space.Type == Haven.SpaceType.Recall)
+                        {
+                            var recall = new BibleVerse() { Text = (string)this.Request.Form.RecallText };
+                            Persistence.Connection.Insert(recall);
+                            space.BibleVerseId = recall.Id;
+
+                        }
+                    }
+
+                    Persistence.Connection.Update(space);
+
+                    return JsonConvert.SerializeObject(space);
+                }
+                else
+                {
+                    return new HtmlResponse(HttpStatusCode.NotFound);
+                }
+            };
+
+            Delete["/Spaces/{id}"] = parameters =>
+            {
+                var spaceId = (int)parameters.id;
+                var userId = int.Parse(this.Context.CurrentUser.UserName);
+                var space = Persistence.Connection.Query<Space>("select Space.* from Space join Board on Space.BoardId=Board.Id where Space.Id=? and Board.OwnerId=?", spaceId, userId).FirstOrDefault();
+                if (space != null)
+                {
+                    space.Delete();
+                    return new HtmlResponse(HttpStatusCode.OK);
+                }
+                else
+                {
+                    return new HtmlResponse(HttpStatusCode.NotFound);
+                }
+            };
+
+
 
 
 
@@ -330,7 +543,7 @@ namespace HavenWebApp
                 }
 
                 // add any dependent records
-                if (space.Type == SpaceType.Challenge)
+                if (space.Type == Haven.SpaceType.Challenge)
                 {
                     var nameCard = new NameCard() { Name = (string)this.Request.Form.NameCardName, Details = (string)this.Request.Form.NameCardDetails };
                     image = this.UpdateImage(pathProvider, image, imageFile);
@@ -341,7 +554,7 @@ namespace HavenWebApp
                     Persistence.Connection.Insert(nameCard);
                     space.NameCardId = nameCard.Id;
                 }
-                else if (space.Type == SpaceType.SafeHaven)
+                else if (space.Type == Haven.SpaceType.SafeHaven)
                 {
                     var safeHavenCard = new SafeHavenCard() { Name = (string)this.Request.Form.SafeHavenCardName, Details = (string)this.Request.Form.SafeHavenCardDetails };
                     image = this.UpdateImage(pathProvider, image, imageFile);
@@ -354,7 +567,7 @@ namespace HavenWebApp
                 }
                 else
                 {
-                    if (space.Type == SpaceType.Recall)
+                    if (space.Type == Haven.SpaceType.Recall)
                     {
                         var recall = new BibleVerse() { Text = (string)this.Request.Form.RecallText };
                         Persistence.Connection.Insert(recall);
@@ -381,13 +594,6 @@ namespace HavenWebApp
                 }
 
                 return View["Views/Space.cshtml", space];
-            };
-
-            Delete["/{username}/Spaces/{id}"] = parameters =>
-            {
-                var space = Persistence.Connection.Get<Space>((int)parameters.id);
-                space.Delete();
-                return new HtmlResponse(HttpStatusCode.OK);
             };
         }
 
@@ -456,5 +662,24 @@ namespace HavenWebApp
         //    //        return new HtmlResponse(HttpStatusCode.NotFound);
         //    //    }
         //}
+
+        private class SpaceType
+        {
+            public int Id { get; set; }
+
+            public string Name { get; set; }
+
+            public string Description { get; set; }
+
+            public string Icon { get; set; }
+
+            public SpaceType(Haven.SpaceType type)
+            {
+                this.Id = (int)type;
+                this.Name = type.GetName();
+                this.Description = type.GetDescription();
+                this.Icon = type.GetIcon();
+            }
+        }
     }
 }

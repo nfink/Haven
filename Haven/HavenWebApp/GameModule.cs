@@ -11,7 +11,6 @@ using Newtonsoft.Json;
 using Nancy.Conventions;
 using Nancy.Responses;
 using Nancy.Security;
-using Newtonsoft.Json;
 
 namespace HavenWebApp
 {

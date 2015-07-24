@@ -71,8 +71,8 @@ var Action = React.createClass({
         var input = this.state.input;
         if (this.props.action.RequiresInput) {
             if (this.props.action.Name === "SelectPiece") {
-                var pieceId = this.refs.iconSelector.value();
-                var colorId = this.refs.colorSelector.value();
+                var pieceId = this.refs.iconSelector.getSelectedId();
+                var colorId = this.refs.colorSelector.getSelectedId();
                 if (pieceId && colorId) {
                     input = JSON.stringify({PieceId: pieceId, ColorId: colorId});
                 }

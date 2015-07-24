@@ -22,7 +22,7 @@ Board.Space = React.createClass({
         var left = AdjustCoordinate(this.props.space.X, 70);
         var top = AdjustCoordinate(this.props.space.Y, 70);
         return (
-            <Space name={this.props.space.Name} image={this.props.space.Image} icon={this.props.space.Icon} onClick={this.viewDetails} style={{position: "absolute", left: left, top: top}} />
+            <Space space={this.props.space} onClick={this.viewDetails} style={{position: "absolute", left: left, top: top}} />
         );
     },
     viewDetails: function () {

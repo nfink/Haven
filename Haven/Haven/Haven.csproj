@@ -90,6 +90,7 @@
     <Compile Include="Spaces\Space.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Spaces\SpaceType.cs" />
     <Compile Include="Spaces\TurnAroundSpace.cs" />
     <Compile Include="Spaces\WarSpace.cs" />
     <Compile Include="SQLite.cs" />

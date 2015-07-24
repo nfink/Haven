@@ -16,16 +16,22 @@ var IconSelector = React.createClass({
         );
     },
     getInitialState: function () {
-        return {selectedIcon: null, selectedIconId: null, iconsDisplayed: false, pieces: [], error: false};
+        return {selectedIcon: (this.props.selectedIcon ? this.props.selectedIcon.Image : null), selectedIconId: (this.props.selectedIcon ? this.props.selectedIcon.Id :  null), iconsDisplayed: false, pieces: [], error: false};
     },
     toggleIcons: function() {
         this.setState({iconsDisplayed: !this.state.iconsDisplayed});
     },
     selectIcon: function (event) {
         this.setState({iconsDisplayed: false, selectedIcon: event.target.getAttribute("value"), selectedIconId: event.target.id, error: false});
+        if (typeof this.props.onSelect === "function") {
+            this.props.onSelect({Id: event.target.id, Image: event.target.getAttribute("value")});
+        }
     },
-    value: function () {
+    getSelectedId: function () {
         return this.state.selectedIconId;
+    },
+    getSelectedName: function () {
+        return this.state.selectedIcon;
     },
     showError: function () {
         this.setState({error: true});

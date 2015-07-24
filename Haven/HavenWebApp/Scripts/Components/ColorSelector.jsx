@@ -16,16 +16,22 @@ var ColorSelector = React.createClass({
         );
     },
     getInitialState: function () {
-        return {selectedColor: null, selectedColorId: null, colorsDisplayed: false, colors: [], error: false};
+        return {selectedColor: (this.props.selectedColor ? this.props.selectedColor.Name : null), selectedColorId: (this.props.selectedColor ? this.props.selectedColor.Id : null), colorsDisplayed: false, colors: [], error: false};
     },
     toggleColors: function() {
         this.setState({colorsDisplayed: !this.state.colorsDisplayed});
     },
     selectColor: function (event) {
         this.setState({colorsDisplayed: false, selectedColor: event.target.getAttribute("value"), selectedColorId: event.target.id, error: false});
+        if (typeof this.props.onSelect === "function") {
+            this.props.onSelect({Id: event.target.id, Name: event.target.getAttribute("value")});
+        }
     },
-    value: function () {
+    getSelectedId: function () {
         return this.state.selectedColorId;
+    },
+    getSelectedName: function () {
+        return this.state.selectedColor;
     },
     showError: function () {
         this.setState({error: true});

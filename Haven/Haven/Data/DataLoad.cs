@@ -30,6 +30,7 @@ namespace Haven.Data
             this.LoadBoardChallenge();
             this.LoadColor();
             this.LoadImage();
+            this.LoadSpaceType();
             this.LoadSpace();
             this.LoadBoard();
             this.LoadMessage();
@@ -250,48 +251,53 @@ namespace Haven.Data
             this.Connection.Insert(new SafeHavenCard() { Id = 4, Name = "Jacob", ImageId = 16, Details = "Son of Isaac, father of the twelve sons who form the tribes of Israel." });
         }
 
+        public void LoadSpaceType()
+        {
+
+        }
+
         public void LoadSpace()
         {
             this.Connection.CreateTable<Space>();
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 1, Type = SpaceType.Recall, BibleVerseId = 1, Width = 100, Height = 100, X = 150, Y = 50, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 9, Type = SpaceType.Recall, BibleVerseId = 2, Width = 100, Height = 100, X = 850, Y = 150, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 17, Type = SpaceType.Recall, BibleVerseId = 3, Width = 100, Height = 100, X = 750, Y = 850, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 25, Type = SpaceType.Recall, BibleVerseId = 4, Width = 100, Height = 100, X = 50, Y = 750, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 1, Type = SpaceType.Recall, BibleVerseId = 1, Width = 100, Height = 100, X = 150, Y = 50,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 9, Type = SpaceType.Recall, BibleVerseId = 2, Width = 100, Height = 100, X = 850, Y = 150,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 17, Type = SpaceType.Recall, BibleVerseId = 3, Width = 100, Height = 100, X = 750, Y = 850,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 25, Type = SpaceType.Recall, BibleVerseId = 4, Width = 100, Height = 100, X = 50, Y = 750,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
 
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 6, Type = SpaceType.ExchangePlaces, Width = 100, Height = 100, X = 650, Y = 50, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 14, Type = SpaceType.ExchangePlaces, Width = 100, Height = 100, X = 850, Y = 650, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 6, Type = SpaceType.ExchangePlaces, Width = 100, Height = 100, X = 650, Y = 50,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 14, Type = SpaceType.ExchangePlaces, Width = 100, Height = 100, X = 850, Y = 650,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
 
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 3, Type = SpaceType.OptionalTurnAround, Width = 100, Height = 100, X = 350, Y = 50, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 19, Type = SpaceType.OptionalTurnAround, Width = 100, Height = 100, X = 550, Y = 850, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 3, Type = SpaceType.OptionalTurnAround, Width = 100, Height = 100, X = 350, Y = 50,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 19, Type = SpaceType.OptionalTurnAround, Width = 100, Height = 100, X = 550, Y = 850,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
 
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 11, Type = SpaceType.RollToGo, Width = 100, Height = 100, X = 850, Y = 350, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 27, Type = SpaceType.RollToGo, Width = 100, Height = 100, X = 50, Y = 550, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 11, Type = SpaceType.RollToGo, Width = 100, Height = 100, X = 850, Y = 350,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 27, Type = SpaceType.RollToGo, Width = 100, Height = 100, X = 50, Y = 550,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
 
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 0, Type = SpaceType.SafeHaven, SafeHavenCardId = 1, Width = 100, Height = 100, X = 50, Y = 50, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 8, Type = SpaceType.SafeHaven, SafeHavenCardId = 2, Width = 100, Height = 100, X = 850, Y = 50, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 16, Type = SpaceType.SafeHaven, SafeHavenCardId = 3, Width = 100, Height = 100, X = 850, Y = 850, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 24, Type = SpaceType.SafeHaven, SafeHavenCardId = 4, Width = 100, Height = 100, X = 50, Y = 850, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 0, Type = SpaceType.SafeHaven, SafeHavenCardId = 1, Width = 100, Height = 100, X = 50, Y = 50,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 8, Type = SpaceType.SafeHaven, SafeHavenCardId = 2, Width = 100, Height = 100, X = 850, Y = 50,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 16, Type = SpaceType.SafeHaven, SafeHavenCardId = 3, Width = 100, Height = 100, X = 850, Y = 850,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 24, Type = SpaceType.SafeHaven, SafeHavenCardId = 4, Width = 100, Height = 100, X = 50, Y = 850,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
 
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 2, Type = SpaceType.Challenge, NameCardId = 1, Width = 100, Height = 100, X = 250, Y = 50, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 4, Type = SpaceType.Challenge, NameCardId = 2, Width = 100, Height = 100, X = 450, Y = 50, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 5, Type = SpaceType.Challenge, NameCardId = 3, Width = 100, Height = 100, X = 550, Y = 50, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 10, Type = SpaceType.Challenge, NameCardId = 4, Width = 100, Height = 100, X = 850, Y = 250, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 12, Type = SpaceType.Challenge, NameCardId = 5, Width = 100, Height = 100, X = 850, Y = 450, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 13, Type = SpaceType.Challenge, NameCardId = 6, Width = 100, Height = 100, X = 850, Y = 550, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 18, Type = SpaceType.Challenge, NameCardId = 7, Width = 100, Height = 100, X = 650, Y = 850, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 20, Type = SpaceType.Challenge, NameCardId = 8, Width = 100, Height = 100, X = 450, Y = 850, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 21, Type = SpaceType.Challenge, NameCardId = 9, Width = 100, Height = 100, X = 350, Y = 850, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 26, Type = SpaceType.Challenge, NameCardId = 10, Width = 100, Height = 100, X = 50, Y = 650, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 28, Type = SpaceType.Challenge, NameCardId = 11, Width = 100, Height = 100, X = 50, Y = 450, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 29, Type = SpaceType.Challenge, NameCardId = 12, Width = 100, Height = 100, X = 50, Y = 350, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 2, Type = SpaceType.Challenge, NameCardId = 1, Width = 100, Height = 100, X = 250, Y = 50,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 4, Type = SpaceType.Challenge, NameCardId = 2, Width = 100, Height = 100, X = 450, Y = 50,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 5, Type = SpaceType.Challenge, NameCardId = 3, Width = 100, Height = 100, X = 550, Y = 50,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 10, Type = SpaceType.Challenge, NameCardId = 4, Width = 100, Height = 100, X = 850, Y = 250,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 12, Type = SpaceType.Challenge, NameCardId = 5, Width = 100, Height = 100, X = 850, Y = 450,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 13, Type = SpaceType.Challenge, NameCardId = 6, Width = 100, Height = 100, X = 850, Y = 550,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 18, Type = SpaceType.Challenge, NameCardId = 7, Width = 100, Height = 100, X = 650, Y = 850,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 20, Type = SpaceType.Challenge, NameCardId = 8, Width = 100, Height = 100, X = 450, Y = 850,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 21, Type = SpaceType.Challenge, NameCardId = 9, Width = 100, Height = 100, X = 350, Y = 850,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 26, Type = SpaceType.Challenge, NameCardId = 10, Width = 100, Height = 100, X = 50, Y = 650,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 28, Type = SpaceType.Challenge, NameCardId = 11, Width = 100, Height = 100, X = 50, Y = 450,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 29, Type = SpaceType.Challenge, NameCardId = 12, Width = 100, Height = 100, X = 50, Y = 350,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
 
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 22, Type = SpaceType.TurnAround, Width = 100, Height = 100, X = 250, Y = 850, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 30, Type = SpaceType.TurnAround, Width = 100, Height = 100, X = 50, Y = 250, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 22, Type = SpaceType.TurnAround, Width = 100, Height = 100, X = 250, Y = 850,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 30, Type = SpaceType.TurnAround, Width = 100, Height = 100, X = 50, Y = 250,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
 
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 7, Type = SpaceType.War, Width = 100, Height = 100, X = 750, Y = 50, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 15, Type = SpaceType.War, Width = 100, Height = 100, X = 850, Y = 750, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 23, Type = SpaceType.War, Width = 100, Height = 100, X = 150, Y = 850, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 31, Type = SpaceType.War, Width = 100, Height = 100, X = 50, Y = 150, BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 7, Type = SpaceType.War, Width = 100, Height = 100, X = 750, Y = 50,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 15, Type = SpaceType.War, Width = 100, Height = 100, X = 850, Y = 750,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 23, Type = SpaceType.War, Width = 100, Height = 100, X = 150, Y = 850,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { BoardId = 1, Order = 31, Type = SpaceType.War, Width = 100, Height = 100, X = 50, Y = 150,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
 
             //this.Connection.Execute("update Space set Width=70, Height=70, X=(X - (X / 4)), Y=(Y - (Y / 4))");
             this.Connection.Execute("update Space set X=(((X - 50) / 100) + 1), Y=(((Y - 50) / 100) + 1)");

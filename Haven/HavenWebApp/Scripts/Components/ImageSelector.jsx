@@ -36,12 +36,13 @@ var ImageSelector = React.createClass({
 
             reader.readAsDataURL(input.files[0]);
         }
+
+        if (typeof this.props.onSelect === "function") {
+            this.props.onSelect(input.files && input.files[0]);
+        }
     },
     selectImage: function (event) {
         React.findDOMNode(this.refs.imageInput).click();
-    },
-    filename: function () {
-        return this.state.image;
     },
     file: function () {
         var input = React.findDOMNode(this.refs.imageInput);
