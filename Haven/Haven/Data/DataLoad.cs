@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SQLite;
-using System.IO;
+﻿using SQLite;
+using System;
 
 namespace Haven.Data
 {
@@ -14,8 +9,7 @@ namespace Haven.Data
 
         public DataLoad()
         {
-            // var path = Path.Combine(Environment., "Data/SafeHavenGame.sqlite");
-            this.Connection = new SQLiteConnection("C:\\Users\\Nolan\\OneDrive\\Code\\Haven\\Haven\\Haven\\bin\\Debug\\Data\\SafeHavenGame.sqlite");
+            this.Connection = new SQLiteConnection(System.Configuration.ConfigurationManager.AppSettings["databasePath"]);
         }
 
         public void LoadTables()
@@ -146,6 +140,13 @@ namespace Haven.Data
             this.Connection.Insert(new Color() { Name = "taupe" });
             this.Connection.Insert(new Color() { Name = "brown" });
             this.Connection.Insert(new Color() { Name = "darkBrown" });
+            this.Connection.Insert(new Color() { Name = "black" });
+            this.Connection.Insert(new Color() { Name = "grayDarker" });
+            this.Connection.Insert(new Color() { Name = "grayDark" });
+            this.Connection.Insert(new Color() { Name = "gray" });
+            this.Connection.Insert(new Color() { Name = "grayLight" });
+            this.Connection.Insert(new Color() { Name = "grayLighter" });
+            this.Connection.Insert(new Color() { Name = "white" });
         }
 
         public void LoadGame()

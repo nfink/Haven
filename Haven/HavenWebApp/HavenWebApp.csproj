@@ -222,9 +222,6 @@
     <Content Include="Scripts\react\react-0.13.1.min.js" />
     <Content Include="Scripts\react\react-with-addons-0.13.1.js" />
     <Content Include="Scripts\react\react-with-addons-0.13.1.min.js" />
-    <Content Include="Templates\Boards.js" />
-    <Content Include="Templates\MainMenu.html" />
-    <Content Include="Templates\Boards.html" />
     <Content Include="Uploads\Abraham.jpg" />
     <Content Include="Uploads\Asher.JPG" />
     <Content Include="Uploads\Benjamin.JPG" />
@@ -243,7 +240,6 @@
     <Content Include="Uploads\Levi.JPG" />
     <Content Include="Uploads\Naphtali.JPG" />
     <Content Include="Uploads\Rembrandt_Harmensz_square.jpg" />
-    <Content Include="Scripts\Admin.js" />
     <Content Include="Scripts\EditBoard.js" />
     <Content Include="Uploads\Reuben.JPG" />
     <Content Include="Uploads\Simeon.JPG" />
@@ -257,7 +253,6 @@
     <Content Include="Views\Admin\EditSpace.cshtml" />
     <Content Include="Views\Admin\EditChallenge.cshtml" />
     <Content Include="Views\Admin\Challenge.cshtml" />
-    <Content Include="Templates\Home.html" />
     <Content Include="Views\Space.cshtml" />
     <Content Include="Views\Admin\EditBoardDetails.cshtml" />
     <None Include="Views\BoardsMenu.cshtml" />

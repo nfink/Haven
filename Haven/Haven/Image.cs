@@ -33,6 +33,13 @@ namespace Haven
             File.Delete(Path.Combine(rootPath, this.FixedFilepath()));
         }
 
+        public Image Clone()
+        {
+            var image = new Image() { Filepath = this.Filepath, Filename = this.Filename };
+            Persistence.Connection.Insert(image);
+            return image;
+        }
+
         private string FixedFilepath()
         {
             return this.Filepath.TrimStart('/');

@@ -149,10 +149,10 @@ namespace Haven
             // delete challenge links
             Persistence.Connection.Execute("delete from BoardChallenge where BoardId=?", this.Id);
 
-            // delete image
+            // delete image if no other boards use the image
             if (this.ImageId != 0)
             {
-                Persistence.Connection.Execute("delete from Image where Id=?", this.ImageId);
+                Persistence.Connection.Execute("delete from Image where Id=? and (select count(Board.Id) from Board where ImageId=?) < 2", this.ImageId, this.ImageId);
             }
 
             // delete board
@@ -250,12 +250,41 @@ namespace Haven
             }
 
             // validate name cards
-
+            // warn if there are name cards without a name
+            // warn if there are name cards without a description
+            // warn if there are name cards without an image
 
             // validate safe haven cards
 
 
             return validation;
+        }
+
+        public Board Clone()
+        {
+            var board = new Board() { Name = this.Name, Description = this.Description, Active = this.Active };
+
+            // clone image
+            if (this.ImageId != 0)
+            {
+                var image = this.Image.Clone();
+                board.ImageId = image.Id;
+            }
+
+            // clone spaces
+            foreach (Space space in this.Spaces)
+            {
+                space.Clone();
+            }
+
+            // clone challenges
+            foreach (Challenge challenge in this.Challenges)
+            {
+
+            }
+
+            Persistence.Connection.Insert(board);
+            return board;
         }
     }
 

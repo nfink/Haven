@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using Haven;
 using Nancy;
-using Haven;
-using Haven.Data;
-using Nancy.Session;
-using Nancy.ModelBinding;
-using Newtonsoft.Json;
-using Nancy.Conventions;
 using Nancy.Responses;
-using Nancy.Security;
+using Newtonsoft.Json;
 
 namespace HavenWebApp
 {
@@ -21,8 +12,6 @@ namespace HavenWebApp
             Get["/Games/{id}"] = parameters =>
             {
                 var game = Persistence.Connection.Get<Game>((int)parameters.id);
-                // remove actions that the user does not have access to
-
                 return JsonConvert.SerializeObject(game);
             };
 
@@ -30,11 +19,7 @@ namespace HavenWebApp
             {
                 var gameId = (int)parameters.id;
                 var players = Persistence.Connection.Table<Player>().Where(x => x.GameId == gameId);
-
-                // remove actions that the user does not have access to
-                //var passwords = parameters.passwords;
-
-                return View["Views/Players.cshtml", players];
+                return JsonConvert.SerializeObject(players);
             };
 
             Post["/Authenticate"] = parameters =>

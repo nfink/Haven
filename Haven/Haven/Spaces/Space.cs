@@ -199,5 +199,35 @@ namespace Haven
             // delete space
             Persistence.Connection.Delete(this);
         }
+
+        public Space Clone()
+        {
+            var space = new Space() { };
+
+
+            // copy any subrecords
+            if (this.BibleVerseId != 0)
+            {
+                var recall = this.BibleVerse;
+                var clonedRecall = new BibleVerse() { Text = recall.Text };
+                Persistence.Connection.Insert(clonedRecall);
+                space.BibleVerseId = clonedRecall.Id;
+            }
+            if (this.NameCardId != 0)
+            {
+                var nameCard = this.NameCard;
+                var clonedNameCard = new NameCard() { Name = nameCard.Name, Details = nameCard.Details };
+
+                Persistence.Connection.Insert(clonedNameCard);
+                space.NameCardId = 0;
+            }
+            if (this.SafeHavenCardId != 0)
+            {
+
+            }
+
+            Persistence.Connection.Insert(space);
+            return space;
+        }
     }
 }

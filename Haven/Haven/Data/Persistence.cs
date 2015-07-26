@@ -9,7 +9,6 @@ namespace Haven
 {
     public class Persistence
     {
-        public static SQLiteConnection Connection = new SQLiteConnection("C:\\Users\\Nolan\\OneDrive\\Code\\Haven\\Haven\\Haven\\bin\\Debug\\Data\\SafeHavenGame.sqlite");
-
+        public static SQLiteConnection Connection = new SQLiteConnection(System.Configuration.ConfigurationManager.AppSettings["databasePath"]);
     }
 }

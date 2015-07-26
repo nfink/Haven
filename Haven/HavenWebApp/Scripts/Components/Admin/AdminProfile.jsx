@@ -12,14 +12,16 @@ var AdminProfile = React.createClass({
         else {
             return (
                 <div className="container page-content">
-                    <form onSubmit={this.save}>
-                        <label htmlFor="usernameEdit">Username:</label>
-                        <div className="input-control text" style={{marginLeft: 5}}>
-				            <input id="usernameEdit" type="text" value={this.state.user.Username} placeholder="Enter username..." onChange={this.handleUsernameChange} />
-			            </div>
-                        <br />
-                        <LoadingButton text="Save" ref="saveButton" />
-                    </form>
+                    <div className="bg-white padding10">
+                        <form onSubmit={this.save}>
+                            <label htmlFor="usernameEdit">Username:</label>
+                            <div className="input-control text" style={{marginLeft: 5}}>
+				                <input id="usernameEdit" type="text" value={this.state.user.Username} placeholder="Enter username..." onChange={this.handleUsernameChange} />
+			                </div>
+                            <br />
+                            <LoadingButton text="Save" ref="saveButton" />
+                        </form>
+                    </div>
                 </div>
             );
         }

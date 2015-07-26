@@ -39,5 +39,13 @@ namespace Haven
             // delete any uses by boards
             Persistence.Connection.Execute("delete from BoardChallenge where ChallengeId=?", this.Id);
         }
+
+        public Challenge Clone()
+        {
+            var challenge = new Challenge();
+
+            Persistence.Connection.Insert(challenge);
+            return challenge;
+        }
     }
 }
