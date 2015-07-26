@@ -184,7 +184,6 @@
     <Content Include="Content\Images\Go_Board_Full_Square.jpg" />
     <Content Include="Content\Images\no_image.png" />
     <Content Include="Content\Images\Rembrandt_Harmensz_square.jpg" />
-    <Content Include="readme.txt" />
     <None Include="Scripts\Components\Admin\AdminBoards.jsx" />
     <None Include="Scripts\Components\Admin\AdminGames.jsx" />
     <None Include="Scripts\Components\Admin\AdminHome.jsx" />
