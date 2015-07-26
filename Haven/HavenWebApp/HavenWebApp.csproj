@@ -224,10 +224,6 @@
     <Content Include="Uploads\Abraham.jpg" />
     <Content Include="Uploads\Asher.JPG" />
     <Content Include="Uploads\Benjamin.JPG" />
-    <Content Include="Uploads\board_continue.jpg" />
-    <Content Include="Uploads\board_continue_square.jpg" />
-    <Content Include="Uploads\board_new.jpg" />
-    <Content Include="Uploads\board_new_square.jpg" />
     <Content Include="Uploads\Dan.JPG" />
     <Content Include="Uploads\Gad.JPG" />
     <Content Include="Uploads\God_the_Father.jpg" />
