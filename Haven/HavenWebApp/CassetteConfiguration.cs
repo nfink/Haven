@@ -55,7 +55,6 @@ namespace HavenWebApp
 
             bundles.Add<StylesheetBundle>("bundle.css", "~/Content/Game.css", "~/Content/Haven.css", "~/Content/metro-icons.css", "~/Content/metro.css");
 
-
         }
     }
 }
