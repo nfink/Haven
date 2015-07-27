@@ -7,8 +7,6 @@ using Nancy.Bootstrapper;
 using Nancy.Conventions;
 using Nancy.TinyIoc;
 using Nancy.Authentication.Forms;
-using System.Web.Optimization;
-using System.Web.Optimization.React;
 
 namespace HavenWebApp
 {
