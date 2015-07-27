@@ -171,18 +171,18 @@
     <Content Include="Scripts\jquery-1.11.3.min.js" />
     <Content Include="Scripts\jquery-1.11.3.min.map" />
     <None Include="Views\Actions.cshtml" />
-    <None Include="ClearScript.V8\ClearScriptV8-32.dll">
+    <Content Include="ClearScript.V8\ClearScriptV8-32.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="ClearScript.V8\ClearScriptV8-64.dll">
+    </Content>
+    <Content Include="ClearScript.V8\ClearScriptV8-64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="ClearScript.V8\v8-ia32.dll">
+    </Content>
+    <Content Include="ClearScript.V8\v8-ia32.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="ClearScript.V8\v8-x64.dll">
+    </Content>
+    <Content Include="ClearScript.V8\v8-x64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
     <Content Include="Content\Images\Go_Board_Empty_Square.jpg" />
     <Content Include="Content\Images\Go_Board_Full_Square.jpg" />
     <Content Include="Content\Images\no_image.png" />
