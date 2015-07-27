@@ -1,6 +1,13 @@
-﻿@using System.Web.Optimization
+﻿@using Cassette.Nancy
 @{
     Layout = null;
+    Bundles.Reference("bundle.css");
+    Bundles.Reference("react", "prereqs");
+    Bundles.Reference("jquery", "prereqs");
+    Bundles.Reference("page", "prereqs");
+    Bundles.Reference("metro.js", "metro");
+    Bundles.Reference("~/Scripts/Components", "components");
+    Bundles.Reference("bundle.js");
 }
 
 <!DOCTYPE html>
@@ -11,14 +18,11 @@
     <meta content="utf-8" http-equiv="encoding">
     <meta name="viewport" content="width=device-width" />
     <title>Haven</title>
-    @Html.Raw(Scripts.Render("~/Scripts/react").ToString())
-    @Html.Raw(Scripts.Render("~/Scripts/jsxtransformer").ToString())
-    @Html.Raw(Scripts.Render("~/Scripts/jquery").ToString())
-    @Html.Raw(Scripts.Render("~/Scripts/page").ToString())
-    @Html.Raw(Scripts.Render("~/Scripts/metro").ToString())
-    @Html.Raw(Scripts.RenderFormat("<script type=\"text/jsx\" src=\"{0}\"></script>", "~/Scripts/bundle").ToString())
-    @Html.Raw(Styles.Render("~/Content/bundle").ToString())
-
+    @Bundles.RenderStylesheets()
+    @Bundles.RenderScripts("prereqs")
+    @Bundles.RenderScripts("metro")
+    @Bundles.RenderScripts("components")
+    @Bundles.RenderScripts()
 </head>
 <body class="bg-grayLighter">
     @RenderBody()

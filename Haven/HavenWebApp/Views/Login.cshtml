@@ -1,6 +1,9 @@
-﻿@using System.Web.Optimization
+﻿@using Cassette.Nancy
 @{
     Layout = null;
+    Bundles.Reference("bundle.css");
+    Bundles.Reference("jquery");
+    Bundles.Reference("metro.js");
 }
 
 <!DOCTYPE html>
@@ -11,10 +14,8 @@
     <meta content="utf-8" http-equiv="encoding">
     <meta name="viewport" content="width=device-width" />
     <title>Haven</title>
-    @Html.Raw(Scripts.Render("~/Scripts/jquery").ToString())
-    @Html.Raw(Scripts.Render("~/Scripts/metro").ToString())
-    @Html.Raw(Styles.Render("~/Content/bundle").ToString())
-
+    @Bundles.RenderStylesheets()
+    @Bundles.RenderScripts()
 </head>
 <body class="bg-grayLighter">
     <div class="login-form padding20 block-shadow">

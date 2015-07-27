@@ -45,8 +45,24 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AjaxMin, Version=5.14.5506.26196, Culture=neutral, PublicKeyToken=21ef50ce11b5d80f, processorArchitecture=MSIL">
+      <HintPath>..\packages\AjaxMin.5.14.5506.26202\lib\net40\AjaxMin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Antlr3.Runtime, Version=3.4.1.9004, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
       <HintPath>..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Cassette, Version=2.4.2.13844, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Cassette.2.4.2\lib\net40-client\Cassette.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Cassette.Nancy, Version=2.1.1.18130, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Cassette.Nancy.2.2.1\lib\net40\Cassette.Nancy.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Cassette.React, Version=1.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Cassette.React.1.5.3\lib\net40\Cassette.React.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ClearScript, Version=5.4.1.0, Culture=neutral, PublicKeyToken=935d0c957da47c73, processorArchitecture=MSIL">
@@ -102,12 +118,20 @@
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.0.1\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="React, Version=1.5.0.0, Culture=neutral, PublicKeyToken=9aed67b161f7db78, processorArchitecture=MSIL">
-      <HintPath>..\packages\React.Core.1.5.2\lib\net40\React.dll</HintPath>
+      <HintPath>..\packages\React.Core.1.5.3\lib\net40\React.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="React.MSBuild, Version=1.5.0.0, Culture=neutral, PublicKeyToken=9aed67b161f7db78, processorArchitecture=MSIL">
+      <HintPath>..\packages\React.MSBuild.1.5.3\lib\net40\React.MSBuild.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="React.Web, Version=1.5.0.0, Culture=neutral, PublicKeyToken=9aed67b161f7db78, processorArchitecture=MSIL">
-      <HintPath>..\packages\React.Web.1.5.2\lib\net40\React.Web.dll</HintPath>
+      <HintPath>..\packages\React.Web.1.5.3\lib\net40\React.Web.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -162,11 +186,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Scripts\jquery-1.11.1.intellisense.js" />
     <Content Include="Scripts\Components\Admin\AdminProfile.jsx" />
-    <Content Include="Scripts\jquery-1.11.1.js" />
-    <Content Include="Scripts\jquery-1.11.1.min.js" />
-    <Content Include="Scripts\jquery-1.11.1.min.map" />
+    <None Include="Scripts\jquery-1.11.3.intellisense.js" />
+    <Content Include="Scripts\jquery-1.11.3.js" />
+    <Content Include="Scripts\jquery-1.11.3.min.js" />
+    <Content Include="Scripts\jquery-1.11.3.min.map" />
+    <Content Include="TransformJsx.proj" />
     <None Include="Views\Actions.cshtml" />
     <None Include="ClearScript.V8\ClearScriptV8-32.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -296,6 +321,7 @@
     <Compile Include="AdminNonsecureModule.cs" />
     <Compile Include="App_Start\ReactConfig.cs" />
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="CassetteConfiguration.cs" />
     <Compile Include="GameModule.cs" />
     <Compile Include="PlayerIdentity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -304,7 +330,9 @@
     <Compile Include="UserMapper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="packages.config" />
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Fonts\selection.json" />
     <Content Include="Fonts\metro.woff" />
     <Content Include="Fonts\metro.ttf" />
@@ -364,6 +392,9 @@ xcopy /s /y /R "$(SolutionDir)packages\Nancy.Viewengines.Razor.1.2.0\lib\Net40\N
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
+  <Target Name="TransformJsx" AfterTargets="Build">
+    <Exec Command="&quot;$(msbuildtoolspath)\msbuild.exe&quot; $(ProjectDirectory)TransformJsx.proj /p:OutputPath=$(OutputPath) /nr:false" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
