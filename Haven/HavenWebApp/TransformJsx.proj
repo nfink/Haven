@@ -3,6 +3,6 @@
 	<!-- ReactJS.NET - Transforms JSX to JavaScript -->
 	<UsingTask AssemblyFile="$(OutputPath)\React.MSBuild.dll" TaskName="TransformJsx" />
 	<Target Name="TransformJsx">
-		<TransformJsx SourceDir="$(OutputPath)\.." />
+		<TransformJsx SourceDir="$(MSBuildProjectDirectory)" />
 	</Target>
 </Project>
