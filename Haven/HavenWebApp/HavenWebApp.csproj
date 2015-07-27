@@ -109,8 +109,8 @@
       <HintPath>..\packages\Nancy.Viewengines.Razor.1.2.0\lib\net40\Nancy.ViewEngines.Razor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
@@ -165,24 +165,27 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ClearScript.V8\ClearScriptV8-32.dll" />
+    <Content Include="ClearScript.V8\ClearScriptV8-64.dll" />
+    <Content Include="ClearScript.V8\v8-ia32.dll" />
+    <Content Include="ClearScript.V8\v8-x64.dll" />
+    <Content Include="Content\metro-icons.css" />
+    <Content Include="Content\metro-icons.min.css" />
+    <Content Include="Content\metro.css" />
+    <Content Include="Content\metro.min.css" />
+    <Content Include="Fonts\metro.svg" />
     <Content Include="Scripts\Components\Admin\AdminProfile.jsx" />
+    <Content Include="packages.config" />
+    <Content Include="Fonts\selection.json" />
+    <Content Include="Fonts\metro.woff" />
+    <Content Include="Fonts\metro.ttf" />
+    <Content Include="Fonts\metro.eot" />
     <None Include="Scripts\jquery-1.11.3.intellisense.js" />
+    <None Include="Scripts\jquery-1.11.3-vsdoc.js" />
     <Content Include="Scripts\jquery-1.11.3.js" />
     <Content Include="Scripts\jquery-1.11.3.min.js" />
     <Content Include="Scripts\jquery-1.11.3.min.map" />
     <None Include="Views\Actions.cshtml" />
-    <Content Include="ClearScript.V8\ClearScriptV8-32.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ClearScript.V8\ClearScriptV8-64.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ClearScript.V8\v8-ia32.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ClearScript.V8\v8-x64.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Content\Images\Go_Board_Empty_Square.jpg" />
     <Content Include="Content\Images\Go_Board_Full_Square.jpg" />
     <Content Include="Content\Images\no_image.png" />
@@ -218,6 +221,7 @@
     <Content Include="Scripts\Components\Game\StatusArea.jsx" />
     <Content Include="Scripts\Components\SubMenuTile.jsx" />
     <Content Include="Scripts\Components\WarningPanel.jsx" />
+    <Content Include="Scripts\metro.min.js" />
     <Content Include="Scripts\page.js" />
     <Content Include="Scripts\react\JSXTransformer-0.13.1.js" />
     <Content Include="Scripts\react\react-0.13.1.js" />
@@ -279,20 +283,16 @@
     <Content Include="Content\Images\Zebulun.JPG" />
     <Content Include="Scripts\Game.js" />
     <Content Include="Content\Haven.css" />
-    <Content Include="Content\metro-icons.css" />
-    <Content Include="Content\metro-icons.min.css" />
-    <Content Include="Content\metro.css" />
-    <Content Include="Content\metro.min.css" />
     <Content Include="Content\Images\white_marble.jpg" />
-    <Content Include="Fonts\metro.svg" />
     <None Include="Views\Game.cshtml" />
     <Content Include="Views\Messages.cshtml" />
     <Content Include="Views\Login.cshtml" />
     <None Include="Views\Players.cshtml" />
     <Content Include="Scripts\Menu.jsx" />
     <Content Include="Scripts\metro.js" />
-    <Content Include="Scripts\metro.min.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdminModule.cs" />
@@ -308,13 +308,6 @@
     <Compile Include="UserMapper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="packages.config">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Fonts\selection.json" />
-    <Content Include="Fonts\metro.woff" />
-    <Content Include="Fonts\metro.ttf" />
-    <Content Include="Fonts\metro.eot" />
     <Content Include="Views\Haven.cshtml" />
     <Content Include="Views\Pieces.cshtml" />
     <Content Include="Views\_Layout.cshtml" />
@@ -362,7 +355,11 @@
 if $(ConfigurationName) == Debug (
 xcopy /s /y /R "$(SolutionDir)packages\Nancy.Viewengines.Razor.1.2.0\BuildProviders\Nancy.ViewEngines.Razor.BuildProviders.dll" "$(ProjectDir)bin\"
 xcopy /s /y /R "$(SolutionDir)packages\Nancy.Viewengines.Razor.1.2.0\lib\Net40\Nancy.ViewEngines.Razor.dll" "$(ProjectDir)bin\"
-)</PostBuildEvent>
+)
+if not exist "$(TargetDir)" md "$(TargetDir)"
+start xcopy /s /y "$(SolutionDir)packages\ClearScript.V8.5.4.2.1\tools\native\x86\*.*" "$(TargetDir)"
+if not exist "$(TargetDir)" md "$(TargetDir)"
+start xcopy /s /y "$(SolutionDir)packages\ClearScript.V8.5.4.2.1\tools\native\amd64\*.*" "$(TargetDir)"</PostBuildEvent>
   </PropertyGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
