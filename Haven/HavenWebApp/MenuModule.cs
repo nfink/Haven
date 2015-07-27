@@ -24,8 +24,15 @@ namespace HavenWebApp
         {
             if (DataLoad == null)
             {
-                DataLoad = new DataLoad();
-                DataLoad.LoadTables();
+                try
+                {
+                    var test = Persistence.Connection.Table<User>().Count();
+                }
+                catch
+                {
+                    DataLoad = new DataLoad();
+                    DataLoad.LoadTables();
+                }
             }
 
             TransformJSX(pathProvider);
