@@ -46,7 +46,7 @@ namespace HavenWebApp
             var files = Directory.EnumerateFiles(root + "Scripts", "*.jsx", SearchOption.AllDirectories);
             foreach (var path in files)
             {
-                environment.JsxTransformer.TransformAndSaveJsxFile(path.Replace(root, string.Empty));
+                environment.JsxTransformer.TransformAndSaveJsxFile("~/" + path.Replace(root, string.Empty));
             }
         }
     }
