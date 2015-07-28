@@ -180,6 +180,9 @@
     <Content Include="Fonts\metro.woff" />
     <Content Include="Fonts\metro.ttf" />
     <Content Include="Fonts\metro.eot" />
+    <Content Include="SafeHavenGame.sqlite">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Scripts\jquery-1.11.3.intellisense.js" />
     <None Include="Scripts\jquery-1.11.3-vsdoc.js" />
     <Content Include="Scripts\jquery-1.11.3.js" />
