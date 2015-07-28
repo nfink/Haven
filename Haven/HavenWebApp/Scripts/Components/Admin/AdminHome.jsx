@@ -6,7 +6,9 @@ var AdminHome = React.createClass({
     render: function () {
         return (
             <div className="container page-content">
-                <div>not implemented</div>
+                <div className="bg-white padding10">
+                    <div>not implemented</div>
+                </div>
             </div>
         );
     },

@@ -188,7 +188,6 @@
     <Content Include="Scripts\jquery-1.11.3.js" />
     <Content Include="Scripts\jquery-1.11.3.min.js" />
     <Content Include="Scripts\jquery-1.11.3.min.map" />
-    <None Include="Views\Actions.cshtml" />
     <Content Include="Content\Images\Go_Board_Empty_Square.jpg" />
     <Content Include="Content\Images\Go_Board_Full_Square.jpg" />
     <Content Include="Content\Images\no_image.png" />
@@ -250,17 +249,6 @@
     <Content Include="Uploads\Simeon.JPG" />
     <Content Include="Uploads\white_marble.jpg" />
     <Content Include="Uploads\Zebulun.JPG" />
-    <Content Include="Views\Admin\Login.cshtml" />
-    <Content Include="Views\Admin\Home.cshtml" />
-    <Content Include="Views\Admin\BoardDialog.cshtml" />
-    <Content Include="Views\Admin\EditBoard.cshtml" />
-    <Content Include="Views\Board.cshtml" />
-    <Content Include="Views\Admin\EditSpace.cshtml" />
-    <Content Include="Views\Admin\EditChallenge.cshtml" />
-    <Content Include="Views\Admin\Challenge.cshtml" />
-    <Content Include="Views\Space.cshtml" />
-    <Content Include="Views\Admin\EditBoardDetails.cshtml" />
-    <None Include="Views\BoardsMenu.cshtml" />
     <Content Include="Content\Images\Abraham.jpg" />
     <Content Include="Content\Images\Asher.JPG" />
     <Content Include="Content\Images\Benjamin.JPG" />
@@ -279,18 +267,13 @@
     <Content Include="Content\Images\Judah.JPG" />
     <Content Include="Content\Images\Levi.JPG" />
     <Content Include="Content\Images\Naphtali.JPG" />
-    <Content Include="Views\Cards.cshtml" />
-    <None Include="Views\GamesMenu.cshtml" />
     <Content Include="Content\Images\Reuben.JPG" />
     <Content Include="Content\Images\Simeon.JPG" />
     <Content Include="Content\Images\Zebulun.JPG" />
     <Content Include="Scripts\Game.js" />
     <Content Include="Content\Haven.css" />
     <Content Include="Content\Images\white_marble.jpg" />
-    <None Include="Views\Game.cshtml" />
-    <Content Include="Views\Messages.cshtml" />
     <Content Include="Views\Login.cshtml" />
-    <None Include="Views\Players.cshtml" />
     <Content Include="Scripts\Menu.jsx" />
     <Content Include="Scripts\metro.js" />
     <Content Include="Web.config">
@@ -312,8 +295,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Haven.cshtml" />
-    <Content Include="Views\Pieces.cshtml" />
     <Content Include="Views\_Layout.cshtml" />
+    <Content Include="Views\RecompileJSX.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

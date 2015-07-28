@@ -1,8 +1,0 @@
-﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
-@using Haven;
-
-<input type="hidden" id="gameid" value="@Model.Id" />
-<div id="board" style="position:absolute;left: 80px;width: 720px;">
-    @Html.Partial("Board", @Model.Board)
-</div>
-@Html.Partial("Players", @Model.Players)

@@ -22,6 +22,13 @@ namespace HavenWebApp
                     DataLoad.LoadTables();
                 }
             }
+
+            #if DEBUG
+            Get["/RecompileJSX"] = parameters =>
+            {
+                return View["Views/RecompileJSX.cshtml", Bootstrapper.TransformJSX(pathProvider)];
+            };
+            #endif
         }
     }
 }

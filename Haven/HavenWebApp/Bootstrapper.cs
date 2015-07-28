@@ -5,6 +5,7 @@ using Nancy.Conventions;
 using Nancy.TinyIoc;
 using React;
 using System.IO;
+using System.Collections.Generic;
 
 namespace HavenWebApp
 {
@@ -41,8 +42,9 @@ namespace HavenWebApp
             TransformJSX(pathProvider);
         }
 
-        private static void TransformJSX(IRootPathProvider pathProvider)
+        public static IEnumerable<string> TransformJSX(IRootPathProvider pathProvider)
         {
+            var outputFiles = new List<string>();
             bool useHarmony = false;
             bool stripTypes = false;
             var config = React.AssemblyRegistration.Container.Resolve<IReactSiteConfiguration>();
@@ -56,8 +58,10 @@ namespace HavenWebApp
             var files = Directory.EnumerateFiles(root + "Scripts", "*.jsx", SearchOption.AllDirectories);
             foreach (var path in files)
             {
-                environment.JsxTransformer.TransformAndSaveJsxFile("~/" + path.Replace(root, string.Empty));
+                outputFiles.Add(environment.JsxTransformer.TransformAndSaveJsxFile("~/" + path.Replace(root, string.Empty)));
             }
+
+            return outputFiles;
         }
     }
 }
