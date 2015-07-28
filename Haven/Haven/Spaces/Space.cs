@@ -99,10 +99,10 @@ namespace Haven
                     {
                         case SpaceType.Challenge:
                             image = this.NameCard.Image;
-                            return image == null ? image.Filepath : null;
+                            return image != null ? image.Filepath : null;
                         case SpaceType.SafeHaven:
                             image = this.SafeHavenCard.Image;
-                            return image == null ? image.Filepath : null;
+                            return image != null ? image.Filepath : null;
                         default:
                             return null;
                     }

@@ -11,10 +11,10 @@ var Game = React.createClass({
         }
         else {
             var selectedPlayer = this.state.players.filter(function (value) { return ((value.Id !== null) && (value.Id === this.state.selectedPlayerId)); }, this)[0];
-
+            var boardWidth = AdjustCoordinate(Math.max.apply(null, this.state.game.Board.Spaces.map(function (item, index) { return item.X; })), 70);
             return (
                 <div>
-                    <div id="board" style={{position: "absolute", left: "80px", width: "720px"}}>
+                    <div id="board" style={{position: "absolute", left: 20, width: boardWidth}}>
                         <Board board={this.state.game.Board} />
                         <MessageArea
                              width={this.state.game.Board.MessageAreaWidth}
@@ -34,7 +34,7 @@ var Game = React.createClass({
                             }, this)}
                         </div>
                     </div>
-                    <div id="actions" className="padding5" style={{position: "absolute", left: "820px"}}>
+                    <div id="actions" className="padding5" style={{position: "absolute", left: boardWidth + 110}}>
                         {this.state.players.map(function (item, index) {
                             return <PlayerPanel player={item} ref={"player" + item.Id} onUpdate={this.update} onClick={this.selectPlayer} selected={this.state.selectedPlayerId === item.Id} key={item.Id} />;
                         }, this)}
