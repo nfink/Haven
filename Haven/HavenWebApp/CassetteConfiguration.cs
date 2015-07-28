@@ -51,7 +51,7 @@ namespace HavenWebApp
 
             bundles.Add<ScriptBundle>("~/Scripts/Components", new FileSearch() { Pattern = "*.js", SearchOption = System.IO.SearchOption.AllDirectories });
 
-            bundles.Add<ScriptBundle>("bundle.js", "~/Scripts/Game.js", "~/Scripts/Menu.generated.js");
+            bundles.Add<ScriptBundle>("bundle.js", "~/Scripts/Menu.generated.js");
 
             bundles.Add<StylesheetBundle>("bundle.css", "~/Content/Game.css", "~/Content/Haven.css", "~/Content/metro-icons.css", "~/Content/metro.css");
 

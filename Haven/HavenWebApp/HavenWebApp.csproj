@@ -185,6 +185,7 @@
     </Content>
     <None Include="Scripts\jquery-1.11.3.intellisense.js" />
     <None Include="Scripts\jquery-1.11.3-vsdoc.js" />
+    <None Include="Scripts\Components\Admin\AdminStatistics.jsx" />
     <Content Include="Scripts\jquery-1.11.3.js" />
     <Content Include="Scripts\jquery-1.11.3.min.js" />
     <Content Include="Scripts\jquery-1.11.3.min.map" />
@@ -244,7 +245,6 @@
     <Content Include="Uploads\Levi.JPG" />
     <Content Include="Uploads\Naphtali.JPG" />
     <Content Include="Uploads\Rembrandt_Harmensz_square.jpg" />
-    <Content Include="Scripts\EditBoard.js" />
     <Content Include="Uploads\Reuben.JPG" />
     <Content Include="Uploads\Simeon.JPG" />
     <Content Include="Uploads\white_marble.jpg" />
@@ -270,7 +270,6 @@
     <Content Include="Content\Images\Reuben.JPG" />
     <Content Include="Content\Images\Simeon.JPG" />
     <Content Include="Content\Images\Zebulun.JPG" />
-    <Content Include="Scripts\Game.js" />
     <Content Include="Content\Haven.css" />
     <Content Include="Content\Images\white_marble.jpg" />
     <Content Include="Views\Login.cshtml" />

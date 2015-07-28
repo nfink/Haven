@@ -33,6 +33,15 @@ $(function () {
         next();
     });
 
+    // statistics page
+    page("/Statistics", function () {
+        React.render(<AdminStatistics />, document.getElementById("content"));
+    });
+    page.exit("/Statistics", function (ctx, next) {
+        React.unmountComponentAtNode(document.getElementById("content"));
+        next();
+    });
+
     // boards menu
     page("/Boards", function () {
         React.render(<AdminBoards />, document.getElementById("content"));
@@ -89,4 +98,12 @@ function FieldValidation(form) {
             return $(this).attr("name") + " is required";
         }).length;
     return failures == 0;
+}
+
+function AdjustCoordinate(coordinate, size) {
+    return (coordinate - 1) * size * 1.1;
+}
+
+function AdjustDimension(dimension, size) {
+    return ((dimension - 1) * (size * 1.1)) + size;
 }
