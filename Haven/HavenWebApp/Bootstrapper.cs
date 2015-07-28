@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Nancy;
+﻿using Nancy;
+using Nancy.Authentication.Forms;
 using Nancy.Bootstrapper;
 using Nancy.Conventions;
 using Nancy.TinyIoc;
-using Nancy.Authentication.Forms;
+using React;
+using System.IO;
 
 namespace HavenWebApp
 {
@@ -35,6 +33,31 @@ namespace HavenWebApp
             // As this is now per-request we could inject a request scoped
             // database "context" or other request scoped services.
             container.Register<IUserMapper, UserMapper>();
+        }
+
+        protected override void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)
+        {
+            var pathProvider = container.Resolve<IRootPathProvider>();
+            TransformJSX(pathProvider);
+        }
+
+        private static void TransformJSX(IRootPathProvider pathProvider)
+        {
+            bool useHarmony = false;
+            bool stripTypes = false;
+            var config = React.AssemblyRegistration.Container.Resolve<IReactSiteConfiguration>();
+            config
+                .SetReuseJavaScriptEngines(false)
+                .SetUseHarmony(useHarmony)
+                .SetStripTypes(stripTypes);
+
+            var environment = React.AssemblyRegistration.Container.Resolve<IReactEnvironment>();
+            string root = pathProvider.GetRootPath();
+            var files = Directory.EnumerateFiles(root + "Scripts", "*.jsx", SearchOption.AllDirectories);
+            foreach (var path in files)
+            {
+                environment.JsxTransformer.TransformAndSaveJsxFile("~/" + path.Replace(root, string.Empty));
+            }
         }
     }
 }
