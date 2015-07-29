@@ -185,7 +185,7 @@
     </Content>
     <None Include="Scripts\jquery-1.11.3.intellisense.js" />
     <None Include="Scripts\jquery-1.11.3-vsdoc.js" />
-    <None Include="Scripts\Components\Admin\AdminStatistics.jsx" />
+    <Content Include="Scripts\Components\Admin\AdminStatistics.jsx" />
     <Content Include="Scripts\jquery-1.11.3.js" />
     <Content Include="Scripts\jquery-1.11.3.min.js" />
     <Content Include="Scripts\jquery-1.11.3.min.map" />
