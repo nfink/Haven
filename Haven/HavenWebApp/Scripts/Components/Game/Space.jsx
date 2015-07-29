@@ -15,7 +15,7 @@ var Space = React.createClass({
             var content = <div className={this.props.space.Icon + " mif-2x"} style={textStyle} />;
         }
         return (
-            <div className={"tile-small" + (this.props.space.BackgroundColor ? " bg-" + this.props.space.BackgroundColor.Name : " bg-taupe") + (this.props.space.TextColor ? " fg-" + this.props.space.TextColor.Name : " fg-white")} onClick={this.props.onClick} style={this.props.style}>
+            <div className={"tile-small" + (this.props.space.BackgroundColor ? " bg-" + this.props.space.BackgroundColor.Name : " bg-taupe") + (this.props.space.TextColor ? " fg-" + this.props.space.TextColor.Name : " fg-white")} onClick={this.props.onClick} style={this.props.style} data-role="popover" data-popover-mode="click" data-popover-position="right" data-popover-text={this.props.space.Description} data-popover-background="bg-cyan" data-popover-color="fg-white">
                 <div className="tile-content" style={{textAlign: "center"}}>{content}</div>
             </div>
         );

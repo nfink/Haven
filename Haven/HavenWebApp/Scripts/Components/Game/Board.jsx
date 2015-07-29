@@ -26,6 +26,6 @@ Board.Space = React.createClass({
         );
     },
     viewDetails: function () {
-        alert("not implemented");
+
     }
 });

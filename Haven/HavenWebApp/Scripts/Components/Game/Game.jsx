@@ -16,25 +16,13 @@ var Game = React.createClass({
                 <div>
                     <div id="board" style={{position: "absolute", left: 20, width: boardWidth}}>
                         <Board board={this.state.game.Board} />
-                        <MessageArea
-                             width={this.state.game.Board.MessageAreaWidth}
-                             height={this.state.game.Board.MessageAreaHeight}
-                             x={this.state.game.Board.MessageAreaX}
-                             y={this.state.game.Board.MessageAreaY}
-                             messages={selectedPlayer ? selectedPlayer.Messages : []} />
-                        <StatusArea
-                             width={this.state.game.Board.StatusAreaWidth}
-                             height={this.state.game.Board.StatusAreaHeight}
-                             x={this.state.game.Board.StatusAreaX}
-                             y={this.state.game.Board.StatusAreaY}
-                             status={""} />
                         <div id="pieces">
                             {this.state.players.map(function (item, index) {
                                 return <Piece player={item} ref={"piece" + item.Id} key={item.Id} />;
                             }, this)}
                         </div>
                     </div>
-                    <div id="actions" className="padding5" style={{position: "absolute", left: boardWidth + 110}}>
+                    <div id="actions" className="padding5" style={{display: "flex", flexWrap: "wrap", position: "absolute", left: boardWidth + 110}}>
                         {this.state.players.map(function (item, index) {
                             return <PlayerPanel player={item} ref={"player" + item.Id} onUpdate={this.update} onClick={this.selectPlayer} selected={this.state.selectedPlayerId === item.Id} key={item.Id} />;
                         }, this)}

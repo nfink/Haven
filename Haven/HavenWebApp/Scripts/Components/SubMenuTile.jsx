@@ -5,7 +5,7 @@
 var SubMenuTile = React.createClass({
     render: function () {
         return (
-            <div className="tile fg-white bg-black" data-role="tile" onClick={this.props.onClick}>
+            <div className="tile fg-white bg-black" data-role={this.props.disabled ? null : "tile"} onClick={this.props.onClick}>
                 <div className="tile-content slide-down">
                     <div className="slide">
                         <div style={{width: "100%"}} className="image-container image-format-square">

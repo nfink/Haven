@@ -5,7 +5,7 @@
 var ColorSelector = React.createClass({
     render: function () {
         return (
-            <div style={this.props.style}>
+            <div style={this.props.style} title="Select a color">
                 <div className={"colorSelect bg-" + (this.state.selectedColor ? this.state.selectedColor : "white") + (this.state.error ? " error" : "")} onClick={this.toggleColors}></div>
                 <div className="colorPad keypad keypad-dropdown" style={{position: "absolute", zIndex: "1000", width: "242px", display: (this.state.colorsDisplayed ? "block" : "none")}}>
                     {this.state.colors.map(function (item, index) {

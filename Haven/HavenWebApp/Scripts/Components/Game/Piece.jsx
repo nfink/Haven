@@ -19,8 +19,7 @@ var Piece = React.createClass({
                          top: top,
                          borderRadius: "50%",
                          transform: "translate(-10px, -10px)",
-                         boxShadow: "1px 1px 5px black",
-                         zIndex: 999}}>
+                         boxShadow: "1px 1px 5px black"}}>
                 <span className={"icon" + icon + color}
                       style={{position: "relative", top: "50%", left: "50%", transform: "translate(-50%, -50%)"}} />
             </div>

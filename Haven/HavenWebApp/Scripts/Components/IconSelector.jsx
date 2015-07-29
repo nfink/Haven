@@ -5,7 +5,7 @@
 var IconSelector = React.createClass({
     render: function () {
         return (
-            <div style={this.props.style}>
+            <div style={this.props.style} title="Select an icon">
                 <div className={"imageSelect mif-2x " + (this.state.selectedIcon ? this.state.selectedIcon : "mif-question") + (this.state.error ? " error" : "")} onClick={this.toggleIcons}></div>
                 <div className="imagePad keypad keypad-dropdown" style={{position: "absolute", zIndex: "1000", width: "242px", display: (this.state.iconsDisplayed ? "block" : "none")}}>
                     {this.state.pieces.map(function (item, index) {
