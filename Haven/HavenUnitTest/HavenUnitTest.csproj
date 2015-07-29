@@ -64,11 +64,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BoardTests.cs" />
+    <Compile Include="ChallengeCategoryTests.cs" />
     <Compile Include="ChallengeTests.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="GameTests.cs" />
+    <Compile Include="NameCardTests.cs" />
     <Compile Include="PlayerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SafeHavenCardTests.cs" />
     <Compile Include="SpaceTests.cs" />
   </ItemGroup>
   <ItemGroup>

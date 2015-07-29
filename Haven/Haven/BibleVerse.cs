@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SQLite;
+﻿using SQLite;
 
 namespace Haven
 {
-    public class BibleVerse
+    public class BibleVerse : ICloneable<BibleVerse>
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
@@ -25,6 +20,13 @@ namespace Haven
         public override string ToString()
         {
             return string.Format("{0} {1}:{2}", this.Book, this.Chapter, this.Verse);
+        }
+
+        public BibleVerse Clone()
+        {
+            var recall = new BibleVerse() { Text = this.Text };
+            Persistence.Connection.Insert(recall);
+            return recall;
         }
     }
 }

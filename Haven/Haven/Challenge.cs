@@ -1,18 +1,12 @@
-﻿using System;
+﻿using SQLite;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SQLite;
 
 namespace Haven
 {
-    public class Challenge : IDeletable
+    public class Challenge : IDeletable, ICloneable<Challenge>
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
-
-        public int BoardId { get; set; }
 
         public int OwnerId { get; set; }
 
@@ -42,9 +36,15 @@ namespace Haven
 
         public Challenge Clone()
         {
-            var challenge = new Challenge();
-
+            var challenge = new Challenge() { OwnerId = this.OwnerId, ChallengeCategoryId = this.ChallengeCategoryId, Question = this.Question };
             Persistence.Connection.Insert(challenge);
+
+            // clone answers
+            foreach (ChallengeAnswer answer in this.Answers)
+            {
+                Persistence.Connection.Insert(new ChallengeAnswer() { ChallengeId = challenge.Id, Answer = answer.Answer, Correct = answer.Correct });
+            }
+
             return challenge;
         }
     }

@@ -120,11 +120,13 @@ namespace Haven
         private IEnumerable<Challenge> GetUnusedChallenges()
         {
             return Persistence.Connection.Query<Challenge>(
-                @"select Challenge.* from Challenge
+                @"select Challenge.* from 
+                  (select Challenge.* from Challenge
+                      join BoardChallenge on Challenge.Id=BoardChallenge.ChallengeId
+                      where BoardChallenge.BoardId=?) as Challenge
                   left join UsedChallenge on Challenge.Id=UsedChallenge.ChallengeId
-                  where (UsedChallenge.ChallengeId is null or UsedChallenge.GameId<>?)
-                  and Challenge.BoardId=?",
-                  this.Id, this.BoardId);
+                  where (UsedChallenge.ChallengeId is null or UsedChallenge.GameId<>?)",
+                  this.BoardId, this.Id);
         }
 
         public void Delete()

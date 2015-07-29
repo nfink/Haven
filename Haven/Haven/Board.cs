@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Haven
 {
-    public class Board : IDeletable
+    public class Board : IDeletable, ICloneable<Board>
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
@@ -243,28 +243,42 @@ namespace Haven
 
         public Board Clone()
         {
-            var board = new Board() { Name = this.Name, Description = this.Description, Active = this.Active };
-
-            // clone image
-            if (this.ImageId != 0)
-            {
-                var image = this.Image.Clone();
-                board.ImageId = image.Id;
-            }
+            // use same attributes and Image record
+            var board = new Board() { Name = this.Name, Description = this.Description, Active = this.Active, ImageId = this.ImageId, OwnerId = this.OwnerId, Width = this.Width, Height = this.Height };
+            Persistence.Connection.Insert(board);
 
             // clone spaces
             foreach (Space space in this.Spaces)
             {
+                space.BoardId = board.Id;
                 space.Clone();
+            }
+
+            // clone challenge categories
+            var categories = this.Challenges.Select(x => x.ChallengeCategoryId).Distinct();
+            var categoryIdMap = new Dictionary<int, int>();
+            foreach (int categoryId in categories)
+            {
+                var category = Persistence.Connection.Get<ChallengeCategory>(categoryId);
+                category.OwnerId = board.Id;
+                categoryIdMap.Add(categoryId, category.Clone().Id);
             }
 
             // clone challenges
             foreach (Challenge challenge in this.Challenges)
             {
+                challenge.OwnerId = board.Id;
 
+                if (challenge.ChallengeCategoryId != 0)
+                {
+                    challenge.ChallengeCategoryId = categoryIdMap[challenge.ChallengeCategoryId];
+                }
+
+                var challengeId = challenge.Clone().Id;
+                Persistence.Connection.Insert(new BoardChallenge() { BoardId = board.Id, ChallengeId = challengeId });
             }
 
-            Persistence.Connection.Insert(board);
+            Persistence.Connection.Update(board);
             return board;
         }
     }

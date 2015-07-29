@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SQLite;
+﻿using SQLite;
+using System;
 
 namespace Haven
 {
-    public partial class Space : IDeletable
+    public partial class Space : IDeletable, ICloneable<Space>
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
@@ -202,28 +198,23 @@ namespace Haven
 
         public Space Clone()
         {
-            var space = new Space() { };
-
+            // use same attributes and Image record
+            var space = new Space() { BoardId = this.BoardId, Order = this.Order, Type = this.Type, Width = this.Width,
+                Height = this.Height, X = this.X, Y = this.Y, BackgroundColorId = this.BackgroundColorId,
+                TextColorId = this.TextColorId, ImageId = this.ImageId };
 
             // copy any subrecords
             if (this.BibleVerseId != 0)
             {
-                var recall = this.BibleVerse;
-                var clonedRecall = new BibleVerse() { Text = recall.Text };
-                Persistence.Connection.Insert(clonedRecall);
-                space.BibleVerseId = clonedRecall.Id;
+                space.BibleVerseId = this.BibleVerse.Clone().Id;
             }
             if (this.NameCardId != 0)
             {
-                var nameCard = this.NameCard;
-                var clonedNameCard = new NameCard() { Name = nameCard.Name, Details = nameCard.Details };
-
-                Persistence.Connection.Insert(clonedNameCard);
-                space.NameCardId = 0;
+                space.NameCardId = this.NameCard.Clone().Id;
             }
             if (this.SafeHavenCardId != 0)
             {
-
+                space.SafeHavenCardId = this.SafeHavenCard.Clone().Id;
             }
 
             Persistence.Connection.Insert(space);

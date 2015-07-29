@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SQLite;
+﻿using SQLite;
+using System;
 
 namespace Haven
 {
@@ -43,6 +39,8 @@ namespace Haven
             }
         }
 
+        public int ChallengeId { get; set; }
+
         public int AnswerId { get; set; }
 
         public int BibleVerseId { get; set; }
@@ -61,6 +59,14 @@ namespace Haven
                     (this.Type == ActionType.ReciteBibleVerse) || 
                     (this.Type == ActionType.EnterPassword) ||
                     (this.Type == ActionType.SelectPiece);
+            }
+        }
+
+        public Challenge Challenge
+        {
+            get
+            {
+                return this.ChallengeId == 0 ? null : Persistence.Connection.Get<Challenge>(this.ChallengeId);
             }
         }
 

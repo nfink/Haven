@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Haven;
 using NUnit.Framework;
-using Haven;
-using Haven.Data;
+using System.Linq;
 
 namespace HavenUnitTest
 {
@@ -49,6 +44,29 @@ namespace HavenUnitTest
             Assert.IsNotEmpty(Persistence.Connection.Table<Challenge>().Where(x => x.Id == challenge2.Id));
             Assert.IsNotEmpty(Persistence.Connection.Table<ChallengeAnswer>().Where(x => x.Id == answer2a.Id));
             Assert.IsNotEmpty(Persistence.Connection.Table<ChallengeAnswer>().Where(x => x.Id == answer2b.Id));
+        }
+
+        [Test]
+        public void CloneChallenge()
+        {
+            // create a challenge
+            var challenge = new Challenge() { Question = "Test Question 1", ChallengeCategoryId = 2, OwnerId = 3 };
+            Persistence.Connection.Insert(challenge);
+            var answer1 = new ChallengeAnswer() { Answer = "Test Answer 1", Correct = true, ChallengeId = challenge.Id };
+            var answer2 = new ChallengeAnswer() { Answer = "Test Answer 2", Correct = false, ChallengeId = challenge.Id };
+            Persistence.Connection.InsertAll(new ChallengeAnswer[] { answer1, answer2 });
+
+            // clone the challenge
+            var clonedChallenge = challenge.Clone();
+
+            // verify that challenge and answers were cloned
+            Assert.AreNotEqual(challenge.Id, clonedChallenge.Id);
+            Assert.AreEqual(challenge.Question, clonedChallenge.Question);
+            Assert.AreEqual(challenge.ChallengeCategoryId, clonedChallenge.ChallengeCategoryId);
+            Assert.AreEqual(challenge.OwnerId, clonedChallenge.OwnerId);
+            Assert.AreNotEqual(challenge.Answers.Select(x => x.Id), clonedChallenge.Answers.Select(x => x.Id));
+            Assert.AreEqual(challenge.Answers.Select(x => x.Answer), clonedChallenge.Answers.Select(x => x.Answer));
+            Assert.AreEqual(challenge.Answers.Select(x => x.Correct), clonedChallenge.Answers.Select(x => x.Correct));
         }
     }
 }

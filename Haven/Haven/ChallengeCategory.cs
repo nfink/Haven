@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SQLite;
+﻿using SQLite;
 
 namespace Haven
 {
-    public class ChallengeCategory : IDeletable
+    public class ChallengeCategory : IDeletable, ICloneable<ChallengeCategory>
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
@@ -23,6 +18,13 @@ namespace Haven
 
             // remove links from any challeneges
             Persistence.Connection.Execute("update Challenge set ChallengeCategoryId=0 where ChallengeCategoryId=?", this.Id);
+        }
+
+        public ChallengeCategory Clone()
+        {
+            var category = new ChallengeCategory() { Name = this.Name, OwnerId = this.OwnerId };
+            Persistence.Connection.Insert(category);
+            return category;
         }
     }
 }

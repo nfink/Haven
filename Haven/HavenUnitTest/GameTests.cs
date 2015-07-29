@@ -74,11 +74,15 @@ namespace HavenUnitTest
             Persistence.Connection.Insert(board);
             var game = new Game() { BoardId = board.Id };
             Persistence.Connection.Insert(game);
-            var challenge1 = new Challenge() { BoardId = board.Id };
-            var challenge2 = new Challenge() { BoardId = board.Id };
-            var challenge3 = new Challenge() { BoardId = board.Id };
+            var challenge1 = new Challenge();
+            var challenge2 = new Challenge();
+            var challenge3 = new Challenge();
             var challenges = new Challenge[] { challenge1, challenge2, challenge3 };
             Persistence.Connection.InsertAll(challenges);
+            foreach (Challenge challenge in challenges)
+            {
+                Persistence.Connection.Insert(new BoardChallenge() { BoardId = board.Id, ChallengeId = challenge.Id });
+            }
 
             // keep getting the next challenge until all challenges should have been used
             var usedChallenges = new List<Challenge>();

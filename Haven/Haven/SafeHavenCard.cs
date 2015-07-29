@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SQLite;
+﻿using SQLite;
 
 namespace Haven
 {
-    public class SafeHavenCard
+    public class SafeHavenCard : ICloneable<SafeHavenCard>
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
@@ -24,6 +19,13 @@ namespace Haven
             {
                 return this.ImageId == 0 ? null : Persistence.Connection.Get<Image>(this.ImageId);
             }
+        }
+
+        public SafeHavenCard Clone()
+        {
+            var safeHavenCard = new SafeHavenCard() { Name = this.Name, Details = this.Details, ImageId = this.ImageId };
+            Persistence.Connection.Insert(safeHavenCard);
+            return safeHavenCard;
         }
     }
 }
