@@ -219,9 +219,7 @@
     <Content Include="Scripts\Components\MainMenu.jsx" />
     <Content Include="Scripts\Components\NewGameDialog.jsx" />
     <Content Include="Scripts\Components\MainMenuTile.jsx" />
-    <Content Include="Scripts\Components\Game\MessageArea.jsx" />
     <Content Include="Scripts\Components\Game\Space.jsx" />
-    <Content Include="Scripts\Components\Game\StatusArea.jsx" />
     <Content Include="Scripts\Components\SubMenuTile.jsx" />
     <Content Include="Scripts\Components\WarningPanel.jsx" />
     <Content Include="Scripts\metro.min.js" />

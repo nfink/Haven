@@ -50,9 +50,7 @@ namespace Haven.Data
         public void LoadBoard()
         {
             this.Connection.CreateTable<Board>();
-            this.Connection.Insert(new Board() { Id = 1, OwnerId = 1, Name = "Genesis", Description = "Covers the book of Genesis", ImageId = 17, Active = true,
-                MessageAreaWidth = 7, MessageAreaHeight = 3, MessageAreaX = 2, MessageAreaY = 2,
-                StatusAreaWidth = 7, StatusAreaHeight = 4, StatusAreaX = 2, StatusAreaY = 5});
+            this.Connection.Insert(new Board() { Id = 1, OwnerId = 1, Name = "Genesis", Description = "Covers the book of Genesis", ImageId = 17, Active = true });
         }
 
         public void LoadBoardChallenge()

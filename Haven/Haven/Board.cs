@@ -1,9 +1,6 @@
-﻿using System;
+﻿using SQLite;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SQLite;
 
 namespace Haven
 {
@@ -25,22 +22,6 @@ namespace Haven
         public int Width { get; set; }
 
         public int Height { get; set; }
-
-        public int MessageAreaWidth { get; set; }
-
-        public int MessageAreaHeight { get; set; }
-
-        public int MessageAreaX { get; set; }
-
-        public int MessageAreaY { get; set; }
-
-        public int StatusAreaWidth { get; set; }
-
-        public int StatusAreaHeight { get; set; }
-
-        public int StatusAreaX { get; set; }
-
-        public int StatusAreaY { get; set; }
 
         public IEnumerable<Space> Spaces
         {
