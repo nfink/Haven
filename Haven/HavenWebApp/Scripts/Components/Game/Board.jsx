@@ -22,10 +22,9 @@ Board.Space = React.createClass({
         var left = AdjustCoordinate(this.props.space.X, 70);
         var top = AdjustCoordinate(this.props.space.Y, 70);
         return (
-            <Space space={this.props.space} onClick={this.viewDetails} style={{position: "absolute", left: left, top: top}} />
+            <div style={{position: "absolute", left: left, top: top}} data-role="popover" data-popover-mode="click" data-popover-position="right" data-popover-text={this.props.space.Description} data-popover-background="bg-cyan" data-popover-color="fg-white">
+                <Space space={this.props.space} />
+            </div>
         );
-    },
-    viewDetails: function () {
-
     }
 });
