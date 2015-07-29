@@ -7,7 +7,7 @@
     Bundles.Reference("page", "prereqs");
     Bundles.Reference("metro.js", "metro");
     Bundles.Reference("~/Scripts/Components", "components");
-    Bundles.Reference("bundle.js");
+    Bundles.Reference("bundle.js", "bundle");
 }
 
 <!DOCTYPE html>
@@ -22,7 +22,7 @@
     @Bundles.RenderScripts("prereqs")
     @Bundles.RenderScripts("metro")
     @Bundles.RenderScripts("components")
-    @Bundles.RenderScripts()
+    @Bundles.RenderScripts("bundle")
 </head>
 <body class="bg-grayLighter">
     @RenderBody()

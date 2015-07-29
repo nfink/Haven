@@ -20,15 +20,6 @@ namespace HavenWebApp
                 }
             );
 
-            bundles.AddUrlWithAlias<ScriptBundle>("https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js", "jsxtransformer");
-            bundles.AddUrlWithLocalAssets<ScriptBundle>("jsxtransformer",
-                new LocalAssetSettings
-                {
-                    FallbackCondition = "!window.React",
-                    Path = "~/Scripts/react/JSXTransformer-0.13.1.js"
-                }
-            );
-
             bundles.AddUrlWithAlias<ScriptBundle>("https://code.jquery.com/jquery-1.11.3.min.js", "jquery");
             bundles.AddUrlWithLocalAssets<ScriptBundle>("jquery",
                 new LocalAssetSettings
