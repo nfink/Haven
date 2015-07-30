@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Haven;
 using NUnit.Framework;
-using Haven;
+using System;
+using System.Linq;
 
 namespace HavenUnitTest
 {
@@ -134,22 +131,7 @@ namespace HavenUnitTest
         public void CloneBoard()
         {
             // create a board and associated data
-            var image = new Image() { Filename = "test.jpg", Filepath = "/test/test.jpg" };
-            Persistence.Connection.Insert(image);
-            var board = new Board() { ImageId = image.Id, Active = true, Description = "test1", Height = 2, Name = "test3", OwnerId = 4, Width = 5 };
-            Persistence.Connection.Insert(board);
-            Persistence.Connection.Insert(new Space() { BoardId = board.Id, Order = 10 });
-            Persistence.Connection.Insert(new Space() { BoardId = board.Id, Order = 20 });
-            // add category
-            var category1 = new ChallengeCategory() { Name = "test1", OwnerId = 2 };
-            var category2 = new ChallengeCategory() { Name = "test3", OwnerId = 4 };
-            var categories = new ChallengeCategory[] { category1, category2 };
-            Persistence.Connection.InsertAll(categories);
-            var challenge1 = new Challenge() { Question = "test1", ChallengeCategoryId = category1.Id, OwnerId = 3 };
-            var challenge2 = new Challenge() { Question = "test2", ChallengeCategoryId = category2.Id, OwnerId = 4 };
-            Persistence.Connection.InsertAll(new Challenge[] { challenge1, challenge2 });
-            Persistence.Connection.Insert(new BoardChallenge() { BoardId = board.Id, ChallengeId = challenge1.Id });
-            Persistence.Connection.Insert(new BoardChallenge() { BoardId = board.Id, ChallengeId = challenge2.Id });
+            var board = CreateBoardData();
 
             // clone the board
             var clonedBoard = board.Clone();
@@ -169,6 +151,7 @@ namespace HavenUnitTest
             Assert.AreNotEqual(board.Challenges.Select(x => x.Id), clonedBoard.Challenges.Select(x => x.Id));
             Assert.AreEqual(board.Challenges.Select(x => x.Question), clonedBoard.Challenges.Select(x => x.Question));
             Assert.AreEqual(board.Challenges.Select(x => clonedBoard.Id), clonedBoard.Challenges.Select(x => x.OwnerId));
+            var categories = board.Challenges.Select(x => Persistence.Connection.Get<ChallengeCategory>(x.ChallengeCategoryId));
             var clonedCategories = clonedBoard.Challenges.Select(x => Persistence.Connection.Get<ChallengeCategory>(x.ChallengeCategoryId));
             Assert.AreNotEqual(categories.Select(x => x.Id), clonedCategories.Select(x => x.Id));
             Assert.AreEqual(categories.Select(x => x.Name), clonedCategories.Select(x => x.Name));
@@ -190,16 +173,61 @@ namespace HavenUnitTest
             Assert.AreEqual(board.Name, clonedBoard.Name);
         }
 
+        [Test]
+        public void CopyBoard()
+        {
+            // create a board and associated data
+            var board = CreateBoardData();
+
+            // copy the board
+            var copiedBoard = board.Copy();
+
+            // verify that the board and spaces are copied, and challenge links are copied but challenges are the same
+            Assert.AreNotEqual(board.Id, copiedBoard.Id);
+            Assert.AreEqual(board.ImageId, copiedBoard.ImageId);
+            Assert.AreEqual(board.Active, copiedBoard.Active);
+            Assert.AreEqual(board.Description, copiedBoard.Description);
+            Assert.AreEqual(board.Height, copiedBoard.Height);
+            Assert.AreEqual(board.Name, copiedBoard.Name);
+            Assert.AreEqual(board.OwnerId, copiedBoard.OwnerId);
+            Assert.AreEqual(board.Width, copiedBoard.Width);
+            Assert.AreNotEqual(board.Spaces.Select(x => x.Id), copiedBoard.Spaces.Select(x => x.Id));
+            Assert.AreEqual(board.Spaces.Select(x => copiedBoard.Id), copiedBoard.Spaces.Select(x => x.BoardId));
+            Assert.AreEqual(board.Spaces.Select(x => x.Order), copiedBoard.Spaces.Select(x => x.Order));
+            Assert.AreEqual(board.Challenges.Select(x => x.Id), copiedBoard.Challenges.Select(x => x.Id));
+        }
+
+        [Test]
+        public void CopyEmptyBoard()
+        {
+            // create a board without any associated data
+            var board = new Board();
+            board.Name = "test1";
+            Persistence.Connection.Insert(board);
+
+            // clone the board
+            var copiedBoard = board.Copy();
+
+            // verify that the board is copied
+            Assert.AreNotEqual(board.Id, copiedBoard.Id);
+            Assert.AreEqual(board.Name, copiedBoard.Name);
+        }
+
         private Board CreateBoardData()
         {
-            var image = new Image();
+            var image = new Image() { Filename = "test.jpg", Filepath = "/test/test.jpg" };
             Persistence.Connection.Insert(image);
-            var board = new Board() { ImageId = image.Id };
+            var board = new Board() { ImageId = image.Id, Active = true, Description = "test1", Height = 2, Name = "test3", OwnerId = 4, Width = 5 };
             Persistence.Connection.Insert(board);
-            Persistence.Connection.Insert(new Space() { BoardId = board.Id });
-            Persistence.Connection.Insert(new Space() { BoardId = board.Id });
-            var challenge1 = new Challenge();
-            var challenge2 = new Challenge();
+            Persistence.Connection.Insert(new Space() { BoardId = board.Id, Order = 10 });
+            Persistence.Connection.Insert(new Space() { BoardId = board.Id, Order = 20 });
+            // add category
+            var category1 = new ChallengeCategory() { Name = "test1", OwnerId = 2 };
+            var category2 = new ChallengeCategory() { Name = "test3", OwnerId = 4 };
+            var categories = new ChallengeCategory[] { category1, category2 };
+            Persistence.Connection.InsertAll(categories);
+            var challenge1 = new Challenge() { Question = "test1", ChallengeCategoryId = category1.Id, OwnerId = 3 };
+            var challenge2 = new Challenge() { Question = "test2", ChallengeCategoryId = category2.Id, OwnerId = 4 };
             Persistence.Connection.InsertAll(new Challenge[] { challenge1, challenge2 });
             Persistence.Connection.Insert(new BoardChallenge() { BoardId = board.Id, ChallengeId = challenge1.Id });
             Persistence.Connection.Insert(new BoardChallenge() { BoardId = board.Id, ChallengeId = challenge2.Id });

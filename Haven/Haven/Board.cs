@@ -281,6 +281,33 @@ namespace Haven
             Persistence.Connection.Update(board);
             return board;
         }
+
+        /// <summary>
+        /// Returns a copy of the board, with copied spaces and challenge links. Does not copy challenges or categories.
+        /// </summary>
+        /// <returns></returns>
+        public Board Copy()
+        {
+            // use same attributes and Image record
+            var board = new Board() { Name = this.Name, Description = this.Description, Active = this.Active, ImageId = this.ImageId, OwnerId = this.OwnerId, Width = this.Width, Height = this.Height };
+            Persistence.Connection.Insert(board);
+
+            // clone spaces
+            foreach (Space space in this.Spaces)
+            {
+                space.BoardId = board.Id;
+                space.Clone();
+            }
+
+            // clone challenge links
+            foreach (Challenge challenge in this.Challenges)
+            {
+                Persistence.Connection.Insert(new BoardChallenge() { BoardId = board.Id, ChallengeId = challenge.Id });
+            }
+
+            Persistence.Connection.Update(board);
+            return board;
+        }
     }
 
 

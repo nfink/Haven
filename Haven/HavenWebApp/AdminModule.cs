@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Haven;
+﻿using Haven;
 using Nancy;
-using Nancy.Security;
 using Nancy.Authentication.Forms;
 using Nancy.ModelBinding;
 using Nancy.Responses;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace HavenWebApp
 {
@@ -185,6 +183,23 @@ namespace HavenWebApp
                 if (board != null)
                 {
                     return JsonConvert.SerializeObject(board.Validate());
+                }
+                else
+                {
+                    return new HtmlResponse(HttpStatusCode.NotFound);
+                }
+            };
+
+            Post["/Boards/{id}/Copy"] = parameters =>
+            {
+                var userId = int.Parse(this.Context.CurrentUser.UserName);
+                var boardId = (int)parameters.id;
+                var board = Persistence.Connection.Table<Board>().Where(x => (x.Id == boardId) && (x.OwnerId == userId)).FirstOrDefault();
+                if (board != null)
+                {
+                    board.Name = board.Name + " (copy)";
+                    var copiedBoard = board.Copy();
+                    return JsonConvert.SerializeObject(copiedBoard);
                 }
                 else
                 {
