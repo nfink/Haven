@@ -99,6 +99,12 @@ namespace Haven
             if (Persistence.Connection.Query<Player>("select Player.* from Player where GameId=? and (PieceId=0 or Name is null or Password is null)", this.Id).Count < 1)
             {
                 Persistence.Connection.Insert(new Action() { Type = ActionType.Roll, OwnerId = this.CurrentPlayerId });
+
+                // clone the board so that edits won't affect existing games
+                var board = this.Board;
+                board.OwnerId = 0;
+                this.BoardId = board.Clone().Id;
+                Persistence.Connection.Update(this);
             }
         }
 

@@ -260,14 +260,14 @@ namespace Haven
             foreach (int categoryId in categories)
             {
                 var category = Persistence.Connection.Get<ChallengeCategory>(categoryId);
-                category.OwnerId = board.Id;
+                category.OwnerId = 0;
                 categoryIdMap.Add(categoryId, category.Clone().Id);
             }
 
             // clone challenges
             foreach (Challenge challenge in this.Challenges)
             {
-                challenge.OwnerId = board.Id;
+                challenge.OwnerId = 0;
 
                 if (challenge.ChallengeCategoryId != 0)
                 {
