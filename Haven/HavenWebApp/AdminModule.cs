@@ -175,14 +175,21 @@ namespace HavenWebApp
                 }
             };
 
-            Get["/Boards/{id}/Validation"] = parameters =>
+            Post["/Boards/{id}/Validate"] = parameters =>
             {
                 var userId = int.Parse(this.Context.CurrentUser.UserName);
                 var boardId = (int)parameters.id;
                 var board = Persistence.Connection.Table<Board>().Where(x => (x.Id == boardId) && (x.OwnerId == userId)).FirstOrDefault();
                 if (board != null)
                 {
-                    return JsonConvert.SerializeObject(board.Validate());
+                    var validations = board.Validate();
+                    var valid = (validations.Errors.Count < 1);
+                    if (board.Active != valid)
+                    {
+                        board.Active = valid;
+                        Persistence.Connection.Update(board);
+                    }
+                    return JsonConvert.SerializeObject(validations);
                 }
                 else
                 {

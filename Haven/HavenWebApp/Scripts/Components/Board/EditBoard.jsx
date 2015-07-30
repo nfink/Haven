@@ -168,7 +168,7 @@ var EditBoard = React.createClass({
         return selectedChallenges;
     },
     validate: function () {
-        $.get("Boards/" + this.props.id + "/Validation", function (data) {
+        $.post("Boards/" + this.props.id + "/Validate", function (data) {
             this.setState({ validation: JSON.parse(data) });
         }.bind(this));
     },

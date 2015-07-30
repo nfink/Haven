@@ -30,7 +30,7 @@ var OpenBoardDialog = React.createClass({
         return {validation: null};
     },
     componentDidMount: function () {
-        $.get("Boards/" + this.props.board.Id + "/Validation", function (data) {
+        $.post("Boards/" + this.props.board.Id + "/Validate", function (data) {
             this.setState({validation: JSON.parse(data)});
             this.open();
         }.bind(this));
