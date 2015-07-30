@@ -23,7 +23,13 @@ namespace Haven
 
         public SafeHavenCard Clone()
         {
-            var safeHavenCard = new SafeHavenCard() { Name = this.Name, Details = this.Details, ImageId = this.ImageId };
+            int imageId = 0;
+            if (this.ImageId != 0)
+            {
+                imageId = this.Image.Clone().Id;
+            }
+
+            var safeHavenCard = new SafeHavenCard() { Name = this.Name, Details = this.Details, ImageId = imageId };
             Persistence.Connection.Insert(safeHavenCard);
             return safeHavenCard;
         }

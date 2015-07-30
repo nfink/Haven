@@ -243,9 +243,15 @@ namespace Haven
 
         public Board Clone()
         {
-            // use same attributes and Image record
-            var board = new Board() { Name = this.Name, Description = this.Description, Active = this.Active, ImageId = this.ImageId, OwnerId = this.OwnerId, Width = this.Width, Height = this.Height };
+            // use same attributes
+            var board = new Board() { Name = this.Name, Description = this.Description, Active = this.Active, OwnerId = this.OwnerId, Width = this.Width, Height = this.Height };
             Persistence.Connection.Insert(board);
+
+            // clone image
+            if (this.ImageId != 0)
+            {
+                board.ImageId = this.Image.Clone().Id;
+            }
 
             // clone spaces
             foreach (Space space in this.Spaces)

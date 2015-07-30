@@ -16,7 +16,9 @@ namespace HavenUnitTest
         public void CloneSafeHavenCard()
         {
             // create a safe haven card
-            var safeHavenCard = new SafeHavenCard() { Name = "test1", Details = "test2", ImageId = 3 };
+            var image = new Image() { Filename = "test1" };
+            Persistence.Connection.Insert(image);
+            var safeHavenCard = new SafeHavenCard() { Name = "test1", Details = "test2", ImageId = image.Id };
             Persistence.Connection.Insert(safeHavenCard);
 
             // clone the safe haven card
@@ -26,7 +28,7 @@ namespace HavenUnitTest
             Assert.AreNotEqual(safeHavenCard.Id, clonedCard.Id);
             Assert.AreEqual(safeHavenCard.Name, clonedCard.Name);
             Assert.AreEqual(safeHavenCard.Details, clonedCard.Details);
-            Assert.AreEqual(safeHavenCard.ImageId, clonedCard.ImageId);
+            Assert.AreNotEqual(safeHavenCard.ImageId, clonedCard.ImageId);
         }
     }
 }

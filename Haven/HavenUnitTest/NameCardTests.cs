@@ -16,7 +16,9 @@ namespace HavenUnitTest
         public void CloneNameCard()
         {
             // create a name card
-            var nameCard = new NameCard() { Name = "test1", Details = "test2", ImageId = 3 };
+            var image = new Image() { Filename = "test1" };
+            Persistence.Connection.Insert(image);
+            var nameCard = new NameCard() { Name = "test1", Details = "test2", ImageId = image.Id };
             Persistence.Connection.Insert(nameCard);
 
             // clone the name card
@@ -26,7 +28,7 @@ namespace HavenUnitTest
             Assert.AreNotEqual(nameCard.Id, clonedCard.Id);
             Assert.AreEqual(nameCard.Name, clonedCard.Name);
             Assert.AreEqual(nameCard.Details, clonedCard.Details);
-            Assert.AreEqual(nameCard.ImageId, clonedCard.ImageId);
+            Assert.AreNotEqual(nameCard.ImageId, clonedCard.ImageId);
         }
     }
 }

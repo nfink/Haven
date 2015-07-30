@@ -138,7 +138,7 @@ namespace HavenUnitTest
 
             // verify that the board and associated objects are cloned
             Assert.AreNotEqual(board.Id, clonedBoard.Id);
-            Assert.AreEqual(board.ImageId, clonedBoard.ImageId);
+            Assert.AreNotEqual(board.ImageId, clonedBoard.ImageId);
             Assert.AreEqual(board.Active, clonedBoard.Active);
             Assert.AreEqual(board.Description, clonedBoard.Description);
             Assert.AreEqual(board.Height, clonedBoard.Height);
@@ -150,11 +150,12 @@ namespace HavenUnitTest
             Assert.AreEqual(board.Spaces.Select(x => x.Order), clonedBoard.Spaces.Select(x => x.Order));
             Assert.AreNotEqual(board.Challenges.Select(x => x.Id), clonedBoard.Challenges.Select(x => x.Id));
             Assert.AreEqual(board.Challenges.Select(x => x.Question), clonedBoard.Challenges.Select(x => x.Question));
-            Assert.AreEqual(board.Challenges.Select(x => clonedBoard.Id), clonedBoard.Challenges.Select(x => x.OwnerId));
+            Assert.AreEqual(board.Challenges.Select(x => 0), clonedBoard.Challenges.Select(x => x.OwnerId));
             var categories = board.Challenges.Select(x => Persistence.Connection.Get<ChallengeCategory>(x.ChallengeCategoryId));
             var clonedCategories = clonedBoard.Challenges.Select(x => Persistence.Connection.Get<ChallengeCategory>(x.ChallengeCategoryId));
             Assert.AreNotEqual(categories.Select(x => x.Id), clonedCategories.Select(x => x.Id));
             Assert.AreEqual(categories.Select(x => x.Name), clonedCategories.Select(x => x.Name));
+            Assert.AreEqual(categories.Select(x => 0), clonedCategories.Select(x => x.OwnerId));
         }
 
         [Test]
@@ -215,7 +216,7 @@ namespace HavenUnitTest
 
         private Board CreateBoardData()
         {
-            var image = new Image() { Filename = "test.jpg", Filepath = "/test/test.jpg" };
+            var image = new Image() { Filename = "test.jpg" };
             Persistence.Connection.Insert(image);
             var board = new Board() { ImageId = image.Id, Active = true, Description = "test1", Height = 2, Name = "test3", OwnerId = 4, Width = 5 };
             Persistence.Connection.Insert(board);

@@ -472,8 +472,7 @@ namespace HavenWebApp
                         {
                             if (space.NameCard.Image != null)
                             {
-                                space.NameCard.Image.DeleteImage(pathProvider.GetRootPath());
-                                Persistence.Connection.Delete(space.NameCard.Image);
+                                space.NameCard.Image.Delete();
                             }
                             Persistence.Connection.Delete<NameCard>(space.NameCardId);
                             space.NameCardId = 0;
@@ -482,8 +481,7 @@ namespace HavenWebApp
                         {
                             if (space.SafeHavenCard.Image != null)
                             {
-                                space.SafeHavenCard.Image.DeleteImage(pathProvider.GetRootPath());
-                                Persistence.Connection.Delete(space.SafeHavenCard.Image);
+                                space.SafeHavenCard.Image.Delete();
                             }
                             Persistence.Connection.Delete<SafeHavenCard>(space.SafeHavenCardId);
                             space.SafeHavenCardId = 0;
@@ -545,14 +543,13 @@ namespace HavenWebApp
                 // delete the image
                 if (image != null)
                 {
-                    image.DeleteImage(pathProvider.GetRootPath());
-                    Persistence.Connection.Delete(image);
+                    image.Delete();
                 }
 
                 // add the new image
                 image = new Image() { Filename = newImage.Name };
                 Persistence.Connection.Insert(image);
-                image.SaveImage(pathProvider.GetRootPath(), "Uploads", newImage.Value);
+                image.SaveImage(newImage.Value);
                 Persistence.Connection.Update(image);
             }
 
