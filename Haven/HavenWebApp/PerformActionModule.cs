@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using Haven;
 using Nancy;
-using Haven;
-using Haven.Data;
-using Nancy.Session;
-using Nancy.ModelBinding;
-using Newtonsoft.Json;
-using Nancy.Security;
 using Nancy.Authentication.Stateless;
+using Nancy.Security;
+using Newtonsoft.Json;
+using System.Linq;
 
 namespace HavenWebApp
 {

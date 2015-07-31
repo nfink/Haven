@@ -41,8 +41,6 @@ namespace Haven
 
         public int ChallengeId { get; set; }
 
-        public int AnswerId { get; set; }
-
         public int BibleVerseId { get; set; }
 
         public bool Challenger { get; set; }
@@ -58,7 +56,9 @@ namespace Haven
                 return (this.Type == ActionType.EnterName) || 
                     (this.Type == ActionType.ReciteBibleVerse) || 
                     (this.Type == ActionType.EnterPassword) ||
-                    (this.Type == ActionType.SelectPiece);
+                    (this.Type == ActionType.SelectPiece) ||
+                    (this.Type == ActionType.AnswerChallenge) ||
+                    (this.Type == ActionType.AnswerWarChallenge);
             }
         }
 
@@ -67,14 +67,6 @@ namespace Haven
             get
             {
                 return this.ChallengeId == 0 ? null : Persistence.Connection.Get<Challenge>(this.ChallengeId);
-            }
-        }
-
-        public ChallengeAnswer Answer
-        {
-            get
-            {
-                return this.AnswerId == 0 ? null : Persistence.Connection.Get<ChallengeAnswer>(this.AnswerId);
             }
         }
 
@@ -109,9 +101,9 @@ namespace Haven
                 switch (this.Type)
                 {
                     case ActionType.AnswerChallenge:
-                        return this.Answer.Answer;
+                        return this.Challenge.Question;
                     case ActionType.AnswerWarChallenge:
-                        return this.Answer.Answer;
+                        return this.Challenge.Question;
                     case ActionType.DeclareWar:
                         return "Declare War";
                     case ActionType.DeclineWar:

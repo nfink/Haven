@@ -1,6 +1,5 @@
 ﻿/** @jsx React.DOM */
 /// <reference path="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js" />
-/// <reference path="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js" />
 
 var PlayerPanel = React.createClass({
     render: function () {
@@ -9,7 +8,7 @@ var PlayerPanel = React.createClass({
         var iconColor = this.props.player.Color ? this.props.player.Color.Name : "white";
 
         return (
-            <div className={"padding5 margin5" + (this.state.passwordEntered ? " bg-olive" : " ribbed-olive") + (this.props.selected ? " element-selected" : "")} onClick={this.selectPlayer} style={{width: 280, height: "100%", boxShadow: "0px 0px 1px #FFC inset"}}>
+            <div className={"padding5 margin5" + (this.state.passwordEntered ? " bg-olive" : " ribbed-olive") + (this.props.selected ? " element-selected" : "")} style={{width: 280, height: "100%", boxShadow: "0px 0px 1px #FFC inset"}}>
                 <form onSubmit={this.enterPassword}>
                     <div className={"playerName password iconic" + (this.state.error ? " error" : "")} data-role="input">
                         <input type="password" ref="passwordField" value={this.state.passwordEntered ? "" : this.state.password} onChange={this.handlePasswordChange} style={{display: (this.state.passwordEntered ? "none" : "block" )}} />
@@ -33,7 +32,7 @@ var PlayerPanel = React.createClass({
                     </div>
                 </div>
                 {this.props.player.Actions.map(function (item, index) {
-                    return <Action action={item} password={this.state.passwordEntered ? this.state.password : null} onUpdate={this.props.onUpdate} key={item.Id} />;
+                    return <Action action={item} password={this.state.passwordEntered ? this.state.password : null} onUpdate={this.actionPerformed} key={item.Id} />;
                 }, this)}
             </div>
         );
@@ -66,8 +65,11 @@ var PlayerPanel = React.createClass({
                 React.findDOMNode(this.refs.passwordField).focus();
             }.bind(this));
     },
-    selectPlayer: function () {
-
+    actionPerformed: function (action, input, data) {
+        if (action.Name === "EnterPassword") {
+            this.setState({ password: input });
+        }
+        this.props.onUpdate(data);
     }
 });
 

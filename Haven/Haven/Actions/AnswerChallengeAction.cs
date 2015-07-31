@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Haven
 {
@@ -10,12 +7,12 @@ namespace Haven
     {
         private void AnswerChallengeAction(Object input)
         {
-            var answer = Persistence.Connection.Get<ChallengeAnswer>(this.AnswerId);
-
+            var challenge = Persistence.Connection.Get<Challenge>(this.ChallengeId);
+            
             // remove all answer challenge actions
             Persistence.Connection.Execute("delete from Action where Type=? and OwnerId=?", ActionType.AnswerChallenge, this.OwnerId);
 
-            if (answer.Correct)
+            if (challenge.CorrectAnswer((string)input))
             {
                 // add the card for the space if the player doesn't have it, otherwise add a random card they don't have
                 var missingNameCards = Persistence.Connection.Query<NameCard>(

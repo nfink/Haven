@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Haven
 {
@@ -16,11 +13,7 @@ namespace Haven
             // add challenge to the challenger
             var game = Persistence.Connection.Query<Game>("select * from Game where Id=(select GameId from Player where Id=?)", this.OwnerId).First();
             var challenge = game.GetNextChallenge();
-            foreach (ChallengeAnswer ca in challenge.Answers)
-            {
-                Persistence.Connection.Insert(new Action() { Type = ActionType.AnswerWarChallenge, OwnerId = this.PlayerId, Challenger = true, PlayerId = this.PlayerId, AnswerId = ca.Id });
-            }
-
+            Persistence.Connection.Insert(new Action() { Type = ActionType.AnswerWarChallenge, OwnerId = this.PlayerId, Challenger = true, PlayerId = this.PlayerId, ChallengeId = challenge.Id });
             var challengedPlayer = Persistence.Connection.Get<Player>(this.PlayerId);
             Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = string.Format("Declared war against {0}!", challengedPlayer.Name) });
         }

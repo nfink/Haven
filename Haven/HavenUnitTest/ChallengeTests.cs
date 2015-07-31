@@ -68,5 +68,36 @@ namespace HavenUnitTest
             Assert.AreEqual(challenge.Answers.Select(x => x.Answer), clonedChallenge.Answers.Select(x => x.Answer));
             Assert.AreEqual(challenge.Answers.Select(x => x.Correct), clonedChallenge.Answers.Select(x => x.Correct));
         }
+
+        [Test]
+        public void MultipleChoiceAnswer()
+        {
+            // create a multiple choice challenge
+            var challenge = new Challenge() { Question = "Test Question 1", ChallengeCategoryId = 2, OwnerId = 3 };
+            Persistence.Connection.Insert(challenge);
+            var answer1 = new ChallengeAnswer() { Answer = "Test Answer 1", Correct = true, ChallengeId = challenge.Id };
+            var answer2 = new ChallengeAnswer() { Answer = "Test Answer 2", Correct = false, ChallengeId = challenge.Id };
+            Persistence.Connection.InsertAll(new ChallengeAnswer[] { answer1, answer2 });
+
+            // verify that correct answer is acknowledged as correct
+            Assert.True(challenge.CorrectAnswer(answer1.Id));
+            Assert.False(challenge.CorrectAnswer(answer2.Id));
+        }
+
+        [Test]
+        public void OpenEndedAnswer()
+        {
+            // create an open ended challenge
+            var challenge = new Challenge() { Question = "Test Question 1", ChallengeCategoryId = 2, OwnerId = 3, OpenEnded = true };
+            Persistence.Connection.Insert(challenge);
+            var answer1 = new ChallengeAnswer() { Answer = "Test Answer 1", Correct = true, ChallengeId = challenge.Id };
+            var answer2 = new ChallengeAnswer() { Answer = "Test Answer 2", Correct = false, ChallengeId = challenge.Id };
+            Persistence.Connection.InsertAll(new ChallengeAnswer[] { answer1, answer2 });
+
+            // verify that correct answer is acknowledged as correct
+            Assert.True(challenge.CorrectAnswer(answer1.Answer));
+            Assert.False(challenge.CorrectAnswer(answer2.Answer));
+            Assert.False(challenge.CorrectAnswer(answer1.Answer + "a"));
+        }
     }
 }

@@ -136,6 +136,17 @@ AdminQuestions.EditChallenge = React.createClass({
                     <input id="challengeQuestion" type="text" value={this.state.question} placeholder="Enter question here..." onChange={this.handleQuestionChange} />
                 </div>
                 <br />
+                <label className="input-control radio">
+                    <input type="radio" name="OpenEnded" value={!this.state.openEnded} checked={!this.state.openEnded} onChange={this.handleMultipleChoiceChange} />
+                    <span className="check"></span>
+                    <span className="caption">Multiple Choice</span>
+                </label>
+                <label className="input-control radio" style={{marginLeft: 5}}>
+                    <input type="radio" name="OpenEnded" value={this.state.openEnded} checked={this.state.openEnded} onChange={this.handleOpenEndedChange} />
+                    <span className="check"></span>
+                    <span className="caption">Open Ended</span>
+                </label>
+                <br />
                 <button className="image-button success" onClick={this.addAnswer} type="button">Add answer<span className="icon mif-plus bg-darkGreen"></span></button>
                 <div>
                     {this.state.answers.map(function(item, index){
@@ -166,7 +177,7 @@ AdminQuestions.EditChallenge = React.createClass({
                 return item.Name;
             })[0];
 
-        return {id: challenge.Id, category: category, question: challenge ? challenge.Question : "", answers: challenge ? challenge.Answers : [], nextAnswerId: answerId};
+        return {id: challenge.Id, category: category, question: challenge ? challenge.Question : "", openEnded: challenge.OpenEnded, answers: challenge ? challenge.Answers : [], nextAnswerId: answerId};
     },
     categories: function () {
         return this.props.categories.map(function(item, index){return item.Name;});
@@ -183,6 +194,7 @@ AdminQuestions.EditChallenge = React.createClass({
                 {
                     Category: this.refs.challengeCategory.value(),
                     Question: this.state.question,
+                    OpenEnded: this.state.openEnded,
                     Answers: JSON.stringify(this.state.answers),
                 },
                 success: function () {
@@ -199,6 +211,7 @@ AdminQuestions.EditChallenge = React.createClass({
                 {
                     Category: this.refs.challengeCategory.value(),
                     Question: this.state.question,
+                    OpenEnded: this.state.openEnded,
                     Answers: JSON.stringify(this.state.answers),
                 },
                 function (data) {
@@ -254,6 +267,12 @@ AdminQuestions.EditChallenge = React.createClass({
     },
     handleQuestionChange: function (event) {
         this.setState({question: event.target.value});
+    },
+    handleMultipleChoiceChange: function (event) {
+        this.setState({ openEnded: false });
+    },
+    handleOpenEndedChange: function (event) {
+        this.setState({ openEnded: true });
     }
 });
 

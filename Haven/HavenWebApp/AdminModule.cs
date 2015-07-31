@@ -245,6 +245,7 @@ namespace HavenWebApp
                 if (challenge != null)
                 {
                     challenge.Question = (string)this.Request.Form.Question;
+                    challenge.OpenEnded = (bool)this.Request.Form.OpenEnded;
                     challenge.OwnerId = userId;
                     challenge.ChallengeCategoryId = this.GetCategoryId((string)this.Request.Form.Category);
                     Persistence.Connection.Update(challenge);
