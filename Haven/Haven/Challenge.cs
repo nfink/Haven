@@ -57,7 +57,7 @@ namespace Haven
 
         public Challenge Clone()
         {
-            var challenge = new Challenge() { OwnerId = this.OwnerId, ChallengeCategoryId = this.ChallengeCategoryId, Question = this.Question };
+            var challenge = new Challenge() { OwnerId = this.OwnerId, ChallengeCategoryId = this.ChallengeCategoryId, Question = this.Question, OpenEnded = this.OpenEnded };
             Persistence.Connection.Insert(challenge);
 
             // clone answers

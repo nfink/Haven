@@ -234,13 +234,15 @@ namespace HavenUnitTest
             Persistence.Connection.Insert(board);
             var space1 = new Space() { BoardId = board.Id, Order = 10 };
             var space2 = new Space() { BoardId = board.Id, Order = 20 };
-            Persistence.Connection.InsertAll(new Space[] { space1, space2 });
+            var space3 = new Space() { BoardId = board.Id, Order = 30 };
+            Persistence.Connection.InsertAll(new Space[] { space1, space2, space3 });
             var category1 = new ChallengeCategory() { Name = "test1", OwnerId = 2 };
             var category2 = new ChallengeCategory() { Name = "test3", OwnerId = 4 };
-            var categories = new ChallengeCategory[] { category1, category2 };
+            var category3 = new ChallengeCategory() { Name = "test4", OwnerId = 4 };
+            var categories = new ChallengeCategory[] { category1, category2, category3 };
             Persistence.Connection.InsertAll(categories);
             Persistence.Connection.Insert(new SpaceChallengeCategory() { SpaceId = space1.Id, ChallengeCategoryId = category1.Id });
-            Persistence.Connection.Insert(new SpaceChallengeCategory() { SpaceId = space2.Id, ChallengeCategoryId = category2.Id });
+            Persistence.Connection.Insert(new SpaceChallengeCategory() { SpaceId = space2.Id, ChallengeCategoryId = category3.Id });
             var challenge1 = new Challenge() { Question = "test1", ChallengeCategoryId = category1.Id, OwnerId = 3 };
             var challenge2 = new Challenge() { Question = "test2", ChallengeCategoryId = category2.Id, OwnerId = 4 };
             Persistence.Connection.InsertAll(new Challenge[] { challenge1, challenge2 });

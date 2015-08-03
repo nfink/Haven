@@ -304,23 +304,37 @@ namespace Haven
             }
 
             // clone challenge categories
-            var categories = this.Challenges.Select(x => x.ChallengeCategoryId).Distinct();
+            var categories = new List<int>();
+            var boardCategories = this.Challenges.Select(x => x.ChallengeCategoryId);
+            categories.AddRange(boardCategories);
+            var spaceCategories = new List<int>();
+            foreach (Space space in this.Spaces)
+            {
+                spaceCategories.AddRange(space.ChallengeCategories.Select(x => x.ChallengeCategoryId));
+            }
+            categories.AddRange(spaceCategories);
+
             var categoryIdMap = new Dictionary<int, int>();
-            foreach (int categoryId in categories)
+            foreach (int categoryId in categories.Distinct())
             {
                 var category = Persistence.Connection.Get<ChallengeCategory>(categoryId);
                 category.OwnerId = 0;
                 var clonedCategory = category.Clone();
                 categoryIdMap.Add(categoryId, clonedCategory.Id);
-                Persistence.Connection.Insert(new BoardChallengeCategory() { BoardId = board.Id, ChallengeCategoryId = clonedCategory.Id });
+            }
+
+            // clone board category links
+            foreach (int categoryId in boardCategories.Distinct())
+            {
+                Persistence.Connection.Insert(new BoardChallengeCategory() { BoardId = board.Id, ChallengeCategoryId = categoryIdMap[categoryId] });
             }
 
             // clone spaces
             foreach (Space space in this.Spaces)
             {
                 space.BoardId = board.Id;
-                space.Clone();
-                foreach (SpaceChallengeCategory category in space.ChallengeCategories)
+                var clonedSpace = space.Clone();
+                foreach (SpaceChallengeCategory category in clonedSpace.ChallengeCategories)
                 {
                     category.ChallengeCategoryId = categoryIdMap[category.ChallengeCategoryId];
                     Persistence.Connection.Update(category);
@@ -328,11 +342,14 @@ namespace Haven
             }
 
             // clone challenges
-            foreach (Challenge challenge in this.Challenges)
+            foreach (int categoryId in categories.Distinct())
             {
-                challenge.OwnerId = 0;
-                challenge.ChallengeCategoryId = categoryIdMap[challenge.ChallengeCategoryId];
-                var challengeId = challenge.Clone().Id;
+                foreach (Challenge challenge in Persistence.Connection.Table<Challenge>().Where(x => x.ChallengeCategoryId == categoryId))
+                {
+                    challenge.OwnerId = 0;
+                    challenge.ChallengeCategoryId = categoryIdMap[challenge.ChallengeCategoryId];
+                    challenge.Clone();
+                }
             }
 
             Persistence.Connection.Update(board);

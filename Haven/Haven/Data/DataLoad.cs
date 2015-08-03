@@ -19,11 +19,10 @@ namespace Haven.Data
             this.LoadSafeHavenCard();
             this.LoadBibleVerse();
             this.LoadChallengeCategory();
+            this.LoadBoardChallengeCategory();
             this.LoadSpaceChallengeCategory();
             this.LoadChallenge();
             this.LoadChallengeAnswer();
-            this.LoadBoardChallengeCategory();
-            this.LoadSpaceChallengeCategory();
             this.LoadColor();
             this.LoadImage();
             this.LoadSpaceType();
@@ -65,9 +64,11 @@ namespace Haven.Data
         public void LoadChallenge()
         {
             this.Connection.CreateTable<Challenge>();
-            this.Connection.Insert(new Challenge() { Id = 1, Question = "Test Question 1?", ChallengeCategoryId = 1, OwnerId = 1 });
-            this.Connection.Insert(new Challenge() { Id = 2, Question = "Test Question 2?", ChallengeCategoryId = 1, OwnerId = 1 });
-            this.Connection.Insert(new Challenge() { Id = 3, Question = "Test Question 3?", ChallengeCategoryId = 2, OwnerId = 1 });
+            this.Connection.Insert(new Challenge() { Id = 1, Question = "Test Multiple Choice 1?", ChallengeCategoryId = 1, OwnerId = 1 });
+            this.Connection.Insert(new Challenge() { Id = 2, Question = "Test Multiple Choice 2?", ChallengeCategoryId = 1, OwnerId = 1 });
+            this.Connection.Insert(new Challenge() { Id = 3, Question = "Test Multiple Choice 3?", ChallengeCategoryId = 2, OwnerId = 1 });
+            this.Connection.Insert(new Challenge() { Id = 4, Question = "Test Open Ended 1?", ChallengeCategoryId = 3, OpenEnded = true, OwnerId = 1 });
+            this.Connection.Insert(new Challenge() { Id = 5, Question = "Test Open Ended 2?", ChallengeCategoryId = 3, OpenEnded = true, OwnerId = 1 });
         }
 
         public void LoadChallengeAnswer()
@@ -85,13 +86,16 @@ namespace Haven.Data
             this.Connection.Insert(new ChallengeAnswer() { Answer = "Test Answer 3b", Correct = true, ChallengeId = 3 });
             this.Connection.Insert(new ChallengeAnswer() { Answer = "Test Answer 3c", Correct = false, ChallengeId = 3 });
             this.Connection.Insert(new ChallengeAnswer() { Answer = "Test Answer 3d", Correct = false, ChallengeId = 3 });
+            this.Connection.Insert(new ChallengeAnswer() { Answer = "test1", Correct = true, ChallengeId = 4 });
+            this.Connection.Insert(new ChallengeAnswer() { Answer = "test2", Correct = true, ChallengeId = 5 });
         }
 
         public void LoadChallengeCategory()
         {
             this.Connection.CreateTable<ChallengeCategory>();
-            this.Connection.Insert(new ChallengeCategory() { Id = 1, Name = "Category 1", OwnerId = 1 });
-            this.Connection.Insert(new ChallengeCategory() { Id = 2, Name = "Category 2", OwnerId = 1 });
+            this.Connection.Insert(new ChallengeCategory() { Id = 1, Name = "Multiple Choice 1", OwnerId = 1 });
+            this.Connection.Insert(new ChallengeCategory() { Id = 2, Name = "Multiple Choice 2", OwnerId = 1 });
+            this.Connection.Insert(new ChallengeCategory() { Id = 3, Name = "Open Ended", OwnerId = 1 });
         }
 
         public void LoadColor()
@@ -190,6 +194,10 @@ namespace Haven.Data
             this.Connection.Insert(new NameCard() { Id = 10, Name = "Dan", ImageId = 10 });
             this.Connection.Insert(new NameCard() { Id = 11, Name = "Asher", ImageId = 11 });
             this.Connection.Insert(new NameCard() { Id = 12, Name = "Naphtali", ImageId = 12 });
+            this.Connection.Insert(new NameCard() { Id = 13, Name = "Genesis 1:1" });
+            this.Connection.Insert(new NameCard() { Id = 14, Name = "Genesis 4:9" });
+            this.Connection.Insert(new NameCard() { Id = 15, Name = "Genesis 6:8" });
+            this.Connection.Insert(new NameCard() { Id = 16, Name = "Genesis 50:25" });
         }
 
         public void LoadMessage()
@@ -259,15 +267,19 @@ namespace Haven.Data
         public void LoadSpaceChallengeCategory()
         {
             this.Connection.CreateTable<SpaceChallengeCategory>();
+            this.Connection.Insert(new SpaceChallengeCategory() { SpaceId = 1, ChallengeCategoryId = 3 });
+            this.Connection.Insert(new SpaceChallengeCategory() { SpaceId = 2, ChallengeCategoryId = 3 });
+            this.Connection.Insert(new SpaceChallengeCategory() { SpaceId = 3, ChallengeCategoryId = 3 });
+            this.Connection.Insert(new SpaceChallengeCategory() { SpaceId = 4, ChallengeCategoryId = 3 });
         }
 
         public void LoadSpace()
         {
             this.Connection.CreateTable<Space>();
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 1, Type = SpaceType.Recall, BibleVerseId = 1, Width = 100, Height = 100, X = 150, Y = 50,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 9, Type = SpaceType.Recall, BibleVerseId = 2, Width = 100, Height = 100, X = 850, Y = 150,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 17, Type = SpaceType.Recall, BibleVerseId = 3, Width = 100, Height = 100, X = 750, Y = 850,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
-            this.Connection.Insert(new Space() { BoardId = 1, Order = 25, Type = SpaceType.Recall, BibleVerseId = 4, Width = 100, Height = 100, X = 50, Y = 750,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { Id = 1, BoardId = 1, Order = 1, Type = SpaceType.Challenge, NameCardId = 13, Width = 100, Height = 100, X = 150, Y = 50,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { Id = 2, BoardId = 1, Order = 9, Type = SpaceType.Challenge, NameCardId = 14, Width = 100, Height = 100, X = 850, Y = 150,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { Id = 3, BoardId = 1, Order = 17, Type = SpaceType.Challenge, NameCardId = 15, Width = 100, Height = 100, X = 750, Y = 850,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
+            this.Connection.Insert(new Space() { Id = 4, BoardId = 1, Order = 25, Type = SpaceType.Challenge, NameCardId = 16, Width = 100, Height = 100, X = 50, Y = 750,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
 
             this.Connection.Insert(new Space() { BoardId = 1, Order = 6, Type = SpaceType.ExchangePlaces, Width = 100, Height = 100, X = 650, Y = 50,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });
             this.Connection.Insert(new Space() { BoardId = 1, Order = 14, Type = SpaceType.ExchangePlaces, Width = 100, Height = 100, X = 850, Y = 650,});// BackgroundColor = "#E1CFC5", BorderColor="#997F70" });

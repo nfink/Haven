@@ -50,7 +50,7 @@ namespace HavenUnitTest
         public void CloneChallenge()
         {
             // create a challenge
-            var challenge = new Challenge() { Question = "Test Question 1", ChallengeCategoryId = 2, OwnerId = 3 };
+            var challenge = new Challenge() { Question = "Test Question 1", ChallengeCategoryId = 2, OwnerId = 3, OpenEnded = true };
             Persistence.Connection.Insert(challenge);
             var answer1 = new ChallengeAnswer() { Answer = "Test Answer 1", Correct = true, ChallengeId = challenge.Id };
             var answer2 = new ChallengeAnswer() { Answer = "Test Answer 2", Correct = false, ChallengeId = challenge.Id };
@@ -64,6 +64,7 @@ namespace HavenUnitTest
             Assert.AreEqual(challenge.Question, clonedChallenge.Question);
             Assert.AreEqual(challenge.ChallengeCategoryId, clonedChallenge.ChallengeCategoryId);
             Assert.AreEqual(challenge.OwnerId, clonedChallenge.OwnerId);
+            Assert.AreEqual(challenge.OpenEnded, clonedChallenge.OpenEnded);
             Assert.AreNotEqual(challenge.Answers.Select(x => x.Id), clonedChallenge.Answers.Select(x => x.Id));
             Assert.AreEqual(challenge.Answers.Select(x => x.Answer), clonedChallenge.Answers.Select(x => x.Answer));
             Assert.AreEqual(challenge.Answers.Select(x => x.Correct), clonedChallenge.Answers.Select(x => x.Correct));
