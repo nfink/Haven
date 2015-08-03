@@ -12,7 +12,7 @@ var Space = React.createClass({
                           </div>);
         }
         else {
-            var content = <div className={this.props.space.Icon + " mif-2x"} style={textStyle} />;
+            var content = <div className={this.props.space.Icon ? this.props.space.Icon.Image + " mif-2x" : null} style={textStyle} />;
         }
         return (
             <div className={"tile-small" + (this.props.space.BackgroundColor ? " bg-" + this.props.space.BackgroundColor.Name : " bg-taupe") + (this.props.space.TextColor ? " fg-" + this.props.space.TextColor.Name : " fg-white")} onClick={this.props.onClick} style={this.props.style}>

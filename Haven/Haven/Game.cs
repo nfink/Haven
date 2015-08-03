@@ -1,9 +1,7 @@
-﻿using System;
+﻿using SQLite;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SQLite;
 
 namespace Haven
 {
@@ -108,31 +106,80 @@ namespace Haven
             }
         }
 
-        public Challenge GetNextChallenge()
+        public Challenge GetNextChallenge(int spaceId)
         {
-            var unusedChallenges = this.GetUnusedChallenges();
-
-            if (unusedChallenges.Count() < 1)
+            // get challenge categories that the space can use (from space, or board if the space has no specified categories)
+            IEnumerable<int> categories;
+            var spaceCategories = Persistence.Connection.Table<SpaceChallengeCategory>().Where(x => x.SpaceId == spaceId);
+            if (spaceCategories.Count() > 0)
             {
-                Persistence.Connection.Execute("delete from UsedChallenge where GameId=?", this.Id);
-                unusedChallenges = this.GetUnusedChallenges();
+                categories = Persistence.Connection.Query<ChallengeCategory>("select ChallengeCategory.* from ChallengeCategory join SpaceChallengeCategory on ChallengeCategory.Id=SpaceChallengeCategory.ChallengeCategoryId where SpaceChallengeCategory.SpaceId=?", spaceId).Select(x => x.Id);
+            }
+            else
+            {
+                categories = Persistence.Connection.Query<ChallengeCategory>("select ChallengeCategory.* from ChallengeCategory join BoardChallengeCategory on ChallengeCategory.Id=BoardChallengeCategory.ChallengeCategoryId where BoardChallengeCategory.BoardId=?", this.BoardId).Select(x => x.Id);
             }
 
+            // get unused challenges from each category, and if a category has no unused challenges, mark all as unused
+            foreach (int categoryId in categories)
+            {
+                var unusedCategoryChallenges = Persistence.Connection.Query<Challenge>(
+                    @"select Challenge.* from 
+                        (select Challenge.* from Challenge
+                            join ChallengeCategory on Challenge.ChallengeCategoryId=ChallengeCategory.Id
+                            where ChallengeCategory.Id=?) as Challenge
+                        left join UsedChallenge on Challenge.Id=UsedChallenge.ChallengeId
+                        where (UsedChallenge.ChallengeId is null or UsedChallenge.GameId<>?)",
+                      categoryId, this.Id);
+
+                if (unusedCategoryChallenges.Count() < 1)
+                {
+                    Persistence.Connection.Execute(
+                        @"delete from UsedChallenge where Id in (
+                            select UsedChallenge.Id from UsedChallenge
+                            join Challenge on UsedChallenge.ChallengeId=Challenge.Id
+                            join ChallengeCategory on Challenge.ChallengeCategoryId=ChallengeCategory.Id
+                            where ChallengeCategory.Id=? and UsedChallenge.GameId=?)",
+                        categoryId, this.Id);
+                }
+            }
+
+            // get unused challenges from all categories
+            IEnumerable<Challenge> unusedChallenges;
+            if (spaceCategories.Count() > 0)
+            {
+                unusedChallenges = Persistence.Connection.Query<Challenge>(
+                    @"select Challenge.* from 
+                        (select Challenge.* from Challenge
+                            join ChallengeCategory on Challenge.ChallengeCategoryId=ChallengeCategory.Id
+                            where ChallengeCategory.Id in (
+                                select ChallengeCategory.Id from ChallengeCategory
+                                join SpaceChallengeCategory on ChallengeCategory.Id=SpaceChallengeCategory.ChallengeCategoryId
+                                where SpaceChallengeCategory.SpaceId=?)) as Challenge
+                        left join UsedChallenge on Challenge.Id=UsedChallenge.ChallengeId
+                        where (UsedChallenge.ChallengeId is null or UsedChallenge.GameId<>?)",
+                        spaceId, this.Id);
+
+            }
+            else
+            {
+                unusedChallenges = Persistence.Connection.Query<Challenge>(
+                    @"select Challenge.* from 
+                        (select Challenge.* from Challenge
+                            join ChallengeCategory on Challenge.ChallengeCategoryId=ChallengeCategory.Id
+                            where ChallengeCategory.Id in (
+                                select ChallengeCategory.Id from ChallengeCategory
+                                join BoardChallengeCategory on ChallengeCategory.Id=BoardChallengeCategory.ChallengeCategoryId
+                                where BoardChallengeCategory.BoardId=?)) as Challenge
+                        left join UsedChallenge on Challenge.Id=UsedChallenge.ChallengeId
+                        where (UsedChallenge.ChallengeId is null or UsedChallenge.GameId<>?)",
+                        this.BoardId, this.Id);
+            }
+
+            // select a random challenge to use and mark as used
             var nextChallenge = unusedChallenges.OrderBy(x => Rand.Next()).First();
             Persistence.Connection.Insert(new UsedChallenge() { ChallengeId = nextChallenge.Id, GameId = this.Id });
             return nextChallenge;
-        }
-
-        private IEnumerable<Challenge> GetUnusedChallenges()
-        {
-            return Persistence.Connection.Query<Challenge>(
-                @"select Challenge.* from 
-                  (select Challenge.* from Challenge
-                      join BoardChallenge on Challenge.Id=BoardChallenge.ChallengeId
-                      where BoardChallenge.BoardId=?) as Challenge
-                  left join UsedChallenge on Challenge.Id=UsedChallenge.ChallengeId
-                  where (UsedChallenge.ChallengeId is null or UsedChallenge.GameId<>?)",
-                  this.BoardId, this.Id);
         }
 
         public void Delete()

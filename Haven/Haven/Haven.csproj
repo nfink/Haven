@@ -61,7 +61,7 @@
     <Compile Include="Actions\SelectPieceAction.cs" />
     <Compile Include="Actions\RollToGoAction.cs" />
     <Compile Include="Actions\ReadRecallAction.cs" />
-    <Compile Include="BoardChallenge.cs" />
+    <Compile Include="BoardChallengeCategory.cs" />
     <Compile Include="Challenge.cs" />
     <Compile Include="ChallengeAnswer.cs" />
     <Compile Include="ChallengeCategory.cs" />
@@ -83,6 +83,7 @@
     <Compile Include="PlayerNameCard.cs" />
     <Compile Include="PlayerSafeHavenCard.cs" />
     <Compile Include="SafeHavenCard.cs" />
+    <Compile Include="SpaceChallengeCategory.cs" />
     <Compile Include="Spaces\RecallSpace.cs" />
     <Compile Include="Spaces\ChallengeSpace.cs" />
     <Compile Include="Spaces\ExchangePlacesSpace.cs" />

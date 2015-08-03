@@ -1,6 +1,5 @@
 ﻿using Haven;
 using NUnit.Framework;
-using System.Linq;
 
 namespace HavenUnitTest
 {
@@ -13,6 +12,8 @@ namespace HavenUnitTest
             // create tables
             Persistence.Connection.CreateTable<Challenge>();
             Persistence.Connection.CreateTable<ChallengeCategory>();
+            Persistence.Connection.CreateTable<SpaceChallengeCategory>();
+            Persistence.Connection.CreateTable<BoardChallengeCategory>();
         }
 
         [Test]
@@ -21,20 +22,27 @@ namespace HavenUnitTest
             // create a category with challenges
             var category = new ChallengeCategory();
             Persistence.Connection.Insert(category);
-            var challenge1 = new Challenge() { ChallengeCategoryId = category.Id, Question = "Test Question 1" };
-            var challenge2 = new Challenge() { ChallengeCategoryId = category.Id, Question = "Test Question 2" };
-            Persistence.Connection.Insert(challenge1);
-            Persistence.Connection.Insert(challenge2);
-         
+            Persistence.Connection.Insert(new Challenge() { ChallengeCategoryId = category.Id, Question = "Test Question 1" });
+            Persistence.Connection.Insert(new Challenge() { ChallengeCategoryId = category.Id, Question = "Test Question 2" });
+            Persistence.Connection.Insert(new SpaceChallengeCategory() { ChallengeCategoryId = category.Id });
+            Persistence.Connection.Insert(new SpaceChallengeCategory() { ChallengeCategoryId = category.Id });
+            Persistence.Connection.Insert(new BoardChallengeCategory() { ChallengeCategoryId = category.Id });
+            Persistence.Connection.Insert(new BoardChallengeCategory() { ChallengeCategoryId = category.Id });
+
             // delete the category
             category.Delete();
 
             // verify category is deleted
             Assert.IsEmpty(Persistence.Connection.Table<ChallengeCategory>().Where(x => x.Id == category.Id));
 
-            // verify challenges have their category set to default
-            Assert.AreEqual(0, Persistence.Connection.Get<Challenge>(challenge1.Id).ChallengeCategoryId);
-            Assert.AreEqual(0, Persistence.Connection.Get<Challenge>(challenge2.Id).ChallengeCategoryId);
+            // verify challenges are deleted
+            Assert.IsEmpty(Persistence.Connection.Table<Challenge>().Where(x => x.ChallengeCategoryId == category.Id));
+
+            // verify that space links are removed
+            Assert.IsEmpty(Persistence.Connection.Table<SpaceChallengeCategory>().Where(x => x.ChallengeCategoryId == category.Id));
+
+            // verify board links are removed
+            Assert.IsEmpty(Persistence.Connection.Table<BoardChallengeCategory>().Where(x => x.ChallengeCategoryId == category.Id));
         }
 
         [Test]

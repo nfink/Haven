@@ -37,7 +37,7 @@ namespace Haven
             {
                 // if a single other player is on this space, player automatically goes to war as the challenger (add challenge actions)
                 var challenged = playersOnWarSpace.Where(x => x != player).First();
-                var challenge = game.GetNextChallenge();
+                var challenge = game.GetNextChallenge(this.Id);
                 Persistence.Connection.Insert(new Action() { Type = ActionType.AnswerWarChallenge, OwnerId = player.Id, ChallengeId = challenge.Id, PlayerId = challenged.Id, Challenger = true });
                 Persistence.Connection.Insert(new Message() { PlayerId = player.Id, Text = string.Format("You have challenged {0} to war!", challenged.Name) });
             }

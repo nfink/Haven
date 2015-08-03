@@ -1,6 +1,5 @@
 ﻿/** @jsx React.DOM */
 /// <reference path="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js" />
-/// <reference path="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js" />
 
 var AdminQuestions = React.createClass({
     render: function () {
@@ -13,19 +12,18 @@ var AdminQuestions = React.createClass({
             return (
                 <div className="container page-content">
                     <button className="image-button primary" onClick={this.addCategory}>Add new category<span className="icon mif-folder-plus bg-darkCobalt"></span></button>
-                    <button className="image-button primary" style={{marginLeft: 10}} onClick={function () {this.addQuestion(0);}.bind(this)}>Add new question<span className="icon mif-plus bg-darkCobalt"></span></button>
+                    {this.state.categories.length < 1 ? null : <button className="image-button primary" style={{marginLeft: 10}} onClick={function () {this.addQuestion(this.state.categories[0].Id);}.bind(this)}>Add new question<span className="icon mif-plus bg-darkCobalt"></span></button>}
                     <div className="grid padding10 bg-white">
                         <div className="row cells2">
                             <div className="cell">
                                 <div className="listview-outlook" data-role="listview" ref="challengesList">
-                                    {this.uncategorizedQuestions()}
                                     {this.state.categories.map(function(item, index){
                                         return (
                                             <div className="list-group" key={item.Id}>
                                                 <div className="list-group-toggle" >
                                                     <span >{item.Name}</span>
                                                 </div>
-                                                <button onClick={function () {this.handleEditCategory(item);}.bind(this)} className="cycle-button mini-button" type="button" style={{position: "absolute", width: "1.2rem", height: "1.2rem", top: -1, right: 10}} title="Edit category"><span className="mif-pencil"></span></button>
+                                                {item.Default ? null : <button onClick={function () {this.handleEditCategory(item);}.bind(this)} className="cycle-button mini-button" type="button" style={{position: "absolute", width: "1.2rem", height: "1.2rem", top: -1, right: 10}} title="Edit category"><span className="mif-pencil"></span></button>}
                                                 <button onClick={function () {this.addQuestion(item.Id);}.bind(this)} className="cycle-button mini-button" type="button" style={{position: "absolute", width: "1.2rem", height: "1.2rem", top: -1, right: 34}} title="Add question"><span className="mif-plus"></span></button>
                                                 <div className="list-group-content">
 			                                        {this.questionsInCategory(item.Id)}
@@ -67,23 +65,6 @@ var AdminQuestions = React.createClass({
                 <AdminQuestions.QuestionListItem challenge={item} categories={this.state.categories} updateCallback={this.componentDidMount.bind(this)} key={item.Id} />
             );
         }, this);
-    },
-    uncategorizedQuestions () {
-        var uncategorized = this.questionsInCategory(0);
-        if (uncategorized.length > 0) {
-            return (
-                <div className="list-group">
-                    <span className="list-group-toggle">Uncategorized</span>
-                    <button onClick={function () {this.addQuestion(0);}.bind(this)} className="cycle-button mini-button" type="button" style={{position: "absolute", width: "1.2rem", height: "1.2rem", top: -1, right: 10}} title="Add question"><span className="mif-plus"></span></button>
-                    <div className="list-group-content">
-		                {uncategorized}
-	                </div>
-                </div>
-            );
-        }
-        else {
-            return null;
-        }
     },
     handleEditCategory: function (category) {
         React.unmountComponentAtNode(document.getElementById("editChallenge"));
@@ -130,7 +111,15 @@ AdminQuestions.EditChallenge = React.createClass({
     render: function () {
         return (
             <form onSubmit={this.save}>
-                <ComboBox ref="challengeCategory" label="Category:" value={this.state.category} options={this.categories()} />
+                <label htmlFor="challengeCategory">Category:</label>
+                <div className="input-control select" style={{marginLeft: 5}}>
+                    <select id="challengeCategory" value={this.state.category} onChange={this.handleCategoryChange}>
+                        {this.props.categories.map(function (item, index) {
+                            return <option value={item.Id} key={item.Id}>{item.Name}</option>;
+                        }, this)}
+                    </select>
+                </div>
+                <br />
                 <label htmlFor="challengeQuestion">Question:</label>
                 <div className="input-control text" style={{marginLeft: 5}}>
                     <input id="challengeQuestion" type="text" value={this.state.question} placeholder="Enter question here..." onChange={this.handleQuestionChange} />
@@ -174,13 +163,10 @@ AdminQuestions.EditChallenge = React.createClass({
                 return value.Id === challenge.ChallengeCategoryId;
             })
             .map(function (item, index) {
-                return item.Name;
+                return item.Id;
             })[0];
 
         return {id: challenge.Id, category: category, question: challenge ? challenge.Question : "", openEnded: challenge.OpenEnded, answers: challenge ? challenge.Answers : [], nextAnswerId: answerId};
-    },
-    categories: function () {
-        return this.props.categories.map(function(item, index){return item.Name;});
     },
     save: function (event) {
         event.preventDefault();
@@ -192,7 +178,7 @@ AdminQuestions.EditChallenge = React.createClass({
                 method: "PUT",
                 data:
                 {
-                    Category: this.refs.challengeCategory.value(),
+                    ChallengeCategoryId: this.state.category,
                     Question: this.state.question,
                     OpenEnded: this.state.openEnded,
                     Answers: JSON.stringify(this.state.answers),
@@ -209,7 +195,7 @@ AdminQuestions.EditChallenge = React.createClass({
         else {
             $.post("/Challenges",
                 {
-                    Category: this.refs.challengeCategory.value(),
+                    ChallengeCategoryId: this.state.category,
                     Question: this.state.question,
                     OpenEnded: this.state.openEnded,
                     Answers: JSON.stringify(this.state.answers),
@@ -262,8 +248,8 @@ AdminQuestions.EditChallenge = React.createClass({
         this.state.answers.splice(index, 1);
         this.setState({answers: this.state.answers});
     },
-    handleNameChange: function (event) {
-        this.setState({name: event.target.value});
+    handleCategoryChange: function (event) {
+        this.setState({ category: event.target.value });
     },
     handleQuestionChange: function (event) {
         this.setState({question: event.target.value});
@@ -365,7 +351,7 @@ AdminQuestions.EditCategory = React.createClass({
         }
     },
     handleDelete: function () {
-        var dialogMessage = "Any questions in this category will become uncategorized. Are you sure you want to delete?";
+        var dialogMessage = "All questions in this category will be deleted. Are you sure you want to delete?";
         var dialog = React.render(<DeleteDialog action={function () {this.deleteCategory()}.bind(this)} text={dialogMessage} />, document.getElementById("deleteDialog"));
         dialog.open();
     },

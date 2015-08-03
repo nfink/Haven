@@ -1,5 +1,6 @@
 ﻿using SQLite;
 using System;
+using System.Collections.Generic;
 
 namespace Haven
 {
@@ -56,6 +57,8 @@ namespace Haven
 
         public int TextColorId { get; set; }
 
+        public int IconId { get; set; }
+
         public string Name
         {
             get
@@ -110,11 +113,18 @@ namespace Haven
             }
         }
 
-        public string Icon
+        public Piece Icon
         {
             get
             {
-                return this.Type.GetIcon();
+                if (this.IconId != 0)
+                {
+                    return Persistence.Connection.Get<Piece>(this.IconId);
+                }
+                else
+                {
+                    return new Piece() { Image = this.Type.GetIcon() };
+                }
             }
         }
 
@@ -131,6 +141,14 @@ namespace Haven
             get
             {
                 return this.TextColorId != 0 ? Persistence.Connection.Get<Color>(this.TextColorId) : null;
+            }
+        }
+
+        public IEnumerable<SpaceChallengeCategory> ChallengeCategories
+        {
+            get
+            {
+                return Persistence.Connection.Table<SpaceChallengeCategory>().Where(x => x.SpaceId == this.Id);
             }
         }
 
@@ -176,21 +194,20 @@ namespace Haven
         public void Delete()
         {
             // delete any dependent records
-            if (this.Id != 0)
+            if (this.BibleVerseId != 0)
             {
-                if (this.BibleVerseId != 0)
-                {
-                    Persistence.Connection.Execute("delete from BibleVerse where Id=?", this.BibleVerseId);
-                }
-                if (this.NameCardId != 0)
-                {
-                    Persistence.Connection.Execute("delete from NameCard where Id=?", this.NameCardId);
-                }
-                if (this.SafeHavenCardId != 0)
-                {
-                    Persistence.Connection.Execute("delete from SafeHavenCard where Id=?", this.SafeHavenCardId);
-                }
+                Persistence.Connection.Execute("delete from BibleVerse where Id=?", this.BibleVerseId);
             }
+            if (this.NameCardId != 0)
+            {
+                Persistence.Connection.Execute("delete from NameCard where Id=?", this.NameCardId);
+            }
+            if (this.SafeHavenCardId != 0)
+            {
+                Persistence.Connection.Execute("delete from SafeHavenCard where Id=?", this.SafeHavenCardId);
+            }
+
+            Persistence.Connection.Execute("delete from SpaceChallengeCategory where SpaceId=?", this.Id);
 
             // delete space
             Persistence.Connection.Delete(this);
@@ -218,6 +235,13 @@ namespace Haven
             }
 
             Persistence.Connection.Insert(space);
+            
+            // add categories
+            foreach (SpaceChallengeCategory category in this.ChallengeCategories)
+            {
+                Persistence.Connection.Insert(new SpaceChallengeCategory() { SpaceId = space.Id, ChallengeCategoryId = category.ChallengeCategoryId });
+            }
+
             return space;
         }
     }

@@ -1,6 +1,5 @@
 ﻿/** @jsx React.DOM */
 /// <reference path="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js" />
-/// <reference path="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js" />
 
 var EditBoard = React.createClass({
     render: function () {
@@ -17,7 +16,7 @@ var EditBoard = React.createClass({
                         <div style={{width: 770, height: 775}}>
                             {this.dummySpaces()}
                             {this.state.board.Spaces.map(function(item, index){
-                                return <EditBoard.Space space={item} updateCallback={this.loadBoard} key={item.Id} />;
+                                return <EditBoard.Space space={item} categories={this.state.challengeCategories} updateCallback={this.loadBoard} key={item.Id} />;
                             }, this)}
                         </div>
                     </div>
@@ -49,9 +48,10 @@ var EditBoard = React.createClass({
                                 </div>
                             </div>
                             <div className="frame">
-                                <div className="heading">Challenges<span className="icon mif-question"></span></div>
+                                <div className="heading">Questions<span className="icon mif-question"></span></div>
                                 <div className="content">
-                                    {(this.state.challenges !== null && this.state.challengeCategories !== null) ? this.challengesList() : <div data-role="preloader" data-type="metro" data-style="dark"></div>}
+                                    <div>Select question categories that will be used by Challenge and War spaces:</div>
+                                    {this.state.challengeCategories !== null ? this.categoriesList() : <div data-role="preloader" data-type="metro" data-style="dark"></div>}
                                 </div>
                             </div>
                             <div className="frame">
@@ -68,14 +68,10 @@ var EditBoard = React.createClass({
         }
     },
     getInitialState: function () {
-        return {board: null, validation: null, name: null, description: null, challenges: null, challengeCategories: null, boardChallenges: null};
+        return {board: null, validation: null, name: null, description: null, challengeCategories: null };
     },
     componentDidMount: function () {
         this.loadBoard();
-        $.get("Challenges", function (data) {
-            var challenges = JSON.parse(data);
-            this.setState({challenges: challenges});
-        }.bind(this));
         $.get("ChallengeCategories", function (data) {
             var categories = JSON.parse(data);
             this.setState({challengeCategories: categories});
@@ -84,11 +80,7 @@ var EditBoard = React.createClass({
     loadBoard: function () {
         $.get("Boards/" + this.props.id, function (data) {
             var board = JSON.parse(data);
-            var boardChallenges = {};
-            board.Challenges.forEach(function (item, index) {
-                boardChallenges[item.Id] = item;
-            });
-            this.setState({ board: board, name: board.Name, description: board.Description, boardChallenges: boardChallenges });
+            this.setState({ board: board, name: board.Name, description: board.Description });
             this.validate();
         }.bind(this));
     },
@@ -98,74 +90,30 @@ var EditBoard = React.createClass({
         {
             for (j = 1; j <= 10; j++)
             {
-                dummySpaces.push(<EditBoard.DummySpace boardId={this.state.board.Id} x={i} y={j} updateCallback={this.loadBoard} key={i + "," + j} />);
+                dummySpaces.push(<EditBoard.DummySpace boardId={this.state.board.Id} x={i} y={j} categories={this.state.challengeCategories} updateCallback={this.loadBoard} key={i + "," + j} />);
             }
         }
         return <div>{dummySpaces}</div>;
     },
-    challengesList: function () {
-        var uncategorized = this.questionsInCategory(0);
+    categoriesList: function () {
+        var categories = this.state.board.ChallengeCategories.map(function (item) { return item.ChallengeCategoryId });
         return (
-            <form onSubmit={this.saveChallenges}>
-                <div className="treeview" data-role="treeview" ref="challengesTree">
+            <form onSubmit={this.saveCategories}>
+                <div className="treeview" data-role="treeview" ref="categoriesTree">
                     <ul>
-                        {uncategorized.length > 0 ?
-                            <li className="node collapsed" data-mode="checkbox" key="0">
-                                <span className="leaf">Uncategorized</span>
-                                <span className="node-toggle"></span>
-                                <ul>
-                                    {uncategorized}
-                                </ul>
-                            </li>
-                            :
-                            null}
-                        {this.state.challengeCategories.map(function(item, index){
+                        {this.state.challengeCategories.map(function (item, index) {
                             return (
-                                <li className="node collapsed" data-mode="checkbox" key={item.Id}>
+                                <li data-mode="checkbox" data-name={"category" + item.Id} data-checked={$.inArray(item.Id, categories) !== -1} key={item.Id}>
                                     <span className="leaf">{item.Name}</span>
-                                    <span className="node-toggle"></span>
-                                    <ul>
-                                        {this.questionsInCategory(item.Id)}
-                                    </ul>
                                 </li>
                                 );
                         }, this)
                         }
                     </ul>
                 </div>
-                <LoadingButton text="Save" ref="saveChallengesButton" />
+                <LoadingButton text="Save" ref="saveCategoriesButton" />
             </form>
         );
-    },
-    questionsInCategory (categoryId) {
-	    return this.state.challenges.filter(function (value) {
-		    return value.ChallengeCategoryId === categoryId;
-	    })
-	    .map(function (item, index) {
-		    return (
-			    <li data-mode="checkbox" data-name={"challenge" + item.Id} data-checked={item.Id in this.state.boardChallenges} key={item.Id}>
-                    <span className="leaf">{item.Question}</span>
-                </li>
-		    );
-	    }, this);
-    },
-    getSelectedChallenges: function () {
-        var challengesTree = $(React.findDOMNode(this.refs.challengesTree));
-        var challengeCheckboxes = challengesTree.find("[name^='challenge']");
-        var selectedChallengeIds = [];
-        $.each(challengeCheckboxes, function (index, value) {
-            if ($(value).prop("checked")) {
-                selectedChallengeIds.push($(value).attr("name").replace("challenge", ""));
-            }
-        });
-        var challenges = {};
-        this.state.challenges.forEach(function(item, index) {
-            challenges[item.Id] = item;
-        });
-        var selectedChallenges = selectedChallengeIds.map(function (item, index) {
-            return challenges[item];
-        }, this);
-        return selectedChallenges;
     },
     validate: function () {
         $.post("Boards/" + this.props.id + "/Validate", function (data) {
@@ -213,16 +161,15 @@ var EditBoard = React.createClass({
             this.validate();
         }.bind(this));
     },
-    saveChallenges: function (event) {
+    saveCategories: function (event) {
         event.preventDefault();
-        this.refs.saveChallengesButton.showLoading();
-        var challenges = {};
-        $.post("/Boards/" + this.props.id + "/Challenges",
+        this.refs.saveCategoriesButton.showLoading();
+        $.post("/Boards/" + this.props.id + "/ChallengeCategories",
             {
-                Challenges: JSON.stringify(this.getSelectedChallenges())
+                ChallengeCategories: JSON.stringify(GetSelectedCategories(this.refs.categoriesTree))
             },
             function (data) {
-                this.refs.saveChallengesButton.hideLoading();
+                this.refs.saveCategoriesButton.hideLoading();
                 this.validate();
             }.bind(this));
     },
@@ -255,7 +202,7 @@ EditBoard.Space = React.createClass({
     },
     editSpace: function () {
         React.unmountComponentAtNode(document.getElementById("editPane"));
-        React.render(<EditBoard.EditSpace space={this.props.space} updateCallback={this.props.updateCallback} />, document.getElementById("editPane"));
+        React.render(<EditBoard.EditSpace space={this.props.space} categories={this.props.categories} updateCallback={this.props.updateCallback} />, document.getElementById("editPane"));
     }
 });
 
@@ -272,8 +219,8 @@ EditBoard.DummySpace = React.createClass({
     },
     editSpace: function () {
         React.unmountComponentAtNode(document.getElementById("editPane"));
-        var space = { BoardId: this.props.boardId, Type: 0, Order: 0, Image: null, X: this.props.x, Y: this.props.y, BackgroundColorId: 0, TextColorId: 0 };
-        React.render(<EditBoard.EditSpace space={space} updateCallback={this.props.updateCallback} />, document.getElementById("editPane"));
+        var space = { BoardId: this.props.boardId, Type: 0, Order: 0, IconId: 0, Image: null, X: this.props.x, Y: this.props.y, BackgroundColorId: 0, TextColorId: 0, ChallengeCategories: [] };
+        React.render(<EditBoard.EditSpace space={space} categories={this.props.categories} updateCallback={this.props.updateCallback} />, document.getElementById("editPane"));
     }
 });
 
@@ -311,13 +258,18 @@ EditBoard.EditSpace = React.createClass({
 				                    <input id="spaceOrder" type="text" value={this.state.space.Order} placeholder="Enter number..." onChange={this.handleOrderChange} />
 			                    </div>
                                 <div style={{display: "flex", alignItems: "center"}}>
+                                    <div style={{marginRight: 5}}>Icon:</div>
+                                    <IconSelector selectedIcon={this.state.space.Icon} onSelect={this.handleIconChange} />
+                                </div>
+                                <div style={{display: "flex", alignItems: "center"}}>
                                     <div style={{marginRight: 5}}>Background color:</div>
-                                    <ColorSelector ref="backgroundColor" selectedColor={this.state.space.BackgroundColor} onSelect={this.handleBackgroundColorChange} />
+                                    <ColorSelector selectedColor={this.state.space.BackgroundColor} onSelect={this.handleBackgroundColorChange} />
                                 </div>
                                 <div style={{display: "flex", alignItems: "center"}}>
                                     <div style={{marginRight: 5}}>Text color:</div>
-                                    <ColorSelector ref="textColor" selectedColor={this.state.space.TextColor} onSelect={this.handleTextColorChange} />
+                                    <ColorSelector selectedColor={this.state.space.TextColor} onSelect={this.handleTextColorChange} />
                                 </div>
+                                {this.challengeSelection()}
                             </div>
                             {this.additionalEditFields()}
                         </div>
@@ -338,6 +290,36 @@ EditBoard.EditSpace = React.createClass({
         $.get("SpaceTypes", function (data) {
             this.setState({spaceTypes: JSON.parse(data)});
         }.bind(this));
+    },
+    challengeSelection: function () {
+        if (!this.state.space || (this.state.spaceTypes.length < 1)) {
+            return null;
+        }
+
+        var spaceType = this.state.spaceTypes[this.state.space.Type].Name;
+        if ((spaceType === "Challenge") || (spaceType === "War"))  {
+            var categories = this.state.space.ChallengeCategories.map(function (item) { return item.ChallengeCategoryId; });
+            return (
+                <div>
+                    <div>Question categories:</div>
+                    <div className="treeview" data-role="treeview" ref="spaceNameCardCategoriesTree">
+                        <ul>
+                            {this.props.categories.map(function (item, index) {
+                                return (
+                                    <li data-mode="checkbox" data-name={"category" + item.Id} data-checked={$.inArray(item.Id, categories) !== -1}  key={item.Id}>
+                                        <span className="leaf">{item.Name}</span>
+                                    </li>
+                                );
+                            }, this)
+                            }
+                        </ul>
+                    </div>
+                </div>
+            );
+        }
+        else {
+            return null;
+        }
     },
     additionalEditFields: function () {
         if (!this.state.space || (this.state.spaceTypes.length < 1)) {
@@ -394,6 +376,7 @@ EditBoard.EditSpace = React.createClass({
         formData.append("BoardId", this.state.space.BoardId);
         formData.append("Type", this.state.space.Type);
         formData.append("Order", this.state.space.Order);
+        formData.append("IconId", this.state.space.IconId);
         formData.append("BackgroundColorId", this.state.space.BackgroundColorId);
         formData.append("TextColorId", this.state.space.TextColorId);
         formData.append("X", this.state.space.X);
@@ -414,6 +397,9 @@ EditBoard.EditSpace = React.createClass({
             if (file) {
                 formData.append("Image", file, file.name);
             }
+        }
+        if ((spaceType === "Challenge") || (spaceType === "War")) {
+            formData.append("ChallengeCategories", JSON.stringify(GetSelectedCategories(this.refs.spaceNameCardCategoriesTree)));
         }
 
         if (this.state.space.Id) {
@@ -500,6 +486,11 @@ EditBoard.EditSpace = React.createClass({
         this.state.space.TextColor = selectedColor;
         this.setState({space: this.state.space});
     },
+    handleIconChange: function (selectedIcon) {
+        this.state.space.IconId = selectedIcon.Id;
+        this.state.space.Icon = selectedIcon;
+        this.setState({ space: this.state.space });
+    },
     initNameCard: function () {
         if (!this.state.space.NameCard) {
             this.state.space.NameCard = { Name: null, Details: null };
@@ -551,3 +542,15 @@ EditBoard.EditSpace = React.createClass({
         reader.readAsDataURL(file);
     },
 });
+
+function GetSelectedCategories (tree) {
+    var categoriesTree = $(React.findDOMNode(tree));
+    var categoryCheckboxes = categoriesTree.find("[name^='category']");
+    var selectedCategoryIds = [];
+    $.each(categoryCheckboxes, function (index, value) {
+        if ($(value).prop("checked")) {
+            selectedCategoryIds.push($(value).attr("name").replace("category", ""));
+        }
+    });
+    return selectedCategoryIds;
+}

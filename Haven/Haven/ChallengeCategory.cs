@@ -16,8 +16,14 @@ namespace Haven
             // delete category
             Persistence.Connection.Delete<ChallengeCategory>(this.Id);
 
-            // remove links from any challeneges
-            Persistence.Connection.Execute("update Challenge set ChallengeCategoryId=0 where ChallengeCategoryId=?", this.Id);
+            // delete challenges in the category
+            Persistence.Connection.Execute("delete from Challenge where ChallengeCategoryId=?", this.Id);
+
+            // remove links from any spaces
+            Persistence.Connection.Execute("delete from SpaceChallengeCategory where ChallengeCategoryId=?", this.Id);
+
+            // remove links from boards
+            Persistence.Connection.Execute("delete from BoardChallengeCategory where ChallengeCategoryId=?", this.Id);
         }
 
         public ChallengeCategory Clone()

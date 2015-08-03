@@ -1,4 +1,5 @@
-﻿using SQLite;
+﻿using Newtonsoft.Json;
+using SQLite;
 using System;
 
 namespace Haven
@@ -70,6 +71,7 @@ namespace Haven
             }
         }
 
+        [JsonIgnore]
         public BibleVerse BibleVerse
         {
             get
@@ -78,6 +80,7 @@ namespace Haven
             }
         }
 
+        [JsonIgnore]
         public NameCard NameCard
         {
             get
@@ -86,6 +89,7 @@ namespace Haven
             }
         }
 
+        [JsonIgnore]
         public Player Player
         {
             get

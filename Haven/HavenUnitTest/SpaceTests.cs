@@ -1,5 +1,6 @@
 ﻿using Haven;
 using NUnit.Framework;
+using System.Linq;
 
 namespace HavenUnitTest
 {
@@ -9,6 +10,7 @@ namespace HavenUnitTest
         [TestFixtureSetUp]
         public void Setup()
         {
+            Persistence.Connection.CreateTable<SpaceChallengeCategory>();
             Persistence.Connection.CreateTable<BibleVerse>();
             Persistence.Connection.CreateTable<NameCard>();
             Persistence.Connection.CreateTable<SafeHavenCard>();
@@ -110,6 +112,25 @@ namespace HavenUnitTest
         }
 
         [Test]
+        public void DeletedSpaceWithCategories()
+        {
+            // create a space with category links
+            var space = new Space();
+            Persistence.Connection.Insert(space);
+            Persistence.Connection.Insert(new SpaceChallengeCategory() { SpaceId = space.Id, ChallengeCategoryId = 1 });
+            Persistence.Connection.Insert(new SpaceChallengeCategory() { SpaceId = space.Id, ChallengeCategoryId = 2 });
+
+            // delete a space
+            space.Delete();
+
+            // verify that space is deleted
+            Assert.IsEmpty(Persistence.Connection.Table<Space>().Where(x => x.Id == space.Id));
+
+            // verify that category links are deleted
+            Assert.IsEmpty(Persistence.Connection.Table<SpaceChallengeCategory>().Where(x => x.SpaceId == space.Id));
+        }
+
+        [Test]
         public void CloneSpace()
         {
             // create a space
@@ -189,6 +210,25 @@ namespace HavenUnitTest
             Assert.AreEqual(clonedSpace.Order, space.Order);
             Assert.AreNotEqual(clonedSpace.SafeHavenCardId, space.SafeHavenCardId);
             Assert.AreEqual(clonedSpace.SafeHavenCard.Name, space.SafeHavenCard.Name);
+        }
+
+        [Test]
+        public void CloneSpaceWithCategories()
+        {
+            // create a space with category links
+            var space = new Space() { Order = 10 };
+            Persistence.Connection.Insert(space);
+            Persistence.Connection.Insert(new SpaceChallengeCategory() { SpaceId = space.Id, ChallengeCategoryId = 1 });
+            Persistence.Connection.Insert(new SpaceChallengeCategory() { SpaceId = space.Id, ChallengeCategoryId = 2 });
+
+            // clone the space
+            var clonedSpace = space.Clone();
+
+            // verify that space and category links were cloned
+            Assert.AreNotEqual(space.Id, clonedSpace.Id);
+            Assert.AreEqual(clonedSpace.Order, space.Order);
+            Assert.AreNotEqual(clonedSpace.ChallengeCategories.Select(x => x.Id), space.ChallengeCategories.Select(x => x.Id));
+            Assert.AreEqual(clonedSpace.ChallengeCategories.Select(x => x.ChallengeCategoryId), space.ChallengeCategories.Select(x => x.ChallengeCategoryId));
         }
     }
 }

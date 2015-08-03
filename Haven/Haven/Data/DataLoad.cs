@@ -19,9 +19,11 @@ namespace Haven.Data
             this.LoadSafeHavenCard();
             this.LoadBibleVerse();
             this.LoadChallengeCategory();
+            this.LoadSpaceChallengeCategory();
             this.LoadChallenge();
             this.LoadChallengeAnswer();
-            this.LoadBoardChallenge();
+            this.LoadBoardChallengeCategory();
+            this.LoadSpaceChallengeCategory();
             this.LoadColor();
             this.LoadImage();
             this.LoadSpaceType();
@@ -53,12 +55,11 @@ namespace Haven.Data
             this.Connection.Insert(new Board() { Id = 1, OwnerId = 1, Name = "Genesis", Description = "Covers the book of Genesis", ImageId = 17, Active = true });
         }
 
-        public void LoadBoardChallenge()
+        public void LoadBoardChallengeCategory()
         {
-            this.Connection.CreateTable<BoardChallenge>();
-            this.Connection.Insert(new BoardChallenge() { BoardId = 1, ChallengeId = 1 });
-            this.Connection.Insert(new BoardChallenge() { BoardId = 1, ChallengeId = 2 });
-            this.Connection.Insert(new BoardChallenge() { BoardId = 1, ChallengeId = 3 });
+            this.Connection.CreateTable<BoardChallengeCategory>();
+            this.Connection.Insert(new BoardChallengeCategory() { BoardId = 1, ChallengeCategoryId = 1 });
+            this.Connection.Insert(new BoardChallengeCategory() { BoardId = 1, ChallengeCategoryId = 2 });
         }
 
         public void LoadChallenge()
@@ -253,6 +254,11 @@ namespace Haven.Data
         public void LoadSpaceType()
         {
 
+        }
+
+        public void LoadSpaceChallengeCategory()
+        {
+            this.Connection.CreateTable<SpaceChallengeCategory>();
         }
 
         public void LoadSpace()

@@ -1,4 +1,6 @@
-﻿using SQLite;
+﻿using Newtonsoft.Json;
+using SQLite;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -47,6 +49,7 @@ namespace Haven
         //    }
         //}
 
+        [JsonIgnore]
         public IEnumerable<NameCard> NameCards
         {
             get
@@ -59,6 +62,7 @@ namespace Haven
             }
         }
 
+        [JsonIgnore]
         public IEnumerable<SafeHavenCard> SafeHavenCards
         {
             get
@@ -71,11 +75,21 @@ namespace Haven
             }
         }
 
+        [JsonIgnore]
         public IEnumerable<Challenge> Challenges
         {
             get
             {
-                return Persistence.Connection.Query<Challenge>("select Challenge.* from Challenge join BoardChallenge on Challenge.Id=BoardChallenge.ChallengeId where BoardChallenge.BoardId=?", this.Id);
+                return Persistence.Connection.Query<Challenge>("select Challenge.* from Challenge join BoardChallengeCategory on Challenge.ChallengeCategoryId=BoardChallengeCategory.ChallengeCategoryId where BoardChallengeCategory.BoardId=?", this.Id);
+            }
+        }
+
+        public IEnumerable<BoardChallengeCategory> ChallengeCategories
+        {
+            get
+            {
+                return Persistence.Connection.Table<BoardChallengeCategory>().Where(x => x.BoardId == this.Id);
+                //return Persistence.Connection.Query<ChallengeCategory>("select ChallengeCategory.* from ChallengeCategory join BoardChallengeCategory on ChallengeCategory.Id=BoardChallengeCategory.ChallengeCategoryId where BoardChallengeCategory.BoardId=?", this.Id);
             }
         }
 
@@ -128,7 +142,7 @@ namespace Haven
             }
 
             // delete challenge links
-            Persistence.Connection.Execute("delete from BoardChallenge where BoardId=?", this.Id);
+            Persistence.Connection.Execute("delete from BoardChallengeCategory where BoardId=?", this.Id);
 
             // delete image if no other boards use the image
             if (this.ImageId != 0)
@@ -157,16 +171,10 @@ namespace Haven
             }
             if (this.Image == null)
             {
-                validation.Warnings.Add("No icon");
+                validation.Warnings.Add("No image");
             }
 
             // validate spaces
-            // make sure there are enough spaces
-            //int requiredSpaces = (this.Width * 2) + ((this.Height - 1) * 2);
-            //if (spaces.Count() < requiredSpaces)
-            //{
-            //    validation.Errors.Add(string.Format("{0}/{1} required spaces", spaces.Count(), requiredSpaces));
-            //}
             // make sure the board has spaces
             if (spaces.Count() < 1)
             {
@@ -211,10 +219,12 @@ namespace Haven
             {
                 validation.Errors.Add(string.Format("Multiple spaces with the same order: {0}", sameOrder.Select(x => x.ToString()).Aggregate((x, y) => x + ", " + y)));
             }
-
-            // validate dimensions
-            // make sure all dimenions are set
-            // make sure there are no overlapping spaces or areas
+            // make sure there are no overlapping spaces
+            var sameLocation = spaces.Select(x => new Tuple<int, int>(x.X, x.Y)).GroupBy(x => x).SelectMany(x => x.Skip(1));
+            if (sameLocation.Count() > 0)
+            {
+                validation.Errors.Add(string.Format("Multiple spaces at the same location: {0}", sameLocation.Select(x => string.Format("({0}, {1})", x.Item1, x.Item2)).Aggregate((x, y) => x + ", " + y)));
+            }
 
             // validate challenges
             // make sure every challenge has at least one correct answer
@@ -231,12 +241,52 @@ namespace Haven
             }
 
             // validate name cards
+            var nameCards = this.NameCards;
+
             // warn if there are name cards without a name
+            var nameCardsWithName = nameCards.Where(x => !string.IsNullOrWhiteSpace(x.Name));
+            if (nameCardsWithName.Count() < nameCards.Count())
+            {
+                validation.Warnings.Add(string.Format("{0}/{1} challenge cards with a name", nameCardsWithName.Count(), nameCards.Count()));
+            }
+
             // warn if there are name cards without a description
+            var nameCardsWithDescription = nameCards.Where(x => !string.IsNullOrWhiteSpace(x.Details));
+            if (nameCardsWithDescription.Count() < nameCards.Count())
+            {
+                validation.Warnings.Add(string.Format("{0}/{1} challenge cards with a description", nameCardsWithDescription.Count(), nameCards.Count()));
+            }
+
             // warn if there are name cards without an image
+            var nameCardsWithImage = nameCards.Where(x => x.ImageId != 0);
+            if (nameCardsWithImage.Count() < nameCards.Count())
+            {
+                validation.Warnings.Add(string.Format("{0}/{1} challenge cards with an image", nameCardsWithImage.Count(), nameCards.Count()));
+            }
 
             // validate safe haven cards
+            var safeHavenCards = this.SafeHavenCards;
 
+            // warn if there are name cards without a name
+            var safeHavenCardsWithName = safeHavenCards.Where(x => !string.IsNullOrWhiteSpace(x.Name));
+            if (safeHavenCardsWithName.Count() < safeHavenCards.Count())
+            {
+                validation.Warnings.Add(string.Format("{0}/{1} safe haven cards with a name", safeHavenCardsWithName.Count(), safeHavenCards.Count()));
+            }
+
+            // warn if there are name cards without a description
+            var safeHavenCardsWithDescription = safeHavenCards.Where(x => !string.IsNullOrWhiteSpace(x.Details));
+            if (safeHavenCardsWithDescription.Count() < safeHavenCards.Count())
+            {
+                validation.Warnings.Add(string.Format("{0}/{1} safe haven cards with a description", safeHavenCardsWithDescription.Count(), safeHavenCards.Count()));
+            }
+
+            // warn if there are name cards without an image
+            var safeHavenCardsWithImage = safeHavenCards.Where(x => x.ImageId != 0);
+            if (safeHavenCardsWithImage.Count() < safeHavenCards.Count())
+            {
+                validation.Warnings.Add(string.Format("{0}/{1} safe haven cards with an image", safeHavenCardsWithImage.Count(), safeHavenCards.Count()));
+            }
 
             return validation;
         }
@@ -253,13 +303,6 @@ namespace Haven
                 board.ImageId = this.Image.Clone().Id;
             }
 
-            // clone spaces
-            foreach (Space space in this.Spaces)
-            {
-                space.BoardId = board.Id;
-                space.Clone();
-            }
-
             // clone challenge categories
             var categories = this.Challenges.Select(x => x.ChallengeCategoryId).Distinct();
             var categoryIdMap = new Dictionary<int, int>();
@@ -267,21 +310,29 @@ namespace Haven
             {
                 var category = Persistence.Connection.Get<ChallengeCategory>(categoryId);
                 category.OwnerId = 0;
-                categoryIdMap.Add(categoryId, category.Clone().Id);
+                var clonedCategory = category.Clone();
+                categoryIdMap.Add(categoryId, clonedCategory.Id);
+                Persistence.Connection.Insert(new BoardChallengeCategory() { BoardId = board.Id, ChallengeCategoryId = clonedCategory.Id });
+            }
+
+            // clone spaces
+            foreach (Space space in this.Spaces)
+            {
+                space.BoardId = board.Id;
+                space.Clone();
+                foreach (SpaceChallengeCategory category in space.ChallengeCategories)
+                {
+                    category.ChallengeCategoryId = categoryIdMap[category.ChallengeCategoryId];
+                    Persistence.Connection.Update(category);
+                }
             }
 
             // clone challenges
             foreach (Challenge challenge in this.Challenges)
             {
                 challenge.OwnerId = 0;
-
-                if (challenge.ChallengeCategoryId != 0)
-                {
-                    challenge.ChallengeCategoryId = categoryIdMap[challenge.ChallengeCategoryId];
-                }
-
+                challenge.ChallengeCategoryId = categoryIdMap[challenge.ChallengeCategoryId];
                 var challengeId = challenge.Clone().Id;
-                Persistence.Connection.Insert(new BoardChallenge() { BoardId = board.Id, ChallengeId = challengeId });
             }
 
             Persistence.Connection.Update(board);
@@ -306,9 +357,9 @@ namespace Haven
             }
 
             // clone challenge links
-            foreach (Challenge challenge in this.Challenges)
+            foreach (BoardChallengeCategory category in this.ChallengeCategories)
             {
-                Persistence.Connection.Insert(new BoardChallenge() { BoardId = board.Id, ChallengeId = challenge.Id });
+                Persistence.Connection.Insert(new BoardChallengeCategory() { BoardId = board.Id, ChallengeCategoryId = category.ChallengeCategoryId });
             }
 
             Persistence.Connection.Update(board);

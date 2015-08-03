@@ -151,20 +151,20 @@ namespace HavenWebApp
                 }
             };
 
-            Post["/Boards/{id}/Challenges"] = parameters =>
+            Post["/Boards/{id}/ChallengeCategories"] = parameters =>
             {
                 var userId = int.Parse(this.Context.CurrentUser.UserName);
                 var boardId = (int)parameters.id;
                 var board = Persistence.Connection.Table<Board>().Where(x => (x.Id == boardId) && (x.OwnerId == userId)).FirstOrDefault();
                 if (board != null)
                 {
-                    Persistence.Connection.Execute("delete from BoardChallenge where BoardId=?", board.Id);
+                    Persistence.Connection.Execute("delete from BoardChallengeCategory where BoardId=?", board.Id);
 
-                    var challenges = JsonConvert.DeserializeObject<IEnumerable<Challenge>>((string)this.Request.Form.Challenges);
+                    var categoryIds= JsonConvert.DeserializeObject<IEnumerable<int>>((string)this.Request.Form.ChallengeCategories);
 
-                    foreach (Challenge challenge in challenges)
+                    foreach (int categoryId in categoryIds)
                     {
-                        Persistence.Connection.Insert(new BoardChallenge() { BoardId = board.Id, ChallengeId = challenge.Id });
+                        Persistence.Connection.Insert(new BoardChallengeCategory() { BoardId = board.Id, ChallengeCategoryId = categoryId });
                     }
 
                     return JsonConvert.SerializeObject(board.Challenges);
@@ -224,7 +224,6 @@ namespace HavenWebApp
             {
                 var challenge = this.Bind<Challenge>();
                 challenge.OwnerId = int.Parse(this.Context.CurrentUser.UserName);
-                challenge.ChallengeCategoryId = this.GetCategoryId((string)this.Request.Form.Category);
                 Persistence.Connection.Insert(challenge);
 
                 var answers = JsonConvert.DeserializeObject<IEnumerable<ChallengeAnswer>>((string)this.Request.Form.Answers);
@@ -247,7 +246,7 @@ namespace HavenWebApp
                     challenge.Question = (string)this.Request.Form.Question;
                     challenge.OpenEnded = (bool)this.Request.Form.OpenEnded;
                     challenge.OwnerId = userId;
-                    challenge.ChallengeCategoryId = this.GetCategoryId((string)this.Request.Form.Category);
+                    challenge.ChallengeCategoryId = (int)this.Request.Form.ChallengeCategoryId;
                     Persistence.Connection.Update(challenge);
                     Persistence.Connection.Execute("delete from ChallengeAnswer where ChallengeId=?", challenge.Id);
 
@@ -373,6 +372,16 @@ namespace HavenWebApp
 
                 Persistence.Connection.Insert(space);
 
+                // add challenge categories
+                if ((space.Type == Haven.SpaceType.Challenge) || (space.Type == Haven.SpaceType.War))
+                {
+                    var categoryIds = JsonConvert.DeserializeObject<IEnumerable<int>>((string)this.Request.Form.ChallengeCategories);
+                    foreach (int categoryId in categoryIds)
+                    {
+                        Persistence.Connection.Insert(new SpaceChallengeCategory() { ChallengeCategoryId = categoryId, SpaceId = space.Id });
+                    }
+                }
+
                 return JsonConvert.SerializeObject(space);
             };
 
@@ -386,6 +395,7 @@ namespace HavenWebApp
                     // update fields
                     space.Type = (Haven.SpaceType)((int)this.Request.Form.Type);
                     space.Order = (int)this.Request.Form.Order;
+                    space.IconId = (int)this.Request.Form.IconId;
                     space.BackgroundColorId = (int)this.Request.Form.BackgroundColorId;
                     space.TextColorId = (int)this.Request.Form.TextColorId;
 
@@ -503,6 +513,17 @@ namespace HavenWebApp
                         }
                     }
 
+                    // update challenge categories
+                    Persistence.Connection.Execute("delete from SpaceChallengeCategory where SpaceId=?", space.Id);
+                    if ((space.Type == Haven.SpaceType.Challenge) || (space.Type == Haven.SpaceType.War))
+                    {
+                        var categoryIds = JsonConvert.DeserializeObject<IEnumerable<int>>((string)this.Request.Form.ChallengeCategories);
+                        foreach (int categoryId in categoryIds)
+                        {
+                            Persistence.Connection.Insert(new SpaceChallengeCategory() { ChallengeCategoryId = categoryId, SpaceId = space.Id });
+                        }
+                    }
+
                     Persistence.Connection.Update(space);
 
                     return JsonConvert.SerializeObject(space);
@@ -556,44 +577,6 @@ namespace HavenWebApp
 
             return image;
         }
-
-        private int GetCategoryId(string categoryName)
-        {
-            if (string.IsNullOrWhiteSpace(categoryName))
-            {
-                return 0;
-            }
-            else
-            {
-                var userId = int.Parse(this.Context.CurrentUser.UserName);
-                var category = Persistence.Connection.Table<ChallengeCategory>().Where(x => (x.OwnerId == userId) && (x.Name == categoryName)).FirstOrDefault();
-                if (category == null)
-                {
-                    category = new ChallengeCategory() { Name = categoryName, OwnerId = userId };
-                    Persistence.Connection.Insert(category);
-                    return category.Id;
-                }
-                else
-                {
-                    return category.Id;
-                }
-            }
-        }
-
-        //private T GetObject<T>(int id)
-        //{
-        //    var userId = int.Parse(this.Context.CurrentUser.UserName);
-        //    var matchingObject = Persistence.Connection.Table<T>().Where(x => (x.Id == id) && (x.OwnerId == userId)).FirstOrDefault();
-        //    return matchingObject;
-        //    //    if (matchingObject != null)
-        //    //    {
-        //    //        return matchingObject;
-        //    //    }
-        //    //    else
-        //    //    {
-        //    //        return new HtmlResponse(HttpStatusCode.NotFound);
-        //    //    }
-        //}
 
         private class SpaceType
         {

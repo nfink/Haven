@@ -12,7 +12,8 @@ namespace Haven
 
             // add challenge to the challenger
             var game = Persistence.Connection.Query<Game>("select * from Game where Id=(select GameId from Player where Id=?)", this.OwnerId).First();
-            var challenge = game.GetNextChallenge();
+            var player = Persistence.Connection.Get<Player>(this.OwnerId);
+            var challenge = game.GetNextChallenge(player.SpaceId);
             Persistence.Connection.Insert(new Action() { Type = ActionType.AnswerWarChallenge, OwnerId = this.PlayerId, Challenger = true, PlayerId = this.PlayerId, ChallengeId = challenge.Id });
             var challengedPlayer = Persistence.Connection.Get<Player>(this.PlayerId);
             Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = string.Format("Declared war against {0}!", challengedPlayer.Name) });

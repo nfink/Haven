@@ -17,7 +17,16 @@ namespace Haven
             {
                 // add a challenge to the other player in the war
                 var game = Persistence.Connection.Get<Game>(enemy.GameId);
-                var newChallenge = game.GetNextChallenge();
+                Challenge newChallenge;
+                if (this.Challenger)
+                {
+                    var owner = Persistence.Connection.Get<Player>(this.OwnerId);
+                    newChallenge = game.GetNextChallenge(owner.SpaceId);
+                }
+                else
+                {
+                    newChallenge = game.GetNextChallenge(enemy.SpaceId);
+                }
                 Persistence.Connection.Insert(new Action() { Type = ActionType.AnswerWarChallenge, OwnerId = enemy.Id, Challenger = !this.Challenger, PlayerId = this.OwnerId, ChallengeId = newChallenge.Id });
                 Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = string.Format("Correct! Now {0} must answer a challenge.", enemy.Name) });
             }

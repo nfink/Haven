@@ -2,7 +2,6 @@
 /// <reference path="https://code.jquery.com/jquery-1.11.3.min.js" />
 /// <reference path="https://cdn.rawgit.com/visionmedia/page.js/master/page.js" />
 /// <reference path="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js" />
-/// <reference path="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js" />
 
 $(function () {
     // set up routing
