@@ -62,6 +62,18 @@ namespace HavenWebApp
                 return JsonConvert.SerializeObject(Persistence.Connection.Table<Game>().Where(x => x.OwnerId == userId));
             };
 
+            Get["/Games/Active"] = parameters =>
+            {
+                var userId = int.Parse(this.Context.CurrentUser.UserName);
+                return JsonConvert.SerializeObject(Persistence.Connection.Query<Game>("select * from Game where OwnerId=? and Ended=0", userId));
+            };
+
+            Get["/Games/Completed"] = parameters =>
+            {
+                var userId = int.Parse(this.Context.CurrentUser.UserName);
+                return JsonConvert.SerializeObject(Persistence.Connection.Query<Game>("select * from Game where OwnerId=? and Ended<>0", userId));
+            };
+
             Post["/Games"] = parameters =>
             {
                 var game = Game.NewGame((int)this.Request.Form.BoardId, (int)this.Request.Form.NumberOfPlayers);
@@ -109,6 +121,9 @@ namespace HavenWebApp
                 {
                     board.Name = (string)this.Request.Form.Name;
                     board.Description = (string)this.Request.Form.Description;
+                    board.TurnsToEnd = (int)this.Request.Form.TurnsToEnd;
+                    board.NameCardsToEnd = (int)this.Request.Form.NameCardsToEnd;
+                    board.SafeHavenCardsToEnd = (int)this.Request.Form.SafeHavenCardsToEnd;
                     var imageFile = this.Request.Files.FirstOrDefault();
                     var image = this.UpdateImage(pathProvider, board.Image, imageFile);
                     if (image != null)

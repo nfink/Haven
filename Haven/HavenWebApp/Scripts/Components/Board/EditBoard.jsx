@@ -9,6 +9,9 @@ var EditBoard = React.createClass({
             );
         }
         else {
+            var nameCardSpaces = this.state.board.Spaces.filter(function (item) {
+                    return item.NameCard !== null;
+                });
             return (
                 <div style={{display: "flex", flexWrap: "wrap"}}>
                     <div>
@@ -42,8 +45,52 @@ var EditBoard = React.createClass({
                                             <textarea id="boardDescription" value={this.state.description} onChange={this.handleDescriptionChange} />
                                         </div>
                                         <br />
+                                        <div>The game ends when...</div>
+                                        <div style={{display: ((!this.state.endWithCards && !this.state.endWithTurns) ? "block" : "none"), marginLeft: "1em", marginTop: 5}}>a player has collected all cards.</div>
+                                        <div style={{display: "flex", marginLeft: "1em"}}>
+                                            <label className="input-control checkbox" style={{marginRight: 5}}>
+                                                <input checked={this.state.endWithTurns} onChange={this.handleEndWithTurnsChange} type="checkbox" />
+                                                <span className="check"></span>
+                                            </label>
+                                            <div className={this.state.endWithTurns ? "" : "fg-grayLight"}><div className="input-control text" style={{width: "3.0rem"}}><input value={this.state.turnsToEnd} disabled={!this.state.endWithTurns} onChange={this.handleTurnsToEndChange} /></div> turns have passed</div>
+                                        </div>
+                                        <div style={{display: "flex", marginLeft: "1em"}}>
+                                            <label className="input-control checkbox">
+                                                <input checked={this.state.endWithCards} onChange={this.handleEndWithCardsChange} type="checkbox" />
+                                                <span className="check"></span>
+                                                <span className={this.state.endWithCards ? "" : "fg-grayLight"} style={{marginLeft: 5}}>{this.state.endWithTurns ? "or " : ""}a player has collected:</span>
+                                            </label>
+                                        </div>
+                                        <div style={{marginLeft: "3em"}}>
+                                            <div className="input-control select">
+				                                <select value={this.state.nameCardsToEnd} disabled={!this.state.endWithCards} onChange={this.handleNameCardsToEndChange}>
+                                                    <option value="-1">All challenge cards</option>
+                                                    <option value="0">0 challenge cards</option>
+				                                    {nameCardSpaces.map(function (item, index) {
+				                                            return <option value={index + 1} key={index}>{index + 1 + " challenge cards"}</option>;
+				                                        }, this)
+                                                    }
+				                                </select>
+			                                </div>
+                                            <div style={{display: ((this.state.nameCardsToEnd < 0 || this.state.nameCardsToEnd >= nameCardSpaces.length) ? "block" : "none")}}>
+                                                <div className={this.state.endWithCards ? "" : "fg-grayLight"}>and</div>
+                                                <div className="input-control select">
+				                                    <select value={this.state.safeHavenCardsToEnd} disabled={!this.state.endWithCards} onChange={this.handleSafeHavenCardsToEndChange}>
+                                                        <option value="-1">All safe haven cards</option>
+                                                        <option value="0">0 haven cards</option>
+				                                        {this.state.board.Spaces.filter(function (item) {
+                                                                return item.SafeHavenCard !== null;
+                                                            }).map(function (item, index) {
+				                                                return <option value={index + 1} key={index}>{index + 1 + " safe haven cards"}</option>;
+				                                            }, this)
+                                                        }
+				                                    </select>
+			                                    </div>
+                                            </div>
+                                        </div>
+                                        <br />
                                         <LoadingButton text="Save" ref="saveBoardButton" />
-                                        <LoadingButton text="Delete" className="button danger" type="button" onClick={this.handleDeleteBoard} ref="deleteBoardButton" style={{marginLeft: 5}}/>
+                                        <LoadingButton text="Delete" className="button danger" type="button" onClick={this.handleDeleteBoard} ref="deleteBoardButton" style={{marginLeft: 5}} />
                                     </form>
                                 </div>
                             </div>
@@ -68,7 +115,7 @@ var EditBoard = React.createClass({
         }
     },
     getInitialState: function () {
-        return {board: null, validation: null, name: null, description: null, challengeCategories: null };
+        return {board: null, validation: null, name: null, description: null, challengeCategories: null, turnsToEnd: -1, nameCardsToEnd: -1, safeHavenCardsToEnd: -1, endWithTurns: false, endWithCards: true };
     },
     componentDidMount: function () {
         this.loadBoard();
@@ -80,7 +127,7 @@ var EditBoard = React.createClass({
     loadBoard: function () {
         $.get("/Boards/" + this.props.id, function (data) {
             var board = JSON.parse(data);
-            this.setState({ board: board, name: board.Name, description: board.Description });
+            this.setState({ board: board, name: board.Name, description: board.Description, turnsToEnd: board.TurnsToEnd, nameCardsToEnd: board.NameCardsToEnd, safeHavenCardsToEnd: board.SafeHavenCardsToEnd, endWithTurns: (board.TurnsToEnd > -1), endWithCards: (board.NameCardsToEnd !== 0 || board.SafeHavenCardsToEnd !== 0) });
             this.validate();
         }.bind(this));
     },
@@ -139,12 +186,31 @@ var EditBoard = React.createClass({
     handleDescriptionChange: function (event) {
         this.setState({description: event.target.value});
     },
+    handleEndWithTurnsChange: function (event) {
+        this.setState({endWithTurns: !this.state.endWithTurns});
+    },
+    handleTurnsToEndChange: function (event) {
+        this.setState({ turnsToEnd: event.target.value });
+    },
+    handleEndWithCardsChange: function (event) {
+        this.setState({endWithCards: !this.state.endWithCards});
+    },
+    handleNameCardsToEndChange: function (event) {
+        this.setState({ nameCardsToEnd: event.target.value });
+    },
+    handleSafeHavenCardsToEndChange: function (event) {
+        this.setState({ safeHavenCardsToEnd: event.target.value });
+    },
     saveBoard: function (event) {
         event.preventDefault();
         this.refs.saveBoardButton.showLoading();
         var formData = new FormData();
         formData.append("Name", this.state.name);
         formData.append("Description", this.state.description);
+        formData.append("TurnsToEnd", (this.state.endWithTurns ? this.state.turnsToEnd : -1));
+        formData.append("NameCardsToEnd", (this.state.endWithCards ? this.state.nameCardsToEnd : -1));
+        var nameCardCount = this.state.board.Spaces.filter(function (item) { return item.NameCard !== null; }).length;
+        formData.append("SafeHavenCardsToEnd", ((this.state.endWithCards && ((this.state.nameCardsToEnd < 0) || (this.state.nameCardsToEnd >= nameCardCount))) ? this.state.safeHavenCardsToEnd : -1));
         var file = this.refs.imageSelector.file();
         if (file) {
             formData.append("Image", file, file.name);

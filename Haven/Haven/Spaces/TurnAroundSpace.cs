@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Haven
+﻿namespace Haven
 {
     public partial class Space
     {
@@ -13,7 +7,7 @@ namespace Haven
             // change player movement direction
             player.MovementDirection = !player.MovementDirection;
 
-            Game.EndTurn(player.Id);
+            Game.GetGame(player.Id).EndTurn(player.Id);
 
             Persistence.Connection.Insert(new Message() { PlayerId = player.Id, Text = "Turned around." });
         }

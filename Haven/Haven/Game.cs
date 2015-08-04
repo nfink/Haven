@@ -14,6 +14,10 @@ namespace Haven
 
         public string Name { get; set; }
 
+        public int Turn { get; set; }
+
+        public bool Ended { get; set; }
+
         public IEnumerable<Player> Players
         {
             get
@@ -28,11 +32,19 @@ namespace Haven
         {
             get
             {
-                return Persistence.Connection.Get<Board>(this.BoardId);
+                return this.BoardId != 0 ? Persistence.Connection.Get<Board>(this.BoardId) : null;
             }
         }
 
         public int BoardId { get; set; }
+
+        public IEnumerable<GameWinner> Winners
+        {
+            get
+            {
+                return this.Ended ? Persistence.Connection.Table<GameWinner>().Where(x => x.GameId == this.Id) : null;
+            }
+        }
 
         private static Random Rand = new Random();
 
@@ -78,17 +90,60 @@ namespace Haven
             return game;
         }
 
-        public static int NextPlayer(int currentPlayerId)
+        public static Game GetGame(int playerId)
         {
-            var player = Persistence.Connection.Get<Player>(currentPlayerId);
-            Persistence.Connection.Execute("update Game set CurrentPlayerId=?", player.NextPlayerId);
-            return player.NextPlayerId;
+            return Persistence.Connection.Query<Game>("select Game.* from Game join Player on Player.GameId=Game.Id where Player.Id=?", playerId).SingleOrDefault();
         }
 
-        public static void EndTurn(int currentPlayerId)
+        public void EndTurn(int currentPlayerId)
         {
-            int nextPlayerId = Game.NextPlayer(currentPlayerId);
-            Persistence.Connection.Insert(new Action() { Type = ActionType.Roll, OwnerId = nextPlayerId });
+            // a player wins if they have more than the required number of name and safe haven cards
+            // -1 for # of cards to end means that the player must collect all cards
+            var board = this.Board;
+            var players = this.Players;
+            var winners = new List<Player>();
+            var totalNameCards = board.NameCards.Count();
+            var totalSafeHavenCards = board.SafeHavenCards.Count();
+            foreach (Player player in players)
+            {
+                var playerNameCards = player.NameCards.Count();
+                if (((board.NameCardsToEnd >= 0) && (playerNameCards >= board.NameCardsToEnd)) ||
+                    (playerNameCards >= totalNameCards))
+                {
+                    var playerSafeHavenCards = player.SafeHavenCards.Count();
+                    if (((board.SafeHavenCardsToEnd >= 0) && (playerSafeHavenCards >= board.SafeHavenCardsToEnd)) ||
+                        (playerSafeHavenCards >= totalSafeHavenCards))
+                    {
+                        winners.Add(player);
+                    }
+                }
+            }
+
+            // if no player has enough cards to win and the game is over by turns, determine winner
+            // winner has the most safe haven cards
+            // if there is a tie, winner has the most name cards
+            // if there is still a tie, multiple players win
+            if (((board.TurnsToEnd > 0) && (this.Turn >= board.TurnsToEnd)) && winners.Count < 1)
+            {
+                int maxSafeHavenCards = players.Max(x => x.SafeHavenCards.Count());
+                var safeHavenWinners = players.Where(x => x.SafeHavenCards.Count() == maxSafeHavenCards);
+                int maxNameCards = safeHavenWinners.Max(x => x.NameCards.Count());
+                var nameCardWinners = players.Where(x => x.NameCards.Count() == maxNameCards);
+                winners.AddRange(nameCardWinners);
+            }
+
+            // end the game if conditions have been met
+            if (winners.Count > 0)
+            {
+                this.EndGame(winners);
+            }
+            else
+            {
+                // otherwise start the next player's turn
+                var currentPlayer = Persistence.Connection.Get<Player>(currentPlayerId);
+                Persistence.Connection.Execute("update Game set CurrentPlayerId=?, Turn=(Turn + 1) where Id=?", currentPlayer.NextPlayerId, currentPlayer.GameId);
+                Persistence.Connection.Insert(new Action() { Type = ActionType.Roll, OwnerId = currentPlayer.NextPlayerId });
+            }
         }
 
         public void StartGame()
@@ -104,6 +159,26 @@ namespace Haven
                 this.BoardId = board.Clone().Id;
                 Persistence.Connection.Update(this);
             }
+        }
+
+        public void EndGame(IEnumerable<Player> winners)
+        {
+            // mark game as ended
+            this.Ended = true;
+
+            // record winners
+            foreach (Player player in winners)
+            {
+                Persistence.Connection.Insert(new GameWinner() { GameId = this.Id, Player = player.Name, Turn = this.Turn });
+            }
+
+            // delete players, used challenges, board
+            foreach (Player player in this.Players)
+            {
+                player.Delete();
+            }
+            Persistence.Connection.Execute("delete from UsedChallenge where GameId=?", this.Id);
+            this.Board.Delete();
         }
 
         public Challenge GetNextChallenge(int spaceId)

@@ -26,14 +26,14 @@ namespace Haven
                     var nameCard = Persistence.Connection.Get<NameCard>(this.NameCardId);
                     Persistence.Connection.Insert(new PlayerNameCard() { PlayerId = this.OwnerId, NameCardId = this.NameCardId });
                     Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = string.Format("Correct! Earned {0} card.", nameCard.Name) });
-                    Game.EndTurn(this.OwnerId);
+                    Game.GetGame(this.OwnerId).EndTurn(this.OwnerId);
                 }
                 else if (missingNameCards.Count > 0)
                 {
                     var randomCard = missingNameCards.OrderBy(x => Dice.RollDice(1, missingNameCards.Count()).Sum).First();
                     Persistence.Connection.Insert(new PlayerNameCard() { PlayerId = this.OwnerId, NameCardId = randomCard.Id });
                     Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = string.Format("Correct! Earned {0} card.", randomCard.Name) });
-                    Game.EndTurn(this.OwnerId);
+                    Game.GetGame(this.OwnerId).EndTurn(this.OwnerId);
                 }
                 else
                 {
@@ -44,7 +44,7 @@ namespace Haven
             else
             {
                 Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = "Incorrect!" });
-                Game.EndTurn(this.OwnerId);
+                Game.GetGame(this.OwnerId).EndTurn(this.OwnerId);
             }
         }
     }

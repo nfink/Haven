@@ -1,8 +1,9 @@
 ﻿using SQLite;
+using System;
 
 namespace Haven
 {
-    public class NameCard : ICloneable<NameCard>
+    public class NameCard : ICloneable<NameCard>, IEquatable<NameCard>
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
@@ -32,6 +33,11 @@ namespace Haven
             var nameCard = new NameCard() { Name = this.Name, Details = this.Details, ImageId = imageId };
             Persistence.Connection.Insert(nameCard);
             return nameCard;
+        }
+
+        public bool Equals(NameCard other)
+        {
+            return this.Id == other.Id;
         }
     }
 }

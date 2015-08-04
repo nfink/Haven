@@ -29,7 +29,7 @@ namespace Haven
                 }
                 else
                 {
-                    Game.EndTurn(player.Id);
+                    game.EndTurn(player.Id);
                     Persistence.Connection.Insert(new Message() { PlayerId = player.Id, Text = "All other players are on a safe haven and cannot be challenged to war." });
                 }
             }

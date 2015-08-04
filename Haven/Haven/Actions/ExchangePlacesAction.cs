@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Haven
 {
@@ -22,7 +18,7 @@ namespace Haven
             Persistence.Connection.Update(player);
             Persistence.Connection.Update(playerToExchangeWith);
 
-            Game.EndTurn(this.OwnerId);
+            Game.GetGame(this.OwnerId).EndTurn(this.OwnerId);
             Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = string.Format("Exchanged places with {0}.", playerToExchangeWith.Name) });
         }
     }

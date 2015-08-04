@@ -1,6 +1,5 @@
 ﻿/** @jsx React.DOM */
 /// <reference path="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js" />
-/// <reference path="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js" />
 
 var GamesMenu = React.createClass({
     render: function () {
@@ -27,7 +26,7 @@ var GamesMenu = React.createClass({
         return {games: null};
     },
     componentDidMount: function () {
-        $.get("/Games", function (data) {
+        $.get("/Games/Active", function (data) {
             this.setState({games: JSON.parse(data)});
         }.bind(this));
     },

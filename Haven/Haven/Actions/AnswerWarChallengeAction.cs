@@ -11,12 +11,13 @@ namespace Haven
             Persistence.Connection.Execute("delete from Action where Type=? and OwnerId=?", ActionType.AnswerWarChallenge, this.OwnerId);
 
             var challenge = Persistence.Connection.Get<Challenge>(this.ChallengeId);
+            var player = Persistence.Connection.Get<Player>(this.OwnerId);
             var enemy = Persistence.Connection.Get<Player>(this.PlayerId);
+            var game = Persistence.Connection.Get<Game>(enemy.GameId);
 
             if (challenge.CorrectAnswer((string)input))
             {
                 // add a challenge to the other player in the war
-                var game = Persistence.Connection.Get<Game>(enemy.GameId);
                 Challenge newChallenge;
                 if (this.Challenger)
                 {
@@ -36,37 +37,29 @@ namespace Haven
                 if (this.Challenger)
                 {
                     // give enemy all name cards that they do not have
-                    var cardsToAdd = Persistence.Connection.Query<NameCard>(
-                        @"select NameCard.* from NameCard
-                            join PlayerNameCard on NameCard.Id=PlayerNameCard.NameCardId
-                            where PlayerNameCard.PlayerId=? and PlayerNameCard.NameCardId not in
-                            (select NameCardId from PlayerNameCard where PlayerId=?)", this.OwnerId, enemy.Id);
+                    var cardsToAdd = player.NameCards.Except(enemy.NameCards);
 
-                    foreach(NameCard card in cardsToAdd)
+                    foreach(NameCard nameCard in cardsToAdd)
                     {
-                        Persistence.Connection.Insert(new PlayerNameCard() { PlayerId = enemy.Id, NameCardId = card.Id });
-                        Persistence.Connection.Execute("delete from PlayerNameCard where PlayerId=? and NameCardId=?", this.OwnerId, card.Id);
+                        Persistence.Connection.Insert(new PlayerNameCard() { PlayerId = enemy.Id, NameCardId = nameCard.Id });
+                        Persistence.Connection.Execute("delete from PlayerNameCard where PlayerId=? and NameCardId=?", this.OwnerId, nameCard.Id);
                     }
 
-                    Game.EndTurn(this.OwnerId);
-
-                    if (cardsToAdd.Count > 0)
+                    if (cardsToAdd.Count() > 0)
                     {
                         Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = string.Format("Incorrect! {0} has taken the following cards: {1}.", enemy.Name, cardsToAdd.Select(x => x.Name).Aggregate((x, y) => x + ", " + y)) });
                     }
                     else
                     {
-                        Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = string.Format("Incorrect! {0} has won the war but you have no cards to take.", enemy.Name) });
+                        Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = string.Format("Incorrect! {0} has won the war but you have no cards they can take.", enemy.Name) });
                     }
+
+                    game.EndTurn(this.OwnerId);
                 }
                 else
                 {
                     // give all name cards to the enemy
-                    var cardsToAdd = Persistence.Connection.Query<NameCard>(
-                        @"select NameCard.* from NameCard
-                            join PlayerNameCard on NameCard.Id=PlayerNameCard.NameCardId
-                            where PlayerNameCard.PlayerId=? and PlayerNameCard.NameCardId not in
-                            (select NameCardId from PlayerNameCard where PlayerId=?)", this.OwnerId, enemy.Id);
+                    var cardsToAdd = player.NameCards.Except(enemy.NameCards);
 
                     foreach (NameCard card in cardsToAdd)
                     {
@@ -74,16 +67,17 @@ namespace Haven
                     }
 
                     Persistence.Connection.Execute("delete from PlayerNameCard where PlayerId=?", this.OwnerId);
-                    Game.EndTurn(enemy.Id);
-
-                    if (cardsToAdd.Count > 0)
+                    
+                    if (cardsToAdd.Count() > 0)
                     {
                         Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = string.Format("Incorrect! {0} has taken all of your cards.", enemy.Name) });
                     }
                     else
                     {
-                        Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = string.Format("Incorrect! {0} has won the war but you have no cards to take.", enemy.Name) });
+                        Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = string.Format("Incorrect! {0} has won the war but you have no cards they can take.", enemy.Name) });
                     }
+
+                    game.EndTurn(enemy.Id);
                 }
             }
         }

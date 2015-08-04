@@ -66,6 +66,7 @@
     <Compile Include="Color.cs" />
     <Compile Include="Data\DataLoad.cs" />
     <Compile Include="Data\Persistence.cs" />
+    <Compile Include="GameWinner.cs" />
     <Compile Include="ICloneable.cs" />
     <Compile Include="IDeletable.cs" />
     <Compile Include="Image.cs" />

@@ -21,9 +21,11 @@ namespace Haven
 
         public bool Active { get; set; }
 
-        public int Width { get; set; }
+        public int TurnsToEnd { get; set; }
 
-        public int Height { get; set; }
+        public int NameCardsToEnd { get; set; }
+
+        public int SafeHavenCardsToEnd { get; set; }
 
         public IEnumerable<Space> Spaces
         {
@@ -99,6 +101,13 @@ namespace Haven
             {
                 return this.ImageId == 0 ? null : Persistence.Connection.Get<Image>(this.ImageId);
             }
+        }
+
+        public Board()
+        {
+            this.TurnsToEnd = -1;
+            this.NameCardsToEnd = -1;
+            this.SafeHavenCardsToEnd = -1;
         }
 
         public Space GetNewSpace(int startSpaceId, int spacesToMove, bool direction)
@@ -287,7 +296,7 @@ namespace Haven
         public Board Clone()
         {
             // use same attributes
-            var board = new Board() { Name = this.Name, Description = this.Description, Active = this.Active, OwnerId = this.OwnerId, Width = this.Width, Height = this.Height };
+            var board = new Board() { Name = this.Name, Description = this.Description, Active = this.Active, OwnerId = this.OwnerId, TurnsToEnd = this.TurnsToEnd, NameCardsToEnd = this.NameCardsToEnd, SafeHavenCardsToEnd = this.SafeHavenCardsToEnd };
             Persistence.Connection.Insert(board);
 
             // clone image
@@ -356,7 +365,7 @@ namespace Haven
         public Board Copy()
         {
             // use same attributes and Image record
-            var board = new Board() { Name = this.Name, Description = this.Description, Active = this.Active, ImageId = this.ImageId, OwnerId = this.OwnerId, Width = this.Width, Height = this.Height };
+            var board = new Board() { Name = this.Name, Description = this.Description, Active = this.Active, ImageId = this.ImageId, OwnerId = this.OwnerId, TurnsToEnd = this.TurnsToEnd, NameCardsToEnd = this.NameCardsToEnd, SafeHavenCardsToEnd = this.SafeHavenCardsToEnd };
             Persistence.Connection.Insert(board);
 
             // clone spaces

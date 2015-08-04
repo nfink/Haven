@@ -71,12 +71,6 @@ namespace HavenTest
                 }
                 i++;
             }
-
-            if (Player.GetAvailableAction(game.CurrentPlayerId).Count() < 1)
-            {
-                Console.WriteLine("------ No actions available ------");
-                Game.NextPlayer(game.CurrentPlayerId);
-            }
         }
     }
 }

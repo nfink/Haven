@@ -30,6 +30,7 @@ namespace Haven.Data
             this.LoadMessage();
             this.LoadPlayer();
             this.LoadGame();
+            this.LoadGameWinner();
             this.LoadUser();
             this.Connection.CreateTable<Action>();
             this.Connection.CreateTable<UsedChallenge>();
@@ -67,13 +68,13 @@ namespace Haven.Data
             this.Connection.Insert(new ChallengeAnswer() { Answer = "Test Answer 1a", Correct = false, ChallengeId = 1 });
             this.Connection.Insert(new ChallengeAnswer() { Answer = "Test Answer 1b", Correct = false, ChallengeId = 1 });
             this.Connection.Insert(new ChallengeAnswer() { Answer = "Test Answer 1c", Correct = false, ChallengeId = 1 });
-            this.Connection.Insert(new ChallengeAnswer() { Answer = "Test Answer 1d", Correct = true, ChallengeId = 1 });
+            this.Connection.Insert(new ChallengeAnswer() { Answer = "Test Answer 1d (correct)", Correct = true, ChallengeId = 1 });
             this.Connection.Insert(new ChallengeAnswer() { Answer = "Test Answer 2a", Correct = false, ChallengeId = 2 });
             this.Connection.Insert(new ChallengeAnswer() { Answer = "Test Answer 2b", Correct = false, ChallengeId = 2 });
-            this.Connection.Insert(new ChallengeAnswer() { Answer = "Test Answer 2c", Correct = true, ChallengeId = 2 });
+            this.Connection.Insert(new ChallengeAnswer() { Answer = "Test Answer 2c (correct)", Correct = true, ChallengeId = 2 });
             this.Connection.Insert(new ChallengeAnswer() { Answer = "Test Answer 2d", Correct = false, ChallengeId = 2 });
             this.Connection.Insert(new ChallengeAnswer() { Answer = "Test Answer 3a", Correct = false, ChallengeId = 3 });
-            this.Connection.Insert(new ChallengeAnswer() { Answer = "Test Answer 3b", Correct = true, ChallengeId = 3 });
+            this.Connection.Insert(new ChallengeAnswer() { Answer = "Test Answer 3b (correct)", Correct = true, ChallengeId = 3 });
             this.Connection.Insert(new ChallengeAnswer() { Answer = "Test Answer 3c", Correct = false, ChallengeId = 3 });
             this.Connection.Insert(new ChallengeAnswer() { Answer = "Test Answer 3d", Correct = false, ChallengeId = 3 });
             this.Connection.Insert(new ChallengeAnswer() { Answer = "test1", Correct = true, ChallengeId = 4 });
@@ -145,6 +146,16 @@ namespace Haven.Data
         public void LoadGame()
         {
             this.Connection.CreateTable<Game>();
+            this.Connection.Insert(new Game() { Id = 1, OwnerId = 1, Name = "Test Game 1", Ended = true });
+            this.Connection.Insert(new Game() { Id = 2, OwnerId = 1, Name = "Test Game 2", Ended = true });
+        }
+
+        public void LoadGameWinner()
+        {
+            this.Connection.CreateTable<GameWinner>();
+            this.Connection.Insert(new GameWinner() { GameId = 1, Player = "Test Player 1", Turn = 50 });
+            this.Connection.Insert(new GameWinner() { GameId = 2, Player = "Test Player 2", Turn = 60 });
+            this.Connection.Insert(new GameWinner() { GameId = 2, Player = "Test Player 3", Turn = 60 });
         }
 
         public void LoadImage()

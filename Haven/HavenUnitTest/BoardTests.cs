@@ -142,10 +142,11 @@ namespace HavenUnitTest
             Assert.AreNotEqual(board.ImageId, clonedBoard.ImageId);
             Assert.AreEqual(board.Active, clonedBoard.Active);
             Assert.AreEqual(board.Description, clonedBoard.Description);
-            Assert.AreEqual(board.Height, clonedBoard.Height);
             Assert.AreEqual(board.Name, clonedBoard.Name);
             Assert.AreEqual(board.OwnerId, clonedBoard.OwnerId);
-            Assert.AreEqual(board.Width, clonedBoard.Width);
+            Assert.AreEqual(board.TurnsToEnd, clonedBoard.TurnsToEnd);
+            Assert.AreEqual(board.NameCardsToEnd, clonedBoard.NameCardsToEnd);
+            Assert.AreEqual(board.SafeHavenCardsToEnd, clonedBoard.SafeHavenCardsToEnd);
 
             // spaces
             Assert.AreNotEqual(board.Spaces.Select(x => x.Id), clonedBoard.Spaces.Select(x => x.Id));
@@ -198,10 +199,11 @@ namespace HavenUnitTest
             Assert.AreEqual(board.ImageId, copiedBoard.ImageId);
             Assert.AreEqual(board.Active, copiedBoard.Active);
             Assert.AreEqual(board.Description, copiedBoard.Description);
-            Assert.AreEqual(board.Height, copiedBoard.Height);
             Assert.AreEqual(board.Name, copiedBoard.Name);
             Assert.AreEqual(board.OwnerId, copiedBoard.OwnerId);
-            Assert.AreEqual(board.Width, copiedBoard.Width);
+            Assert.AreEqual(board.TurnsToEnd, copiedBoard.TurnsToEnd);
+            Assert.AreEqual(board.NameCardsToEnd, copiedBoard.NameCardsToEnd);
+            Assert.AreEqual(board.SafeHavenCardsToEnd, copiedBoard.SafeHavenCardsToEnd);
             Assert.AreNotEqual(board.Spaces.Select(x => x.Id), copiedBoard.Spaces.Select(x => x.Id));
             Assert.AreEqual(board.Spaces.Select(x => copiedBoard.Id), copiedBoard.Spaces.Select(x => x.BoardId));
             Assert.AreEqual(board.Spaces.Select(x => x.Order), copiedBoard.Spaces.Select(x => x.Order));
@@ -230,7 +232,7 @@ namespace HavenUnitTest
         {
             var image = new Image() { Filename = "test.jpg" };
             Persistence.Connection.Insert(image);
-            var board = new Board() { ImageId = image.Id, Active = true, Description = "test1", Height = 2, Name = "test3", OwnerId = 4, Width = 5 };
+            var board = new Board() { ImageId = image.Id, Active = true, Description = "test1", Name = "test3", OwnerId = 4, TurnsToEnd = 50, NameCardsToEnd = 10, SafeHavenCardsToEnd = 5 };
             Persistence.Connection.Insert(board);
             var space1 = new Space() { BoardId = board.Id, Order = 10 };
             var space2 = new Space() { BoardId = board.Id, Order = 20 };
