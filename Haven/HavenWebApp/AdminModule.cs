@@ -359,16 +359,6 @@ namespace HavenWebApp
                     Persistence.Connection.Insert(safeHavenCard);
                     space.SafeHavenCardId = safeHavenCard.Id;
                 }
-                else
-                {
-                    if (space.Type == Haven.SpaceType.Recall)
-                    {
-                        var recall = new BibleVerse() { Text = (string)this.Request.Form.Text };
-                        Persistence.Connection.Insert(recall);
-                        space.BibleVerseId = recall.Id;
-
-                    }
-                }
 
                 Persistence.Connection.Insert(space);
 
@@ -405,11 +395,6 @@ namespace HavenWebApp
                     if (space.Type == Haven.SpaceType.Challenge)
                     {
                         // delete other records
-                        if (space.BibleVerseId != 0)
-                        {
-                            Persistence.Connection.Delete<BibleVerse>(space.BibleVerseId);
-                            space.BibleVerseId = 0;
-                        }
                         if (space.SafeHavenCardId != 0)
                         {
                             Persistence.Connection.Delete<SafeHavenCard>(space.SafeHavenCardId);
@@ -442,11 +427,6 @@ namespace HavenWebApp
                     else if (space.Type == Haven.SpaceType.SafeHaven)
                     {
                         // delete other records
-                        if (space.BibleVerseId != 0)
-                        {
-                            Persistence.Connection.Delete<BibleVerse>(space.BibleVerseId);
-                            space.BibleVerseId = 0;
-                        }
                         if (space.NameCardId != 0)
                         {
                             Persistence.Connection.Delete<NameCard>(space.NameCardId);
@@ -496,20 +476,6 @@ namespace HavenWebApp
                             }
                             Persistence.Connection.Delete<SafeHavenCard>(space.SafeHavenCardId);
                             space.SafeHavenCardId = 0;
-                        }
-                        if (space.BibleVerseId != 0)
-                        {
-                            Persistence.Connection.Delete<BibleVerse>(space.BibleVerseId);
-                            space.BibleVerseId = 0;
-                        }
-
-                        // re-create recall record for each edit
-                        if (space.Type == Haven.SpaceType.Recall)
-                        {
-                            var recall = new BibleVerse() { Text = (string)this.Request.Form.RecallText };
-                            Persistence.Connection.Insert(recall);
-                            space.BibleVerseId = recall.Id;
-
                         }
                     }
 

@@ -10,7 +10,6 @@ namespace Haven
     public enum SpaceType
     {
         None = 0,
-        Recall,
         Challenge,
         ExchangePlaces,
         OptionalTurnAround,
@@ -26,8 +25,6 @@ namespace Haven
         {
             switch (type)
             {
-                case SpaceType.Recall:
-                    return "Recall";
                 case SpaceType.Challenge:
                     return "Challenge";
                 case SpaceType.ExchangePlaces:
@@ -51,8 +48,6 @@ namespace Haven
         {
             switch (type)
             {
-                case SpaceType.Recall:
-                    return "Player landing here may read the text, or attempt to recite it. Reciting it accurately is rewarded with a bonus turn.";
                 case SpaceType.Challenge:
                     return "Player landing here must answer one of the challenge questions. If correct, the player is rewarded with a challenge card.";
                 case SpaceType.ExchangePlaces:
@@ -76,8 +71,6 @@ namespace Haven
         {
             switch (type)
             {
-                case SpaceType.Recall:
-                    return "mif-books";
                 case SpaceType.Challenge:
                     return "mif-question";
                 case SpaceType.ExchangePlaces:

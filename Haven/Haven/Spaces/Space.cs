@@ -15,16 +15,6 @@ namespace Haven
 
         public SpaceType Type { get; set; }
 
-        public int BibleVerseId { get; set; }
-
-        public BibleVerse BibleVerse
-        {
-            get
-            {
-                return (this.BibleVerseId != 0 ? Persistence.Connection.Get<BibleVerse>(this.BibleVerseId) : null);
-            }
-        }
-
         public int NameCardId { get; set; }
 
         public NameCard NameCard
@@ -65,8 +55,6 @@ namespace Haven
             {
                 switch (this.Type)
                 {
-                    case SpaceType.Recall:
-                        return this.BibleVerse.ToString();
                     case SpaceType.Challenge:
                         return this.NameCard.Name;
                     case SpaceType.SafeHaven:
@@ -162,9 +150,6 @@ namespace Haven
         {
             switch (this.Type)
             {
-                case (SpaceType.Recall):
-                    OnLandRecall(player);
-                    break;
                 case (SpaceType.Challenge):
                     OnLandChallege(player);
                     break;
@@ -194,10 +179,6 @@ namespace Haven
         public void Delete()
         {
             // delete any dependent records
-            if (this.BibleVerseId != 0)
-            {
-                Persistence.Connection.Execute("delete from BibleVerse where Id=?", this.BibleVerseId);
-            }
             if (this.NameCardId != 0)
             {
                 Persistence.Connection.Execute("delete from NameCard where Id=?", this.NameCardId);
@@ -221,10 +202,6 @@ namespace Haven
                 TextColorId = this.TextColorId, ImageId = this.ImageId };
 
             // copy any subrecords
-            if (this.BibleVerseId != 0)
-            {
-                space.BibleVerseId = this.BibleVerse.Clone().Id;
-            }
             if (this.NameCardId != 0)
             {
                 space.NameCardId = this.NameCard.Clone().Id;

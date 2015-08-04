@@ -206,13 +206,6 @@ namespace Haven
             {
                 validation.Errors.Add(string.Format("{0}/{1} safe haven spaces with a corresponding card", noSafeHavenCard.Count(), safeHavenSpaces.Count()));
             }
-            // make sure any recall space has a corresponding verse
-            var recallSpaces = spaces.Where(x => x.Type == SpaceType.Recall);
-            var noRecall = recallSpaces.Where(x => x.BibleVerseId == 0);
-            if (noRecall.Count() > 0)
-            {
-                validation.Errors.Add(string.Format("{0}/{1} recall spaces with a corresponding card", noRecall.Count(), recallSpaces.Count()));
-            }
             // make sure there are no collisions in order
             var sameOrder = spaces.Select(x => x.Order).GroupBy(x => x).SelectMany(x => x.Skip(1));
             if (sameOrder.Count() > 0)

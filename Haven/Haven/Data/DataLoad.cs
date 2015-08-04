@@ -17,7 +17,6 @@ namespace Haven.Data
             this.LoadPiece();
             this.LoadNameCard();
             this.LoadSafeHavenCard();
-            this.LoadBibleVerse();
             this.LoadChallengeCategory();
             this.LoadBoardChallengeCategory();
             this.LoadSpaceChallengeCategory();
@@ -37,15 +36,6 @@ namespace Haven.Data
             this.Connection.CreateTable<PlayerNameCard>();
             this.Connection.CreateTable<PlayerSafeHavenCard>();
             this.Connection.Close();
-        }
-
-        public void LoadBibleVerse()
-        {
-            this.Connection.CreateTable<BibleVerse>();
-            this.Connection.Insert(new BibleVerse() { Id = 1, Book = "Genesis", Chapter = 1, Verse = 1, Text = "a" });
-            this.Connection.Insert(new BibleVerse() { Id = 2, Book = "Genesis", Chapter = 4, Verse = 9, Text = "b" });
-            this.Connection.Insert(new BibleVerse() { Id = 3, Book = "Genesis", Chapter = 6, Verse = 8, Text = "c" });
-            this.Connection.Insert(new BibleVerse() { Id = 4, Book = "Genesis", Chapter = 50, Verse = 25, Text = "d" });
         }
 
         public void LoadBoard()

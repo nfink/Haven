@@ -11,7 +11,6 @@ namespace HavenUnitTest
         public void Setup()
         {
             Persistence.Connection.CreateTable<SpaceChallengeCategory>();
-            Persistence.Connection.CreateTable<BibleVerse>();
             Persistence.Connection.CreateTable<NameCard>();
             Persistence.Connection.CreateTable<SafeHavenCard>();
             Persistence.Connection.CreateTable<Space>();
@@ -33,32 +32,6 @@ namespace HavenUnitTest
 
             // verify that other space is not deleted
             Assert.IsNotEmpty(Persistence.Connection.Table<Space>().Where(x => x.Id == space2.Id));
-        }
-
-        [Test]
-        public void DeleteRecallSpace()
-        {
-            // create recall spaces
-            var recall1 = new BibleVerse();
-            var recall2 = new BibleVerse();
-            Persistence.Connection.InsertAll(new BibleVerse[] { recall1, recall2 });
-
-            var space1 = new Space() { BibleVerseId = recall1.Id };
-            var space2 = new Space() { BibleVerseId = recall2.Id };
-            Persistence.Connection.InsertAll(new Space[] { space1, space2 });
-
-            // delete a space
-            space1.Delete();
-
-            // verify that space is deleted
-            Assert.IsEmpty(Persistence.Connection.Table<Space>().Where(x => x.Id == space1.Id));
-
-            // verify that recall is deleted
-            Assert.IsEmpty(Persistence.Connection.Table<BibleVerse>().Where(x => x.Id == space1.BibleVerseId));
-
-            // verify that other space data is not deleted
-            Assert.IsNotEmpty(Persistence.Connection.Table<Space>().Where(x => x.Id == space2.Id));
-            Assert.IsNotEmpty(Persistence.Connection.Table<BibleVerse>().Where(x => x.Id == space2.BibleVerseId));
         }
 
         [Test]
@@ -153,25 +126,6 @@ namespace HavenUnitTest
             Assert.AreEqual(clonedSpace.Width, space.Width);
             Assert.AreEqual(clonedSpace.X, space.X);
             Assert.AreEqual(clonedSpace.Y, space.Y);
-        }
-
-        [Test]
-        public void CloneRecallSpace()
-        {
-            // create a space with a recall
-            var recall = new BibleVerse() { Text = "test1" };
-            Persistence.Connection.Insert(recall);
-            var space = new Space() { BibleVerseId = recall.Id, Order = 10 };
-            Persistence.Connection.Insert(space);
-
-            // clone the space
-            var clonedSpace = space.Clone();
-
-            // verify that space and subobject were cloned
-            Assert.AreNotEqual(space.Id, clonedSpace.Id);
-            Assert.AreEqual(clonedSpace.Order, space.Order);
-            Assert.AreNotEqual(clonedSpace.BibleVerseId, space.BibleVerseId);
-            Assert.AreEqual(clonedSpace.BibleVerse.Text, space.BibleVerse.Text);
         }
 
         [Test]

@@ -15,8 +15,6 @@ namespace Haven
         EnterName,
         EnterPassword,
         ExchangePlaces,
-        ReadBibleVerse,
-        ReciteBibleVerse,
         Roll,
         RollToGo,
         SelectPiece,
@@ -42,8 +40,6 @@ namespace Haven
 
         public int ChallengeId { get; set; }
 
-        public int BibleVerseId { get; set; }
-
         public bool Challenger { get; set; }
 
         public int NameCardId { get; set; }
@@ -55,7 +51,6 @@ namespace Haven
             get
             {
                 return (this.Type == ActionType.EnterName) || 
-                    (this.Type == ActionType.ReciteBibleVerse) || 
                     (this.Type == ActionType.EnterPassword) ||
                     (this.Type == ActionType.SelectPiece) ||
                     (this.Type == ActionType.AnswerChallenge) ||
@@ -68,15 +63,6 @@ namespace Haven
             get
             {
                 return this.ChallengeId == 0 ? null : Persistence.Connection.Get<Challenge>(this.ChallengeId);
-            }
-        }
-
-        [JsonIgnore]
-        public BibleVerse BibleVerse
-        {
-            get
-            {
-                return this.BibleVerseId == 0 ? null : Persistence.Connection.Get<BibleVerse>(this.BibleVerseId);
             }
         }
 
@@ -120,10 +106,6 @@ namespace Haven
                         return "Your password";
                     case ActionType.ExchangePlaces:
                         return "Exchange Places";
-                    case ActionType.ReadBibleVerse:
-                        return "Read";
-                    case ActionType.ReciteBibleVerse:
-                        return "Enter bible verse";
                     case ActionType.Roll:
                         return "Roll";
                     case ActionType.RollToGo:
@@ -156,8 +138,6 @@ namespace Haven
                         return "mif-blocked";
                     case ActionType.ExchangePlaces:
                         return this.Player.Piece.Image;
-                    case ActionType.ReadBibleVerse:
-                        return "mif-books";
                     case ActionType.Roll:
                         return "mif-dice";
                     case ActionType.RollToGo:
@@ -215,12 +195,6 @@ namespace Haven
                         break;
                     case (ActionType.ExchangePlaces):
                         ExchangePlacesAction(input);
-                        break;
-                    case (ActionType.ReadBibleVerse):
-                        ReadRecallAction(input);
-                        break;
-                    case (ActionType.ReciteBibleVerse):
-                        ReciteRecallAction(input);
                         break;
                     case (ActionType.Roll):
                         RollAction(input);
