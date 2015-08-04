@@ -30,7 +30,7 @@ var NewGameMenu = React.createClass({
         return {boards: null};
     },
     componentDidMount: function () {
-        $.get("Boards", function (data) {
+        $.get("/Boards", function (data) {
             this.setState({boards: JSON.parse(data)});
         }.bind(this));
     },

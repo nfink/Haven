@@ -21,3 +21,12 @@ var Space = React.createClass({
         );
     }
 });
+
+
+function AdjustCoordinate(coordinate, size) {
+    return (coordinate - 1) * size * 1.1;
+}
+
+function AdjustDimension(dimension, size) {
+    return ((dimension - 1) * (size * 1.1)) + size;
+}

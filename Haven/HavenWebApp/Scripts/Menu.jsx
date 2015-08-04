@@ -25,7 +25,7 @@ $(function () {
 
     // game
     page("/Games/:id", function (ctx, next) {
-        React.render(<Game id={ctx.params.id} />, document.getElementById("content"));
+        React.render(<AdminGame id={ctx.params.id} />, document.getElementById("content"));
     });
     page.exit("/Games/:id", function (ctx, next) {
         React.unmountComponentAtNode(document.getElementById("content"));
@@ -77,15 +77,9 @@ $(function () {
         next();
     });
 
-    // fallback
-    page("*", function () {
-        alert("nothing found");
-    });
-
     page({
         hashbang: true
     });
-    //page();
 });
 
 function FieldValidation(form) {
@@ -97,12 +91,4 @@ function FieldValidation(form) {
             return $(this).attr("name") + " is required";
         }).length;
     return failures == 0;
-}
-
-function AdjustCoordinate(coordinate, size) {
-    return (coordinate - 1) * size * 1.1;
-}
-
-function AdjustDimension(dimension, size) {
-    return ((dimension - 1) * (size * 1.1)) + size;
 }

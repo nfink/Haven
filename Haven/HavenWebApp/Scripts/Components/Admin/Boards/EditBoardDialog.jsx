@@ -30,7 +30,7 @@ var OpenBoardDialog = React.createClass({
         return {validation: null};
     },
     componentDidMount: function () {
-        $.post("Boards/" + this.props.board.Id + "/Validate", function (data) {
+        $.post("/Boards/" + this.props.board.Id + "/Validate", function (data) {
             this.setState({validation: JSON.parse(data)});
             this.open();
         }.bind(this));
@@ -65,7 +65,7 @@ var OpenBoardDialog = React.createClass({
     editBoard: function (event) {
         event.preventDefault();
         this.close();
-        $.get("Boards/" + this.props.board.Id, function (data) {
+        $.get("/Boards/" + this.props.board.Id, function (data) {
             page("/Boards/" + JSON.parse(data).Id);
         });
     },

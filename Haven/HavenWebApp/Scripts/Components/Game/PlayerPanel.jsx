@@ -51,7 +51,7 @@ var PlayerPanel = React.createClass({
     enterPassword: function (event) {
         event.preventDefault();
         // verify password
-        $.post("Authenticate",
+        $.post("/Authenticate",
             {
                 PlayerId: this.props.player.Id,
                 Password: this.state.password,

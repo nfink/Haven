@@ -27,7 +27,7 @@ var GamesMenu = React.createClass({
         return {games: null};
     },
     componentDidMount: function () {
-        $.get("Games", function (data) {
+        $.get("/Games", function (data) {
             this.setState({games: JSON.parse(data)});
         }.bind(this));
     },

@@ -60,7 +60,7 @@ var NewGameDialog = React.createClass({
         }
         else {
             this.close();
-            $.post("Games",
+            $.post("/Games",
                 {
                     BoardId: this.props.boardId,
                     NumberOfPlayers: this.state.numberOfPlayers,

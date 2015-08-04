@@ -72,13 +72,13 @@ var EditBoard = React.createClass({
     },
     componentDidMount: function () {
         this.loadBoard();
-        $.get("ChallengeCategories", function (data) {
+        $.get("/ChallengeCategories", function (data) {
             var categories = JSON.parse(data);
             this.setState({challengeCategories: categories});
         }.bind(this));
     },
     loadBoard: function () {
-        $.get("Boards/" + this.props.id, function (data) {
+        $.get("/Boards/" + this.props.id, function (data) {
             var board = JSON.parse(data);
             this.setState({ board: board, name: board.Name, description: board.Description });
             this.validate();
@@ -116,7 +116,7 @@ var EditBoard = React.createClass({
         );
     },
     validate: function () {
-        $.post("Boards/" + this.props.id + "/Validate", function (data) {
+        $.post("/Boards/" + this.props.id + "/Validate", function (data) {
             this.setState({ validation: JSON.parse(data) });
         }.bind(this));
     },
@@ -287,7 +287,7 @@ EditBoard.EditSpace = React.createClass({
         return {space: space, spaceTypes: []};
     },
     componentDidMount: function () {
-        $.get("SpaceTypes", function (data) {
+        $.get("/SpaceTypes", function (data) {
             this.setState({spaceTypes: JSON.parse(data)});
         }.bind(this));
     },

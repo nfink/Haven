@@ -47,11 +47,11 @@ var AdminQuestions = React.createClass({
         return {categories: null, challenges: null};
     },
     componentDidMount: function () {
-        $.get("Challenges", function (data) {
+        $.get("/Challenges", function (data) {
             var challenges = JSON.parse(data);
             this.setState({challenges: challenges});
         }.bind(this));
-        $.get("ChallengeCategories", function (data) {
+        $.get("/ChallengeCategories", function (data) {
             var categories = JSON.parse(data);
             this.setState({categories: categories});
         }.bind(this));

@@ -130,7 +130,7 @@ var Action = React.createClass({
             }
         }
 
-        $.post("PerformAction",
+        $.post("/PerformAction",
             {
                 Id: this.props.action.Id,
                 Password: this.props.password,

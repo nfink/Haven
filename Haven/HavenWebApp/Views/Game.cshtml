@@ -1,0 +1,28 @@
+﻿@using Cassette.Nancy
+@{
+    Layout = null;
+    Bundles.Reference("bundle.css");
+    Bundles.Reference("react", "prereqs");
+    Bundles.Reference("jquery", "prereqs");
+    Bundles.Reference("metro.js", "metro");
+    Bundles.Reference("~/Scripts/Components", "components");
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    <meta name="viewport" content="width=device-width" />
+    <title>Haven</title>
+    @Bundles.RenderStylesheets()
+    @Bundles.RenderScripts("prereqs")
+    @Bundles.RenderScripts("metro")
+    @Bundles.RenderScripts("components")
+</head>
+<body class="bg-grayLighter">
+    <div id="content"></div>
+    <script>React.render(React.createElement(Game, {id: @Model}), document.getElementById("content"));</script>
+</body>
+</html>

@@ -38,7 +38,7 @@ var BoardsMenu = React.createClass({
         return {boards: null};
     },
     componentDidMount: function () {
-        $.get("Boards", function (data) {
+        $.get("/Boards", function (data) {
             this.setState({boards: JSON.parse(data)});
         }.bind(this));
     },
@@ -51,7 +51,7 @@ BoardsMenu.Tile = React.createClass({
         );
     },
     editBoard: function () {
-        $.get("Boards/" + this.props.board.Id, function (data) {
+        $.get("/Boards/" + this.props.board.Id, function (data) {
             page("/Boards/" + JSON.parse(data).Id);
         });
     },

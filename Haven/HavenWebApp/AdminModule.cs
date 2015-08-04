@@ -29,16 +29,6 @@ namespace HavenWebApp
                 return View["Views/Haven.cshtml"];
             };
 
-            Get["/Pieces"] = parameters =>
-            {
-                return JsonConvert.SerializeObject(Piece.Pieces);
-            };
-
-            Get["/Colors"] = parameters =>
-            {
-                return JsonConvert.SerializeObject(Color.Colors);
-            };
-
             Get["/SpaceTypes"] = parameters =>
             {
                 var types = new List<AdminModule.SpaceType>();

@@ -9,6 +9,11 @@ namespace HavenWebApp
     {
         public GameModule()
         {
+            Get["/Play/{id}"] = parameters =>
+            {
+                return View["Views/Game.cshtml", (int)parameters.id];
+            };
+
             Get["/Games/{id}"] = parameters =>
             {
                 var game = Persistence.Connection.Get<Game>((int)parameters.id);

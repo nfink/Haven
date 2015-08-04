@@ -61,7 +61,7 @@ NewBoardMenu.CopyBoardDialog = React.createClass({
         React.unmountComponentAtNode(document.getElementById("copyBoardDialog"));
     },
     copyBoard: function (board) {
-        $.post("Boards/" + board.Id + "/Copy", function (data) {
+        $.post("/Boards/" + board.Id + "/Copy", function (data) {
             this.close();
             page("/Boards/" + JSON.parse(data).Id);
         }.bind(this));

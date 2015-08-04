@@ -37,7 +37,7 @@ var ColorSelector = React.createClass({
         this.setState({error: true});
     },
     componentDidMount: function () {
-        $.get("Colors", function (data) {
+        $.get("/Colors", function (data) {
             this.setState({colors: JSON.parse(data)});
         }.bind(this));
     },

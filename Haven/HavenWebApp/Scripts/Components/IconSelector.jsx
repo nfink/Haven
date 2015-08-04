@@ -37,7 +37,7 @@ var IconSelector = React.createClass({
         this.setState({error: true});
     },
     componentDidMount: function () {
-        $.get("Pieces", function (data) {
+        $.get("/Pieces", function (data) {
             this.setState({pieces: JSON.parse(data)});
         }.bind(this));
     },

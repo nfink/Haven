@@ -1,6 +1,5 @@
 ﻿/** @jsx React.DOM */
 /// <reference path="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js" />
-/// <reference path="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js" />
 
 var Game = React.createClass({
     render: function () {
@@ -35,7 +34,7 @@ var Game = React.createClass({
         return {game: null, players: [], selectedPlayerId: null};
     },
     componentDidMount: function () {
-        $.get("Games/" + this.props.id, function (data) {
+        $.get("/Games/" + this.props.id, function (data) {
             var gameState = JSON.parse(data);
             this.setState({game: gameState, players: gameState.Players});
         }.bind(this));

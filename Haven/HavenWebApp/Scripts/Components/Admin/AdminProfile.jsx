@@ -30,7 +30,7 @@ var AdminProfile = React.createClass({
         return {user: null};
     },
     componentDidMount: function () {
-        $.get("User", function (data) {
+        $.get("/User", function (data) {
             var user = JSON.parse(data);
             this.setState({user: user});
         }.bind(this));

@@ -1,6 +1,7 @@
 ﻿using Haven;
 using Haven.Data;
 using Nancy;
+using Newtonsoft.Json;
 
 namespace HavenWebApp
 {
@@ -22,6 +23,16 @@ namespace HavenWebApp
                     DataLoad.LoadTables();
                 }
             }
+
+            Get["/Pieces"] = parameters =>
+            {
+                return JsonConvert.SerializeObject(Piece.Pieces);
+            };
+
+            Get["/Colors"] = parameters =>
+            {
+                return JsonConvert.SerializeObject(Color.Colors);
+            };
 
             #if DEBUG
             Get["/RecompileJSX"] = parameters =>
