@@ -48,9 +48,12 @@ namespace Haven
 
         public static Game NewGame(int boardId, int numberOfPlayers)
         {
+            // clone the board so that edits won't affect existing games
             var game = new Game();
-            game.BoardId = boardId;
-            game.OwnerId = Persistence.Connection.Get<Board>(boardId).OwnerId;
+            var board = Persistence.Connection.Get<Board>(boardId);
+            game.OwnerId = board.OwnerId;
+            board.OwnerId = 0;
+            game.BoardId = board.Clone().Id;
             Persistence.Connection.Insert(game);
 
             // create players
@@ -162,12 +165,6 @@ namespace Haven
             {
                 var firstPlayer = this.Players.OrderBy(x => x.TurnOrder).First();
                 Persistence.Connection.Insert(new Action() { Type = ActionType.Roll, OwnerId = firstPlayer.Id });
-
-                // clone the board so that edits won't affect existing games
-                var board = this.Board;
-                board.OwnerId = 0;
-                this.BoardId = board.Clone().Id;
-                Persistence.Connection.Update(this);
             }
         }
 
