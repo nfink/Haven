@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Haven;
 using NUnit.Framework;
-using Haven;
+using System.Linq;
 
 namespace HavenUnitTest
 {
@@ -51,24 +47,11 @@ namespace HavenUnitTest
             var player2 = CreatePlayerData();
             var player3 = CreatePlayerData();
 
-            // set up turns links between players
-            player1.NextPlayerId = player2.Id;
-            player2.NextPlayerId = player3.Id;
-            player3.NextPlayerId = player1.Id;
-            Persistence.Connection.UpdateAll(new Player[] { player1, player2, player3 });
-
-
             // delete a player
             player1.Delete();
 
             // verify all related data is deleted
             VerifyPlayerDataDeleted(player1);
-
-            // verify that the linked list of players is correct
-            player2 = Persistence.Connection.Get<Player>(player2.Id);
-            player3 = Persistence.Connection.Get<Player>(player3.Id);
-            Assert.AreEqual(player3.Id, player2.NextPlayerId);
-            Assert.AreEqual(player2.Id, player3.NextPlayerId);
 
             // verify that other player data was not deleted
             Assert.IsNotEmpty(Persistence.Connection.Table<Haven.Action>().Where(x => x.OwnerId == player2.Id));

@@ -8,7 +8,7 @@ namespace Haven
         {
             Persistence.Connection.Delete(this);
             Persistence.Connection.Execute("delete from Action where Type=? and OwnerId=?", ActionType.EndTurn, this.OwnerId);
-            var player = Persistence.Connection.Get<Player>(this.OwnerId);
+            var player = this.Owner;
             player.MovementDirection = !player.MovementDirection;
             Persistence.Connection.Update(player);
             Game.GetGame(this.OwnerId).EndTurn(this.OwnerId);

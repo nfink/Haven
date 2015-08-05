@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace Haven
 {
@@ -28,13 +24,12 @@ namespace Haven
                 // set piece
                 var piece = Persistence.Connection.Get<Piece>(pieceId);
                 var color = Persistence.Connection.Get<Color>(colorId);
-                var player = Persistence.Connection.Get<Player>(this.OwnerId);
+                var player = this.Owner;
                 player.PieceId = pieceId;
                 player.ColorId = colorId;
                 Persistence.Connection.Update(player);
 
-                var game = Persistence.Connection.Get<Game>(player.GameId);
-                game.StartGame();
+                Game.GetGame(this.OwnerId).StartGame();
                 Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = string.Format("{0} {1} piece selected.", piece.Name, color.Name) });
             }
         }

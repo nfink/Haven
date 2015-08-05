@@ -26,8 +26,6 @@ namespace Haven
             }
         }
 
-        public int CurrentPlayerId { get; set; }
-
         public Board Board
         {
             get
@@ -55,44 +53,42 @@ namespace Haven
             game.OwnerId = Persistence.Connection.Get<Board>(boardId).OwnerId;
             Persistence.Connection.Insert(game);
 
-            int firstSpaceId = Persistence.Connection.Query<Space>("select [Id] from [Space] where [Order]=(select min([Order]) from [Space] where BoardId=?) and BoardId=?", game.BoardId, game.BoardId).First().Id;
-
-            var players = new List<Player>();
-
             // create players
             for (int i = 0; i < numberOfPlayers; i++)
             {
-                var player = new Player();
-                player.GameId = game.Id;
-                player.Guid = Guid.NewGuid().ToString();
-                Persistence.Connection.Insert(player);
-
-                // add actions for setting up the player
-                Persistence.Connection.Insert(new Action() { Type = ActionType.SelectPiece, OwnerId = player.Id });
-                Persistence.Connection.Insert(new Action() { Type = ActionType.EnterName, OwnerId = player.Id });
-                Persistence.Connection.Insert(new Action() { Type = ActionType.EnterPassword, OwnerId = player.Id });
-
-                // start player on the first space
-                player.SpaceId = firstSpaceId;
-
-                players.Add(player);
+                game.AddPlayer();
             }
 
-            // set up turn order
-            for (int i = 0; i < players.Count; i++)
-            {
-                players[i].NextPlayerId = players[(i + 1) % players.Count].Id;
-            }
-
-            Persistence.Connection.UpdateAll(players);
-            game.CurrentPlayerId = players[0].Id;
-            Persistence.Connection.Update(game);
             return game;
         }
 
         public static Game GetGame(int playerId)
         {
             return Persistence.Connection.Query<Game>("select Game.* from Game join Player on Player.GameId=Game.Id where Player.Id=?", playerId).SingleOrDefault();
+        }
+
+        public Player AddPlayer()
+        {
+            // create a player
+            var player = new Player();
+            player.GameId = this.Id;
+            player.Guid = Guid.NewGuid().ToString();
+            var players = this.Players;
+            if (players.Count() > 0)
+            {
+                player.TurnOrder = players.Select(x => x.TurnOrder).Max() + 1;
+            }
+
+            // start player on the first space
+            player.SpaceId = this.Board.StartingSpace.Id;
+            Persistence.Connection.Insert(player);
+
+            // add actions for setting up the player
+            Persistence.Connection.Insert(new Action() { Type = ActionType.SelectPiece, OwnerId = player.Id });
+            Persistence.Connection.Insert(new Action() { Type = ActionType.EnterName, OwnerId = player.Id });
+            Persistence.Connection.Insert(new Action() { Type = ActionType.EnterPassword, OwnerId = player.Id });
+
+            return player;
         }
 
         public void EndTurn(int currentPlayerId)
@@ -140,10 +136,23 @@ namespace Haven
             else
             {
                 // otherwise start the next player's turn
-                var currentPlayer = Persistence.Connection.Get<Player>(currentPlayerId);
-                Persistence.Connection.Execute("update Game set CurrentPlayerId=?, Turn=(Turn + 1) where Id=?", currentPlayer.NextPlayerId, currentPlayer.GameId);
-                Persistence.Connection.Insert(new Action() { Type = ActionType.Roll, OwnerId = currentPlayer.NextPlayerId });
+                this.NextPlayer(currentPlayerId);
             }
+        }
+
+        public void NextPlayer(int currentPlayerId)
+        {
+            var currentPlayer = Persistence.Connection.Get<Player>(currentPlayerId);
+            var players = this.Players.OrderBy(x => x.TurnOrder).ToList();
+            var index = players.IndexOf(currentPlayer) + 1;
+            if (index >= players.Count)
+            {
+                index = 0;
+            }
+
+            var nextPlayer = players[index];
+            Persistence.Connection.Execute("update Game set Turn=(Turn + 1) where Id=?", currentPlayer.GameId);
+            Persistence.Connection.Insert(new Action() { Type = ActionType.Roll, OwnerId = nextPlayer.Id });
         }
 
         public void StartGame()
@@ -151,7 +160,8 @@ namespace Haven
             // if all players have selected a piece and entered a name and password,  start game
             if (Persistence.Connection.Query<Player>("select Player.* from Player where GameId=? and (PieceId=0 or Name is null or Password is null)", this.Id).Count < 1)
             {
-                Persistence.Connection.Insert(new Action() { Type = ActionType.Roll, OwnerId = this.CurrentPlayerId });
+                var firstPlayer = this.Players.OrderBy(x => x.TurnOrder).First();
+                Persistence.Connection.Insert(new Action() { Type = ActionType.Roll, OwnerId = firstPlayer.Id });
 
                 // clone the board so that edits won't affect existing games
                 var board = this.Board;

@@ -10,12 +10,10 @@ namespace Haven
             // remove all answer war challenge actions
             Persistence.Connection.Execute("delete from Action where Type=? and OwnerId=?", ActionType.AnswerWarChallenge, this.OwnerId);
 
-            var challenge = Persistence.Connection.Get<Challenge>(this.ChallengeId);
-            var player = Persistence.Connection.Get<Player>(this.OwnerId);
-            var enemy = Persistence.Connection.Get<Player>(this.PlayerId);
+            var enemy = this.Player;
             var game = Persistence.Connection.Get<Game>(enemy.GameId);
 
-            if (challenge.CorrectAnswer((string)input))
+            if (this.Challenge.CorrectAnswer((string)input))
             {
                 // add a challenge to the other player in the war
                 Challenge newChallenge;
@@ -37,7 +35,7 @@ namespace Haven
                 if (this.Challenger)
                 {
                     // give enemy all name cards that they do not have
-                    var cardsToAdd = player.NameCards.Except(enemy.NameCards);
+                    var cardsToAdd = this.Owner.NameCards.Except(enemy.NameCards);
 
                     foreach(NameCard nameCard in cardsToAdd)
                     {
@@ -59,7 +57,7 @@ namespace Haven
                 else
                 {
                     // give all name cards to the enemy
-                    var cardsToAdd = player.NameCards.Except(enemy.NameCards);
+                    var cardsToAdd = this.Owner.NameCards.Except(enemy.NameCards);
 
                     foreach (NameCard card in cardsToAdd)
                     {

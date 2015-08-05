@@ -1,10 +1,11 @@
 ﻿using Newtonsoft.Json;
 using SQLite;
+using System;
 using System.Collections.Generic;
 
 namespace Haven
 {
-    public class Player : IDeletable
+    public class Player : IDeletable, IEquatable<Player>
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
@@ -36,7 +37,7 @@ namespace Haven
         // false = counter-clockwise
         public bool MovementDirection { get; set; }
 
-        public int NextPlayerId { get; set; }
+        public int TurnOrder { get; set; }
 
         public Piece Piece
         {
@@ -108,11 +109,6 @@ namespace Haven
             this.MovementDirection = true;
         }
 
-        public static IEnumerable<Action> GetAvailableAction(int playerId)
-        {
-            return Persistence.Connection.Table<Action>().Where(x => x.OwnerId == playerId);
-        }
-
         public void Move(int spaceId)
         {
             this.SpaceId = spaceId;
@@ -150,11 +146,18 @@ namespace Haven
             // delete messages
             Persistence.Connection.Execute("delete from Message where PlayerId=?", this.Id);
 
-            // update NextPlayerId for other players
-            Persistence.Connection.Execute("update Player set NextPlayerId=? where NextPlayerId=?", this.NextPlayerId, this.Id);
-
             // delete player
             Persistence.Connection.Delete(this);
+        }
+
+        public bool Equals(Player other)
+        {
+            return this.Id == other.Id;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.Id;
         }
     }
 }

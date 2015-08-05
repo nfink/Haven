@@ -1,10 +1,7 @@
-﻿using System;
+﻿using Haven;
+using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NUnit.Framework;
-using Haven;
 
 namespace HavenUnitTest
 {
@@ -198,7 +195,10 @@ namespace HavenUnitTest
         private Game CreateGameData()
         {
             // create game
-            var game = new Game();
+            var board = new Board();
+            Persistence.Connection.Insert(board);
+            Persistence.Connection.Insert(new Space() { BoardId = board.Id });
+            var game = new Game() { BoardId = board.Id };
             Persistence.Connection.Insert(game);
 
             // add challenges
@@ -213,16 +213,9 @@ namespace HavenUnitTest
             Persistence.Connection.Insert(new UsedChallenge() { GameId = game.Id, ChallengeId = challenge2.Id });
 
             // add players
-            var player1 = new Player() { GameId = game.Id };
-            var player2 = new Player() { GameId = game.Id };
-            var player3 = new Player() { GameId = game.Id };
-            Persistence.Connection.InsertAll(new Player[] { player1, player2, player3 });
-
-            // set up player turn order
-            player1.NextPlayerId = player2.Id;
-            player2.NextPlayerId = player3.Id;
-            player3.NextPlayerId = player1.Id;
-            Persistence.Connection.UpdateAll(new Player[] { player1, player2, player3 });
+            game.AddPlayer();
+            game.AddPlayer();
+            game.AddPlayer();
 
             return game;
         }

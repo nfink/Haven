@@ -10,8 +10,8 @@ namespace Haven
             Persistence.Connection.Execute("delete from Action where Type=? and OwnerId=?", ActionType.ExchangePlaces, this.OwnerId);
 
             // swap locations
-            var player = Persistence.Connection.Get<Player>(this.OwnerId);
-            var playerToExchangeWith = Persistence.Connection.Get<Player>(this.PlayerId);
+            var player = this.Owner;
+            var playerToExchangeWith = this.Player;
             var swapLocation = player.SpaceId;
             player.SpaceId = playerToExchangeWith.SpaceId;
             playerToExchangeWith.SpaceId = swapLocation;

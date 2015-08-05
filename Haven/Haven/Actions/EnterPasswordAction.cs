@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Haven
 {
@@ -11,7 +7,7 @@ namespace Haven
         private void EnterPasswordAction(Object input)
         {
             Persistence.Connection.Delete(this);
-            var player = Persistence.Connection.Get<Player>(this.OwnerId);
+            var player = this.Owner;
             player.SetPassword((string)input);
             var game = Persistence.Connection.Get<Game>(player.GameId);
             game.StartGame();

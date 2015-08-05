@@ -110,6 +110,14 @@ namespace Haven
             this.SafeHavenCardsToEnd = -1;
         }
 
+        public Space StartingSpace
+        {
+            get
+            {
+                return Persistence.Connection.Query<Space>("select [Id] from [Space] where [Order]=(select min([Order]) from [Space] where BoardId=?) and BoardId=?", this.Id, this.Id).FirstOrDefault();
+            }
+        }
+
         public Space GetNewSpace(int startSpaceId, int spacesToMove, bool direction)
         {
             var spaces = this.Spaces.OrderBy(x => x.Order).ToList();

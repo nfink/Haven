@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Haven
 {
@@ -17,8 +13,8 @@ namespace Haven
             Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = string.Format("Rolled a {0}.", roll.Sum) });
 
             // move player to next space
-            var player = Persistence.Connection.Get<Player>(this.OwnerId);
-            var board = Persistence.Connection.Query<Board>("select Board.* from Board join Game on Game.BoardId=Board.Id where Game.Id=?", player.GameId).First();
+            var player = this.Owner;
+            var board = Game.GetGame(player.Id).Board;
             var newSpace = board.GetNewSpace(player.SpaceId, roll.Sum, player.MovementDirection);
             player.Move(newSpace.Id);
         }

@@ -58,6 +58,15 @@ namespace Haven
             }
         }
 
+        [JsonIgnore]
+        public Player Owner
+        {
+            get
+            {
+                return this.OwnerId == 0 ? null : Persistence.Connection.Get<Player>(this.OwnerId);
+            }
+        }
+
         public Challenge Challenge
         {
             get

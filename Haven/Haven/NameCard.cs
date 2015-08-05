@@ -37,7 +37,27 @@ namespace Haven
 
         public bool Equals(NameCard other)
         {
+            if (object.ReferenceEquals(other, null))
+            {
+                return false;
+            }
+
+            if (object.ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
             return this.Id == other.Id;
+        }
+
+        public override bool Equals(object other)
+        {
+            return this.Equals(other as NameCard);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.Id;
         }
     }
 }

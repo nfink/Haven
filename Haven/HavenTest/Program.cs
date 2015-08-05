@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Haven;
+using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Haven;
 
 namespace HavenTest
 {
@@ -14,19 +11,19 @@ namespace HavenTest
             var dl = new Haven.Data.DataLoad();
             dl.LoadTables();
 
-            var gameId = Game.NewGame(1, 2).Id;
-            Console.WriteLine(gameId);
+            var game = Game.NewGame(1, 2);
+            Console.WriteLine(game.Id);
 
             string command;
             do
             {
-                ListActions(gameId);
+                ListActions(game.Id);
                 Console.Write("Action: ");
                 command = Console.ReadLine();
-                int commandNumber;
-                if (Int32.TryParse(command, out commandNumber))
+                int actionId;
+                if (Int32.TryParse(command, out actionId))
                 {
-                    PerformAction(gameId, commandNumber);
+                    PerformAction(game.Id, actionId);
                 }
 
             } while (command != "exit");
@@ -38,18 +35,18 @@ namespace HavenTest
         public static void ListActions(int gameId)
         {
             var game = Persistence.Connection.Get<Game>(gameId);
-            var currentPlayer = Persistence.Connection.Get<Player>(game.CurrentPlayerId);
-            Console.WriteLine(string.IsNullOrWhiteSpace(currentPlayer.Name) ? string.Format("Player {0}:", currentPlayer.Id) : currentPlayer.Name + ": ");
-            Console.WriteLine(string.Format("On {0}", currentPlayer.SpaceId));
-            int i = 0;
-            foreach (Haven.Action a in Player.GetAvailableAction(game.CurrentPlayerId))
+            foreach (Player player in game.Players)
             {
-                Console.WriteLine(i + ") " + a);
-                i++;
+                Console.WriteLine(string.IsNullOrWhiteSpace(player.Name) ? string.Format("Player {0}:", player.Id) : player.Name + ": ");
+                Console.WriteLine(string.Format("On {0}", player.SpaceId));
+                foreach (Haven.Action a in player.Actions)
+                {
+                    Console.WriteLine(a.Id + ") " + a);
+                }
             }
         }
 
-        public static void PerformAction(int gameId, int number)
+        public static void PerformAction(int gameId, int actionId)
         {
             Console.Write("Input: ");
             var input = Console.ReadLine();
@@ -58,19 +55,10 @@ namespace HavenTest
                 input = null;
             }
 
-            var game = Persistence.Connection.Get<Game>(gameId);
-            int i = 0;
-            foreach (Haven.Action a in Player.GetAvailableAction(game.CurrentPlayerId))
-            {
-                if (i == number)
-                {
-                    a.PerformAction(input);
-                    var latestMessage = Persistence.Connection.Query<Message>("select Message.* from Message where Id=(select max(Message.Id) from Message join Player on Message.PlayerId=Player.Id where Player.Id=?)", game.CurrentPlayerId).First();
-                    Console.WriteLine(latestMessage.Text);
-                    return;
-                }
-                i++;
-            }
+            var action = Persistence.Connection.Get<Haven.Action>(actionId);
+            action.PerformAction(input);
+            var latestMessage = Persistence.Connection.Query<Message>("select Message.* from Message where Id=(select max(Message.Id) from Message join Player on Message.PlayerId=Player.Id where Player.Id=?)", action.OwnerId).First();
+            Console.WriteLine(latestMessage.Text);
         }
     }
 }
