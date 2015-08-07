@@ -2,13 +2,16 @@
 using SQLite;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Haven
 {
-    public class Player : IDeletable, IEquatable<Player>
+    public class Player : IDeletable, IEquatable<Player>, IEntity
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
+
+        public IRepository Repository { private get; set; }
 
         public string Guid { get; set; }
 
@@ -43,7 +46,7 @@ namespace Haven
         {
             get
             {
-                return this.PieceId == 0 ? null : Persistence.Connection.Get<Piece>(this.PieceId);
+                return this.PieceId == 0 ? null : this.Repository.Get<Piece>(this.PieceId);
             }
         }
 
@@ -51,7 +54,7 @@ namespace Haven
         {
             get
             {
-                return this.ColorId == 0 ? null : Persistence.Connection.Get<Color>(this.ColorId);
+                return this.ColorId == 0 ? null : this.Repository.Get<Color>(this.ColorId);
             }
         }
 
@@ -59,7 +62,7 @@ namespace Haven
         {
             get
             {
-                return Persistence.Connection.Get<Space>(this.SpaceId);
+                return this.Repository.Get<Space>(this.SpaceId);
             }
         }
 
@@ -67,7 +70,7 @@ namespace Haven
         {
             get
             {
-                return Persistence.Connection.Table<Action>().Where(x => x.OwnerId == this.Id);
+                return this.Repository.Find<Action>(x => x.OwnerId == this.Id);
             }
         }
 
@@ -112,8 +115,8 @@ namespace Haven
         public void Move(int spaceId)
         {
             this.SpaceId = spaceId;
-            Persistence.Connection.Update(this);
-            var space = Persistence.Connection.Get<Space>(this.SpaceId);
+            this.Repository.Update(this);
+            var space = this.Repository.Get<Space>(this.SpaceId);
             space.OnLand(this);
         }
 
@@ -121,7 +124,7 @@ namespace Haven
         {
             string savedPasswordHash = Haven.Password.HashPassword(password);
             this.Password = savedPasswordHash;
-            Persistence.Connection.Update(this);
+            this.Repository.Update(this);
         }
 
         public bool VerifyPassword(string password)
@@ -131,23 +134,35 @@ namespace Haven
 
         public IEnumerable<Message> RecentMessages(int number)
         {
-            return Persistence.Connection.Table<Message>().Where(x => x.PlayerId == this.Id).OrderByDescending(x => x.Id).Take(number).OrderBy(x => x.Id);
+            return this.Repository.Find<Message>(x => x.PlayerId == this.Id).OrderByDescending(x => x.Id).Take(number).OrderBy(x => x.Id);
         }
 
         public void Delete()
         {
             // delete actions
-            Persistence.Connection.Execute("delete from Action where OwnerId=?", this.Id);
+            foreach (Action action in this.Actions.ToList())
+            {
+                this.Repository.Remove(action);
+            }
 
             // delete cards
-            Persistence.Connection.Execute("delete from PlayerNameCard where PlayerId=?", this.Id);
-            Persistence.Connection.Execute("delete from PlayerSafeHavenCard where PlayerId=?", this.Id);
+            foreach (NameCard nameCard in this.NameCards.ToList())
+            {
+                this.Repository.Remove(nameCard);
+            }
+            foreach (SafeHavenCard safeHavenCard in this.SafeHavenCards.ToList())
+            {
+                this.Repository.Remove(safeHavenCard);
+            }
 
             // delete messages
-            Persistence.Connection.Execute("delete from Message where PlayerId=?", this.Id);
+            foreach (Message message in this.Repository.Find<Message>(x => x.PlayerId == this.Id))
+            {
+                this.Repository.Remove(message);
+            }
 
             // delete player
-            Persistence.Connection.Delete(this);
+            this.Repository.Remove(this);
         }
 
         public bool Equals(Player other)

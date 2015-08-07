@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SQLite;
+﻿using SQLite;
 
 namespace Haven
 {
-    public class PlayerNameCard
+    public class PlayerNameCard : IEntity
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
+
+        public IRepository Repository { private get; set; }
 
         public int PlayerId { get; set; }
 

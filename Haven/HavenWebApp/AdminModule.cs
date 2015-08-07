@@ -12,7 +12,7 @@ namespace HavenWebApp
 {
     public class AdminModule : NancyModule
     {
-        public AdminModule(IRootPathProvider pathProvider)
+        public AdminModule(IRootPathProvider pathProvider, IRepository repository)
         {
 
             var formsAuthConfiguration =
@@ -76,10 +76,12 @@ namespace HavenWebApp
 
             Post["/Games"] = parameters =>
             {
-                var game = Game.NewGame((int)this.Request.Form.BoardId, (int)this.Request.Form.NumberOfPlayers);
-                game.Name = (string)this.Request.Form.Name;
-                Persistence.Connection.Update(game);
-                return JsonConvert.SerializeObject(game);
+                using (repository)
+                {
+                    var game = new Game { Name = (string)this.Request.Form.Name };
+                    game.Create((int)this.Request.Form.BoardId, (int)this.Request.Form.NumberOfPlayers);
+                    return JsonConvert.SerializeObject(game);
+                }
             };
 
             Get["/Boards"] = parameters =>

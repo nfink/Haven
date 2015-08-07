@@ -6,11 +6,15 @@ namespace Haven
     {
         private void EndTurnAction(Object input)
         {
-            Persistence.Connection.Execute("delete from Action where OwnerId=?", this.OwnerId);
+            // remove all actions
+            foreach (Action action in this.Owner.Actions)
+            {
+                this.Repository.Remove(action);
+            }
 
             Game.GetGame(this.OwnerId).EndTurn(this.OwnerId);
 
-            Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = "Ended turn." });
+            this.Repository.Add(new Message() { PlayerId = this.OwnerId, Text = "Ended turn." });
         }
     }
 }

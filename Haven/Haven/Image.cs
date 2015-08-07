@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SQLite;
+﻿using SQLite;
 using System.IO;
+using System;
 
 namespace Haven
 {
-    public class Image : IDeletable, ICloneable<Image>
+    public class Image : IEntity, IDeletable, ICloneable<Image>
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
+
+        public IRepository Repository { private get; set; }
 
         public string Filepath { get; set; }
 
@@ -21,7 +19,7 @@ namespace Haven
         {
             string rootDir = System.Configuration.ConfigurationManager.AppSettings["rootDir"];
             string folder = System.Configuration.ConfigurationManager.AppSettings["uploadFolder"];
-            this.Filepath = "/" + folder + "/" + this.Id.ToString();
+            this.Filepath = "/" + folder + "/" + Guid.NewGuid().ToString();
 
             using (var fileStream = File.Create(Path.Combine(rootDir, this.FixedFilepath())))
             {
@@ -34,13 +32,13 @@ namespace Haven
         {
             string rootDir = System.Configuration.ConfigurationManager.AppSettings["rootDir"];
             File.Delete(Path.Combine(rootDir, this.FixedFilepath()));
-            Persistence.Connection.Delete(this);
+            this.Repository.Remove<Image>(this);
         }
 
         public Image Clone()
         {
             var image = new Image() { Filename = this.Filename };
-            Persistence.Connection.Insert(image);
+            this.Repository.Add<Image>(image);
 
             if (this.Filepath != null)
             {
@@ -48,7 +46,7 @@ namespace Haven
                 using (var fileStream = File.Open(Path.Combine(rootDir, this.FixedFilepath()), FileMode.Open))
                 {
                     image.SaveImage(fileStream);
-                    Persistence.Connection.Update(image);
+                    this.Repository.Add<Image>(image);
                 }
             }
 

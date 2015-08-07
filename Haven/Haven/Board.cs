@@ -6,10 +6,12 @@ using System.Linq;
 
 namespace Haven
 {
-    public class Board : IDeletable, ICloneable<Board>
+    public class Board : IEntity, IDeletable, ICloneable<Board>
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
+
+        public IRepository Repository { private get; set; }
 
         public int OwnerId { get; set; }
 
@@ -31,7 +33,7 @@ namespace Haven
         {
             get
             {
-                return Persistence.Connection.Table<Space>().Where(x => x.BoardId == this.Id);
+                return this.Repository.Find<Space>(x => x.BoardId == this.Id);
             }
         }
 
@@ -90,7 +92,7 @@ namespace Haven
         {
             get
             {
-                return Persistence.Connection.Table<BoardChallengeCategory>().Where(x => x.BoardId == this.Id);
+                return this.Repository.Find<BoardChallengeCategory>(x => x.BoardId == this.Id);
                 //return Persistence.Connection.Query<ChallengeCategory>("select ChallengeCategory.* from ChallengeCategory join BoardChallengeCategory on ChallengeCategory.Id=BoardChallengeCategory.ChallengeCategoryId where BoardChallengeCategory.BoardId=?", this.Id);
             }
         }
@@ -99,7 +101,7 @@ namespace Haven
         {
             get
             {
-                return this.ImageId == 0 ? null : Persistence.Connection.Get<Image>(this.ImageId);
+                return this.ImageId == 0 ? null : this.Repository.Get<Image>(this.ImageId);
             }
         }
 
@@ -153,22 +155,25 @@ namespace Haven
         public void Delete()
         {
             // delete spaces
-            foreach (Space space in this.Spaces)
+            foreach (Space space in this.Spaces.ToList())
             {
                 space.Delete();
             }
 
             // delete challenge links
-            Persistence.Connection.Execute("delete from BoardChallengeCategory where BoardId=?", this.Id);
+            foreach (BoardChallengeCategory category in this.ChallengeCategories.ToList())
+            {
+                this.Repository.Remove(category);
+            }
 
-            // delete image if no other boards use the image
+            // delete image
             if (this.ImageId != 0)
             {
-                Persistence.Connection.Execute("delete from Image where Id=? and (select count(Board.Id) from Board where ImageId=?) < 2", this.ImageId, this.ImageId);
+                this.Repository.Remove(this.Image);
             }
 
             // delete board
-            Persistence.Connection.Delete(this);
+            this.Repository.Remove(this);
         }
 
         public BoardValidation Validate()
@@ -305,7 +310,7 @@ namespace Haven
         {
             // use same attributes
             var board = new Board() { Name = this.Name, Description = this.Description, Active = this.Active, OwnerId = this.OwnerId, TurnsToEnd = this.TurnsToEnd, NameCardsToEnd = this.NameCardsToEnd, SafeHavenCardsToEnd = this.SafeHavenCardsToEnd };
-            Persistence.Connection.Insert(board);
+            this.Repository.Add(board);
 
             // clone image
             if (this.ImageId != 0)
@@ -327,7 +332,7 @@ namespace Haven
             var categoryIdMap = new Dictionary<int, int>();
             foreach (int categoryId in categories.Distinct())
             {
-                var category = Persistence.Connection.Get<ChallengeCategory>(categoryId);
+                var category = this.Repository.Get<ChallengeCategory>(categoryId);
                 category.OwnerId = 0;
                 var clonedCategory = category.Clone();
                 categoryIdMap.Add(categoryId, clonedCategory.Id);
@@ -336,7 +341,7 @@ namespace Haven
             // clone board category links
             foreach (int categoryId in boardCategories.Distinct())
             {
-                Persistence.Connection.Insert(new BoardChallengeCategory() { BoardId = board.Id, ChallengeCategoryId = categoryIdMap[categoryId] });
+                this.Repository.Add(new BoardChallengeCategory() { BoardId = board.Id, ChallengeCategoryId = categoryIdMap[categoryId] });
             }
 
             // clone spaces
@@ -347,14 +352,14 @@ namespace Haven
                 foreach (SpaceChallengeCategory category in clonedSpace.ChallengeCategories)
                 {
                     category.ChallengeCategoryId = categoryIdMap[category.ChallengeCategoryId];
-                    Persistence.Connection.Update(category);
+                    this.Repository.Update(category);
                 }
             }
 
             // clone challenges
             foreach (int categoryId in categories.Distinct())
             {
-                foreach (Challenge challenge in Persistence.Connection.Table<Challenge>().Where(x => x.ChallengeCategoryId == categoryId))
+                foreach (Challenge challenge in this.Repository.Find<Challenge>(x => x.ChallengeCategoryId == categoryId))
                 {
                     challenge.OwnerId = 0;
                     challenge.ChallengeCategoryId = categoryIdMap[challenge.ChallengeCategoryId];
@@ -362,7 +367,7 @@ namespace Haven
                 }
             }
 
-            Persistence.Connection.Update(board);
+            this.Repository.Update(board);
             return board;
         }
 
@@ -374,22 +379,22 @@ namespace Haven
         {
             // use same attributes and Image record
             var board = new Board() { Name = this.Name, Description = this.Description, Active = this.Active, ImageId = this.ImageId, OwnerId = this.OwnerId, TurnsToEnd = this.TurnsToEnd, NameCardsToEnd = this.NameCardsToEnd, SafeHavenCardsToEnd = this.SafeHavenCardsToEnd };
-            Persistence.Connection.Insert(board);
+            this.Repository.Add(board);
 
             // clone spaces
-            foreach (Space space in this.Spaces)
+            foreach (Space space in this.Spaces.ToList())
             {
                 space.BoardId = board.Id;
                 space.Clone();
             }
 
             // clone challenge links
-            foreach (BoardChallengeCategory category in this.ChallengeCategories)
+            foreach (BoardChallengeCategory category in this.ChallengeCategories.ToList())
             {
-                Persistence.Connection.Insert(new BoardChallengeCategory() { BoardId = board.Id, ChallengeCategoryId = category.ChallengeCategoryId });
+                this.Repository.Add(new BoardChallengeCategory() { BoardId = board.Id, ChallengeCategoryId = category.ChallengeCategoryId });
             }
 
-            Persistence.Connection.Update(board);
+            this.Repository.Update(board);
             return board;
         }
     }

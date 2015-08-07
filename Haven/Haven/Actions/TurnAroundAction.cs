@@ -6,13 +6,16 @@ namespace Haven
     {
         private void TurnAroundAction(Object input)
         {
-            Persistence.Connection.Delete(this);
-            Persistence.Connection.Execute("delete from Action where Type=? and OwnerId=?", ActionType.EndTurn, this.OwnerId);
+            // remove actions
+            this.Repository.Remove(this);
+            this.RemoveActions(ActionType.EndTurn);
+
+            // flip movement direction
             var player = this.Owner;
             player.MovementDirection = !player.MovementDirection;
-            Persistence.Connection.Update(player);
+            this.Repository.Update(player);
             Game.GetGame(this.OwnerId).EndTurn(this.OwnerId);
-            Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = "Turned around." });
+            this.Repository.Add(new Message() { PlayerId = this.OwnerId, Text = "Turned around." });
         }
     }
 }

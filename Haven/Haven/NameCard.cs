@@ -3,10 +3,12 @@ using System;
 
 namespace Haven
 {
-    public class NameCard : ICloneable<NameCard>, IEquatable<NameCard>
+    public class NameCard : IEntity, ICloneable<NameCard>, IEquatable<NameCard>
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
+
+        public IRepository Repository { private get; set; }
 
         public string Name { get; set; }
 
@@ -18,7 +20,7 @@ namespace Haven
         {
             get
             {
-                return this.ImageId == 0 ? null : Persistence.Connection.Get<Image>(this.ImageId);
+                return this.ImageId == 0 ? null : this.Repository.Get<Image>(this.ImageId);
             }
         }
 
@@ -31,7 +33,7 @@ namespace Haven
             }
 
             var nameCard = new NameCard() { Name = this.Name, Details = this.Details, ImageId = imageId };
-            Persistence.Connection.Insert(nameCard);
+            this.Repository.Add<NameCard>(nameCard);
             return nameCard;
         }
 

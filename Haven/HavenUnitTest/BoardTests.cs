@@ -8,41 +8,29 @@ namespace HavenUnitTest
     [TestFixture]
     public class BoardTests
     {
-        [TestFixtureSetUp]
-        public void Setup()
-        {
-            // create necessary tables
-            Persistence.Connection.CreateTable<Challenge>();
-            Persistence.Connection.CreateTable<ChallengeAnswer>();
-            Persistence.Connection.CreateTable<BoardChallengeCategory>();
-            Persistence.Connection.CreateTable<ChallengeCategory>();
-            Persistence.Connection.CreateTable<SpaceChallengeCategory>();
-            Persistence.Connection.CreateTable<Space>();
-            Persistence.Connection.CreateTable<Image>();
-            Persistence.Connection.CreateTable<Board>();
-        }
-
         [Test]
         public void DeleteBoard()
         {
+            var repository = new TestRepository();
+
             // create some boards and associated data
-            var board1 = CreateBoardData();
-            var board2 = CreateBoardData();
+            var board1 = CreateBoardData(repository);
+            var board2 = CreateBoardData(repository);
 
             // delete the board
             board1.Delete();
             
             // verify that the board is deleted
-            Assert.IsEmpty(Persistence.Connection.Table<Board>().Where(x => x.Id == board1.Id));
+            Assert.IsEmpty(repository.Find<Board>(x => x.Id == board1.Id));
 
             // verify that associated data is deleted
-            Assert.IsEmpty(Persistence.Connection.Table<Image>().Where(x => x.Id == board1.ImageId));
+            Assert.IsEmpty(repository.Find<Image>(x => x.Id == board1.ImageId));
             Assert.IsEmpty(board1.Challenges);
             Assert.IsEmpty(board1.Spaces);
 
             // verify that other board data is not deleted
-            Assert.IsNotEmpty(Persistence.Connection.Table<Board>().Where(x => x.Id == board2.Id));
-            Assert.IsNotEmpty(Persistence.Connection.Table<Image>().Where(x => x.Id == board2.ImageId));
+            Assert.IsNotEmpty(repository.Find<Board>(x => x.Id == board2.Id));
+            Assert.IsNotEmpty(repository.Find<Image>(x => x.Id == board2.ImageId));
             Assert.IsNotEmpty(board2.Challenges);
             Assert.IsNotEmpty(board2.Spaces);
         }
@@ -50,27 +38,31 @@ namespace HavenUnitTest
         [Test]
         public void DeleteEmptyBoard()
         {
+            var repository = new TestRepository();
+
             // create a board without any associated data
             var board = new Board();
-            Persistence.Connection.Insert(board);
+            repository.Add(board);
 
             // verify that deletion works
             board.Delete();
-            Assert.IsEmpty(Persistence.Connection.Table<Board>().Where(x => x.Id == board.Id));
+            Assert.IsEmpty(repository.Find<Board>(x => x.Id == board.Id));
         }
 
         [Test]
         public void GetNewSpace()
         {
+            var repository = new TestRepository();
+
             // create a board with some spaces
             var board = new Board();
-            Persistence.Connection.Insert(board);
+            repository.Add(board);
             var space1 = new Space() { BoardId = board.Id, Order = 10 };
             var space2 = new Space() { BoardId = board.Id, Order = 20 };
             var space3 = new Space() { BoardId = board.Id, Order = 30 };
             var space4 = new Space() { BoardId = board.Id, Order = 40 };
             var space5 = new Space() { BoardId = board.Id, Order = 50 };
-            Persistence.Connection.InsertAll(new Space[] { space1, space2, space3, space4, space5 });
+            repository.AddAll(new Space[] { space1, space2, space3, space4, space5 });
 
             // verify that the correct space is returned moving forward
             Assert.AreEqual(space2.Id, board.GetNewSpace(space1.Id, 1, true).Id);
@@ -102,11 +94,13 @@ namespace HavenUnitTest
         [Test]
         public void GetNewSpaceSingleSpace()
         {
+            var repository = new TestRepository();
+
             // create a board with a single space
             var board = new Board();
-            Persistence.Connection.Insert(board);
+            repository.Add(board);
             var space = new Space() { BoardId = board.Id, Order = 10 };
-            Persistence.Connection.Insert(space);
+            repository.Add(space);
 
             // verify that the same space is returned when moving forward
             Assert.AreEqual(space.Id, board.GetNewSpace(space.Id, 1, true).Id);
@@ -120,9 +114,11 @@ namespace HavenUnitTest
         [Test]
         public void GetNewSpaceNoSpace()
         {
+            var repository = new TestRepository();
+
             // create a board without spaces
             var board = new Board();
-            Persistence.Connection.Insert(board);
+            repository.Add(board);
 
             // verify that an exception is raised when trying to move
             Assert.Catch<Exception>(() => board.GetNewSpace(0, 1, true));
@@ -131,8 +127,10 @@ namespace HavenUnitTest
         [Test]
         public void CloneBoard()
         {
+            var repository = new TestRepository();
+
             // create a board and associated data
-            var board = CreateBoardData();
+            var board = CreateBoardData(repository);
 
             // clone the board
             var clonedBoard = board.Clone();
@@ -153,8 +151,8 @@ namespace HavenUnitTest
             Assert.AreEqual(board.Spaces.Select(x => clonedBoard.Id), clonedBoard.Spaces.Select(x => x.BoardId));
             Assert.AreEqual(board.Spaces.Select(x => x.Order), clonedBoard.Spaces.Select(x => x.Order));
             Assert.AreNotEqual(board.Spaces.Select(x => x.ChallengeCategories.Select(y => y.Id)), clonedBoard.Spaces.Select(x => x.ChallengeCategories.Select(y => y.Id)));
-            Assert.AreEqual(board.Spaces.Select(x => x.ChallengeCategories.Select(y => Persistence.Connection.Get<ChallengeCategory>(y.ChallengeCategoryId).Name)), clonedBoard.Spaces.Select(x => x.ChallengeCategories.Select(y => Persistence.Connection.Get<ChallengeCategory>(y.ChallengeCategoryId).Name)));
-            Assert.AreNotEqual(board.Spaces.Select(x => x.ChallengeCategories.Select(y => Persistence.Connection.Get<ChallengeCategory>(y.ChallengeCategoryId).Id)), clonedBoard.Spaces.Select(x => x.ChallengeCategories.Select(y => Persistence.Connection.Get<ChallengeCategory>(y.ChallengeCategoryId).Id)));
+            Assert.AreEqual(board.Spaces.Select(x => x.ChallengeCategories.Select(y => repository.Get<ChallengeCategory>(y.ChallengeCategoryId).Name)), clonedBoard.Spaces.Select(x => x.ChallengeCategories.Select(y => repository.Get<ChallengeCategory>(y.ChallengeCategoryId).Name)));
+            Assert.AreNotEqual(board.Spaces.Select(x => x.ChallengeCategories.Select(y => repository.Get<ChallengeCategory>(y.ChallengeCategoryId).Id)), clonedBoard.Spaces.Select(x => x.ChallengeCategories.Select(y => repository.Get<ChallengeCategory>(y.ChallengeCategoryId).Id)));
 
             // challenges
             Assert.AreNotEqual(board.Challenges.Select(x => x.Id), clonedBoard.Challenges.Select(x => x.Id));
@@ -162,8 +160,8 @@ namespace HavenUnitTest
             Assert.AreEqual(board.Challenges.Select(x => 0), clonedBoard.Challenges.Select(x => x.OwnerId));
            
             // categories
-            var categories = board.Challenges.Select(x => Persistence.Connection.Get<ChallengeCategory>(x.ChallengeCategoryId));
-            var clonedCategories = clonedBoard.Challenges.Select(x => Persistence.Connection.Get<ChallengeCategory>(x.ChallengeCategoryId));
+            var categories = board.Challenges.Select(x => repository.Get<ChallengeCategory>(x.ChallengeCategoryId));
+            var clonedCategories = clonedBoard.Challenges.Select(x => repository.Get<ChallengeCategory>(x.ChallengeCategoryId));
             Assert.AreNotEqual(categories.Select(x => x.Id), clonedCategories.Select(x => x.Id));
             Assert.AreEqual(categories.Select(x => x.Name), clonedCategories.Select(x => x.Name));
             Assert.AreEqual(categories.Select(x => 0), clonedCategories.Select(x => x.OwnerId));
@@ -172,10 +170,12 @@ namespace HavenUnitTest
         [Test]
         public void CloneEmptyBoard()
         {
+            var repository = new TestRepository();
+
             // create a board without any associated data
             var board = new Board();
             board.Name = "test1";
-            Persistence.Connection.Insert(board);
+            repository.Add(board);
 
             // clone the board
             var clonedBoard = board.Clone();
@@ -188,8 +188,10 @@ namespace HavenUnitTest
         [Test]
         public void CopyBoard()
         {
+            var repository = new TestRepository();
+
             // create a board and associated data
-            var board = CreateBoardData();
+            var board = CreateBoardData(repository);
 
             // copy the board
             var copiedBoard = board.Copy();
@@ -208,17 +210,19 @@ namespace HavenUnitTest
             Assert.AreEqual(board.Spaces.Select(x => copiedBoard.Id), copiedBoard.Spaces.Select(x => x.BoardId));
             Assert.AreEqual(board.Spaces.Select(x => x.Order), copiedBoard.Spaces.Select(x => x.Order));
             Assert.AreNotEqual(board.Spaces.Select(x => x.ChallengeCategories.Select(y => y.Id)), copiedBoard.Spaces.Select(x => x.ChallengeCategories.Select(y => y.Id)));
-            Assert.AreEqual(board.Spaces.Select(x => x.ChallengeCategories.Select(y => Persistence.Connection.Get<ChallengeCategory>(y.ChallengeCategoryId).Id)), copiedBoard.Spaces.Select(x => x.ChallengeCategories.Select(y => Persistence.Connection.Get<ChallengeCategory>(y.ChallengeCategoryId).Id)));
+            Assert.AreEqual(board.Spaces.Select(x => x.ChallengeCategories.Select(y => repository.Get<ChallengeCategory>(y.ChallengeCategoryId).Id)), copiedBoard.Spaces.Select(x => x.ChallengeCategories.Select(y => repository.Get<ChallengeCategory>(y.ChallengeCategoryId).Id)));
             Assert.AreEqual(board.Challenges.Select(x => x.Id), copiedBoard.Challenges.Select(x => x.Id));
         }
 
         [Test]
         public void CopyEmptyBoard()
         {
+            var repository = new TestRepository();
+
             // create a board without any associated data
             var board = new Board();
             board.Name = "test1";
-            Persistence.Connection.Insert(board);
+            repository.Add(board);
 
             // clone the board
             var copiedBoard = board.Copy();
@@ -228,28 +232,28 @@ namespace HavenUnitTest
             Assert.AreEqual(board.Name, copiedBoard.Name);
         }
 
-        private Board CreateBoardData()
+        private Board CreateBoardData(TestRepository repository)
         {
             var image = new Image() { Filename = "test.jpg" };
-            Persistence.Connection.Insert(image);
+            repository.Add(image);
             var board = new Board() { ImageId = image.Id, Active = true, Description = "test1", Name = "test3", OwnerId = 4, TurnsToEnd = 50, NameCardsToEnd = 10, SafeHavenCardsToEnd = 5 };
-            Persistence.Connection.Insert(board);
+            repository.Add(board);
             var space1 = new Space() { BoardId = board.Id, Order = 10 };
             var space2 = new Space() { BoardId = board.Id, Order = 20 };
             var space3 = new Space() { BoardId = board.Id, Order = 30 };
-            Persistence.Connection.InsertAll(new Space[] { space1, space2, space3 });
+            repository.AddAll(new Space[] { space1, space2, space3 });
             var category1 = new ChallengeCategory() { Name = "test1", OwnerId = 2 };
             var category2 = new ChallengeCategory() { Name = "test3", OwnerId = 4 };
             var category3 = new ChallengeCategory() { Name = "test4", OwnerId = 4 };
             var categories = new ChallengeCategory[] { category1, category2, category3 };
-            Persistence.Connection.InsertAll(categories);
-            Persistence.Connection.Insert(new SpaceChallengeCategory() { SpaceId = space1.Id, ChallengeCategoryId = category1.Id });
-            Persistence.Connection.Insert(new SpaceChallengeCategory() { SpaceId = space2.Id, ChallengeCategoryId = category3.Id });
+            repository.AddAll(categories);
+            repository.Add(new SpaceChallengeCategory() { SpaceId = space1.Id, ChallengeCategoryId = category1.Id });
+            repository.Add(new SpaceChallengeCategory() { SpaceId = space2.Id, ChallengeCategoryId = category3.Id });
             var challenge1 = new Challenge() { Question = "test1", ChallengeCategoryId = category1.Id, OwnerId = 3 };
             var challenge2 = new Challenge() { Question = "test2", ChallengeCategoryId = category2.Id, OwnerId = 4 };
-            Persistence.Connection.InsertAll(new Challenge[] { challenge1, challenge2 });
-            Persistence.Connection.Insert(new BoardChallengeCategory() { BoardId = board.Id, ChallengeCategoryId = category1.Id });
-            Persistence.Connection.Insert(new BoardChallengeCategory() { BoardId = board.Id, ChallengeCategoryId = category2.Id });
+            repository.AddAll(new Challenge[] { challenge1, challenge2 });
+            repository.Add(new BoardChallengeCategory() { BoardId = board.Id, ChallengeCategoryId = category1.Id });
+            repository.Add(new BoardChallengeCategory() { BoardId = board.Id, ChallengeCategoryId = category2.Id });
             return board;
         }
     }

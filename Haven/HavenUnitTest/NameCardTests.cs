@@ -6,20 +6,16 @@ namespace HavenUnitTest
     [TestFixture]
     public class NameCardTests
     {
-        [TestFixtureSetUp]
-        public void Setup()
-        {
-            Persistence.Connection.CreateTable<NameCard>();
-        }
-
         [Test]
         public void CloneNameCard()
         {
+            var repository = new TestRepository();
+
             // create a name card
             var image = new Image() { Filename = "test1" };
-            Persistence.Connection.Insert(image);
+            repository.Add<Image>(image);
             var nameCard = new NameCard() { Name = "test1", Details = "test2", ImageId = image.Id };
-            Persistence.Connection.Insert(nameCard);
+            repository.Add<NameCard>(nameCard);
 
             // clone the name card
             var clonedCard = nameCard.Clone();

@@ -1,11 +1,14 @@
 ﻿using SQLite;
+using System.Linq;
 
 namespace Haven
 {
-    public class ChallengeCategory : IDeletable, ICloneable<ChallengeCategory>
+    public class ChallengeCategory : IEntity, IDeletable, ICloneable<ChallengeCategory>
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
+
+        public IRepository Repository { private get; set; }
 
         public string Name { get; set; }
 
@@ -13,23 +16,32 @@ namespace Haven
 
         public void Delete()
         {
-            // delete category
-            Persistence.Connection.Delete<ChallengeCategory>(this.Id);
-
             // delete challenges in the category
-            Persistence.Connection.Execute("delete from Challenge where ChallengeCategoryId=?", this.Id);
+            foreach (Challenge challenge in this.Repository.Find<Challenge>(x => x.ChallengeCategoryId == this.Id).ToList())
+            {
+                this.Repository.Remove(challenge);
+            }
 
             // remove links from any spaces
-            Persistence.Connection.Execute("delete from SpaceChallengeCategory where ChallengeCategoryId=?", this.Id);
+            foreach (SpaceChallengeCategory link in this.Repository.Find<SpaceChallengeCategory>(x => x.ChallengeCategoryId == this.Id).ToList())
+            {
+                this.Repository.Remove(link);
+            }
 
             // remove links from boards
-            Persistence.Connection.Execute("delete from BoardChallengeCategory where ChallengeCategoryId=?", this.Id);
+            foreach (BoardChallengeCategory link in this.Repository.Find<BoardChallengeCategory>(x => x.ChallengeCategoryId == this.Id).ToList())
+            {
+                this.Repository.Remove(link);
+            }
+
+            // delete category
+            this.Repository.Remove(this);
         }
 
         public ChallengeCategory Clone()
         {
             var category = new ChallengeCategory() { Name = this.Name, OwnerId = this.OwnerId };
-            Persistence.Connection.Insert(category);
+            this.Repository.Add(category);
             return category;
         }
     }

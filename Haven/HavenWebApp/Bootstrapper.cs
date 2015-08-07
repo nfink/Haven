@@ -6,6 +6,7 @@ using Nancy.TinyIoc;
 using React;
 using System.IO;
 using System.Collections.Generic;
+using Haven;
 
 namespace HavenWebApp
 {
@@ -34,6 +35,7 @@ namespace HavenWebApp
             // As this is now per-request we could inject a request scoped
             // database "context" or other request scoped services.
             container.Register<IUserMapper, UserMapper>();
+            container.Register<IRepository, Repository>().AsMultiInstance();
         }
 
         protected override void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)

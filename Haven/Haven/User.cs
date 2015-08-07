@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Newtonsoft.Json;
 using SQLite;
-using Newtonsoft.Json;
 
 namespace Haven
 {
-    public class User
+    public class User : IEntity
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
+
+        public IRepository Repository { private get; set; }
 
         [JsonIgnore]
         public string Guid { get; set; }
@@ -25,7 +22,7 @@ namespace Haven
         {
             string savedPasswordHash = Haven.Password.HashPassword(password);
             this.Password = savedPasswordHash;
-            Persistence.Connection.Update(this);
+            this.Repository.Update<User>(this);
         }
 
         public bool VerifyPassword(string password)

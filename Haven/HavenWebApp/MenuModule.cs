@@ -2,6 +2,7 @@
 using Haven.Data;
 using Nancy;
 using Newtonsoft.Json;
+using Nancy.TinyIoc;
 
 namespace HavenWebApp
 {
@@ -9,7 +10,7 @@ namespace HavenWebApp
     {
         public static DataLoad DataLoad;
 
-        public MenuModule(IRootPathProvider pathProvider)
+        public MenuModule(IRootPathProvider pathProvider, IRepository repository)
         {
             if (DataLoad == null)
             {
@@ -26,12 +27,18 @@ namespace HavenWebApp
 
             Get["/Pieces"] = parameters =>
             {
-                return JsonConvert.SerializeObject(Piece.Pieces);
+                using (repository)
+                {
+                    return JsonConvert.SerializeObject(repository.FindAll<Piece>());
+                }
             };
 
             Get["/Colors"] = parameters =>
             {
-                return JsonConvert.SerializeObject(Color.Colors);
+                using (repository)
+                {
+                    return JsonConvert.SerializeObject(repository.FindAll<Color>());
+                }
             };
 
             #if DEBUG

@@ -7,7 +7,7 @@ namespace Haven
         private void ExchangePlacesAction(Object input)
         {
             // remove all exchange places actions
-            Persistence.Connection.Execute("delete from Action where Type=? and OwnerId=?", ActionType.ExchangePlaces, this.OwnerId);
+            this.RemoveActions(ActionType.ExchangePlaces);
 
             // swap locations
             var player = this.Owner;
@@ -15,11 +15,11 @@ namespace Haven
             var swapLocation = player.SpaceId;
             player.SpaceId = playerToExchangeWith.SpaceId;
             playerToExchangeWith.SpaceId = swapLocation;
-            Persistence.Connection.Update(player);
-            Persistence.Connection.Update(playerToExchangeWith);
+            this.Repository.Update(player);
+            this.Repository.Update(playerToExchangeWith);
 
             Game.GetGame(this.OwnerId).EndTurn(this.OwnerId);
-            Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = string.Format("Exchanged places with {0}.", playerToExchangeWith.Name) });
+            this.Repository.Add(new Message() { PlayerId = this.OwnerId, Text = string.Format("Exchanged places with {0}.", playerToExchangeWith.Name) });
         }
     }
 }

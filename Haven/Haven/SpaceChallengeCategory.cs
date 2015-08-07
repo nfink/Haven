@@ -2,10 +2,12 @@
 
 namespace Haven
 {
-    public class SpaceChallengeCategory
+    public class SpaceChallengeCategory : IEntity
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
+
+        public IRepository Repository { private get; set; }
 
         public int SpaceId { get; set; }
 
