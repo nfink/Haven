@@ -7,108 +7,109 @@ namespace HavenUnitTest
     [TestFixture]
     public class SpaceTests
     {
-        [TestFixtureSetUp]
-        public void Setup()
-        {
-            Persistence.Connection.CreateTable<SpaceChallengeCategory>();
-            Persistence.Connection.CreateTable<NameCard>();
-            Persistence.Connection.CreateTable<SafeHavenCard>();
-            Persistence.Connection.CreateTable<Space>();
-        }
-
         [Test]
         public void DeleteSpace()
         {
+            var repository = new TestRepository();
+
             // create spaces
             var space1 = new Space();
             var space2 = new Space();
-            Persistence.Connection.InsertAll(new Space[] { space1, space2 });
+            repository.AddAll(new Space[] { space1, space2 });
 
             // delete a space
             space1.Delete();
 
             // verify that space is deleted
-            Assert.IsEmpty(Persistence.Connection.Table<Space>().Where(x => x.Id == space1.Id));
+            Assert.IsEmpty(repository.Find<Space>(x => x.Id == space1.Id));
 
             // verify that other space is not deleted
-            Assert.IsNotEmpty(Persistence.Connection.Table<Space>().Where(x => x.Id == space2.Id));
+            Assert.IsNotEmpty(repository.Find<Space>(x => x.Id == space2.Id));
         }
 
         [Test]
         public void DeletedChallengeSpace()
         {
+            var repository = new TestRepository();
+
             // create challenge spaces
             var nameCard1 = new NameCard();
             var nameCard2 = new NameCard();
-            Persistence.Connection.InsertAll(new NameCard[] { nameCard1, nameCard2 });
+            repository.AddAll(new NameCard[] { nameCard1, nameCard2 });
             var space1 = new Space() { NameCardId = nameCard1.Id };
             var space2 = new Space() { NameCardId = nameCard2.Id };
-            Persistence.Connection.InsertAll(new Space[] { space1, space2 });
+            repository.AddAll(new Space[] { space1, space2 });
 
             // delete a space
             space1.Delete();
             
             // verify that space is deleted
-            Assert.IsEmpty(Persistence.Connection.Table<Space>().Where(x => x.Id == space1.Id));
+            Assert.IsEmpty(repository.Find<Space>(x => x.Id == space1.Id));
             
             // verify that name card is deleted
-            Assert.IsEmpty(Persistence.Connection.Table<NameCard>().Where(x => x.Id == space1.NameCardId));
+            Assert.IsEmpty(repository.Find<NameCard>(x => x.Id == space1.NameCardId));
 
             // verify that other space data is not deleted
-            Assert.IsNotEmpty(Persistence.Connection.Table<Space>().Where(x => x.Id == space2.Id));
-            Assert.IsNotEmpty(Persistence.Connection.Table<NameCard>().Where(x => x.Id == space2.NameCardId));
+            Assert.IsNotEmpty(repository.Find<Space>(x => x.Id == space2.Id));
+            Assert.IsNotEmpty(repository.Find<NameCard>(x => x.Id == space2.NameCardId));
         }
 
         [Test]
         public void DeletedSafeHavenSpace()
         {
+            var repository = new TestRepository();
+
             // create safe haven spaces
             var safeHavenCard1 = new SafeHavenCard();
             var safeHavenCard2 = new SafeHavenCard();
-            Persistence.Connection.InsertAll(new SafeHavenCard[] { safeHavenCard1, safeHavenCard2 });
+            repository.AddAll(new SafeHavenCard[] { safeHavenCard1, safeHavenCard2 });
             var space1 = new Space() { SafeHavenCardId = safeHavenCard1.Id };
             var space2 = new Space() { SafeHavenCardId = safeHavenCard2.Id };
-            Persistence.Connection.InsertAll(new Space[] { space1, space2 });
+            repository.AddAll(new Space[] { space1, space2 });
 
             // delete a space
             space1.Delete();
 
             // verify that space is deleted
-            Assert.IsEmpty(Persistence.Connection.Table<Space>().Where(x => x.Id == space1.Id));
+            Assert.IsEmpty(repository.Find<Space>(x => x.Id == space1.Id));
 
             // verify that safe haven card is deleted
-            Assert.IsEmpty(Persistence.Connection.Table<SafeHavenCard>().Where(x => x.Id == space1.SafeHavenCardId));
+            Assert.IsEmpty(repository.Find<SafeHavenCard>(x => x.Id == space1.SafeHavenCardId));
 
             // verify that other space data is not deleted
-            Assert.IsNotEmpty(Persistence.Connection.Table<Space>().Where(x => x.Id == space2.Id));
-            Assert.IsNotEmpty(Persistence.Connection.Table<SafeHavenCard>().Where(x => x.Id == space2.SafeHavenCardId));
+            Assert.IsNotEmpty(repository.Find<Space>(x => x.Id == space2.Id));
+            Assert.IsNotEmpty(repository.Find<SafeHavenCard>(x => x.Id == space2.SafeHavenCardId));
         }
 
         [Test]
         public void DeletedSpaceWithCategories()
         {
+            var repository = new TestRepository();
+
             // create a space with category links
             var space = new Space();
-            Persistence.Connection.Insert(space);
-            Persistence.Connection.Insert(new SpaceChallengeCategory() { SpaceId = space.Id, ChallengeCategoryId = 1 });
-            Persistence.Connection.Insert(new SpaceChallengeCategory() { SpaceId = space.Id, ChallengeCategoryId = 2 });
+            repository.Add(space);
+            repository.Add(new SpaceChallengeCategory() { SpaceId = space.Id, ChallengeCategoryId = 1 });
+            repository.Add(new SpaceChallengeCategory() { SpaceId = space.Id, ChallengeCategoryId = 2 });
 
             // delete a space
             space.Delete();
 
             // verify that space is deleted
-            Assert.IsEmpty(Persistence.Connection.Table<Space>().Where(x => x.Id == space.Id));
+            Assert.IsEmpty(repository.Find<Space>(x => x.Id == space.Id));
 
             // verify that category links are deleted
-            Assert.IsEmpty(Persistence.Connection.Table<SpaceChallengeCategory>().Where(x => x.SpaceId == space.Id));
+            Assert.IsEmpty(repository.Find<SpaceChallengeCategory>(x => x.SpaceId == space.Id));
         }
 
         [Test]
         public void CloneSpace()
         {
+            var repository = new TestRepository();
+
             // create a space
             var space = new Space() { BackgroundColorId = 1, BoardId = 2, Height = 3, ImageId = 4, Order = 5, TextColorId = 6, Type = SpaceType.TurnAround, Width = 7, X = 8, Y = 9 };
-            Persistence.Connection.Insert(space);
+            repository.Add(space);
 
             // clone the space
             var clonedSpace = space.Clone();
@@ -131,11 +132,13 @@ namespace HavenUnitTest
         [Test]
         public void CloneChallengeSpace()
         {
+            var repository = new TestRepository();
+
             // create a space with a name card
             var nameCard = new NameCard() { Name = "test1" };
-            Persistence.Connection.Insert(nameCard);
+            repository.Add(nameCard);
             var space = new Space() { NameCardId = nameCard.Id, Order = 10 };
-            Persistence.Connection.Insert(space);
+            repository.Add(space);
 
             // clone the space
             var clonedSpace = space.Clone();
@@ -150,11 +153,13 @@ namespace HavenUnitTest
         [Test]
         public void CloneSafeHavenSpace()
         {
+            var repository = new TestRepository();
+
             // create a space with a safe haven card
             var safeHavenCard = new SafeHavenCard() { Name = "test1" };
-            Persistence.Connection.Insert(safeHavenCard);
+            repository.Add(safeHavenCard);
             var space = new Space() { SafeHavenCardId = safeHavenCard.Id, Order = 10 };
-            Persistence.Connection.Insert(space);
+            repository.Add(space);
 
             // clone the space
             var clonedSpace = space.Clone();
@@ -169,11 +174,13 @@ namespace HavenUnitTest
         [Test]
         public void CloneSpaceWithCategories()
         {
+            var repository = new TestRepository();
+
             // create a space with category links
             var space = new Space() { Order = 10 };
-            Persistence.Connection.Insert(space);
-            Persistence.Connection.Insert(new SpaceChallengeCategory() { SpaceId = space.Id, ChallengeCategoryId = 1 });
-            Persistence.Connection.Insert(new SpaceChallengeCategory() { SpaceId = space.Id, ChallengeCategoryId = 2 });
+            repository.Add(space);
+            repository.Add(new SpaceChallengeCategory() { SpaceId = space.Id, ChallengeCategoryId = 1 });
+            repository.Add(new SpaceChallengeCategory() { SpaceId = space.Id, ChallengeCategoryId = 2 });
 
             // clone the space
             var clonedSpace = space.Clone();

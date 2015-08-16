@@ -6,13 +6,13 @@ namespace Haven
     {
         private void EnterNameAction(Object input)
         {
-            Persistence.Connection.Delete(this);
+            this.Repository.Remove(this);
             var player = this.Owner;
             player.Name = (string)input;
-            Persistence.Connection.Update(player);
-            var game = Persistence.Connection.Get<Game>(player.GameId);
+            this.Repository.Update(player);
+            var game = this.Repository.Get<Game>(player.GameId);
             game.StartGame();
-            Persistence.Connection.Insert(new Message() { PlayerId = player.Id, Text = string.Format("Welcome {0}!", player.Name) });
+            this.Repository.Add(new Message() { PlayerId = player.Id, Text = string.Format("Welcome {0}!", player.Name) });
         }
     }
 }

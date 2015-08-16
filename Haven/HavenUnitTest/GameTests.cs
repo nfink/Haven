@@ -8,81 +8,67 @@ namespace HavenUnitTest
     [TestFixture]
     public class GameTests
     {
-        [TestFixtureSetUp]
-        public void Setup()
-        {
-            // create necessary tables
-            Persistence.Connection.CreateTable<Challenge>();
-            Persistence.Connection.CreateTable<ChallengeAnswer>();
-            Persistence.Connection.CreateTable<ChallengeCategory>();
-            Persistence.Connection.CreateTable<UsedChallenge>();
-            Persistence.Connection.CreateTable<Board>();
-            Persistence.Connection.CreateTable<BoardChallengeCategory>();
-            Persistence.Connection.CreateTable<Space>();
-            Persistence.Connection.CreateTable<SpaceChallengeCategory>();
-            Persistence.Connection.CreateTable<Haven.Action>();
-            Persistence.Connection.CreateTable<PlayerNameCard>();
-            Persistence.Connection.CreateTable<PlayerSafeHavenCard>();
-            Persistence.Connection.CreateTable<Message>();
-            Persistence.Connection.CreateTable<Player>();
-            Persistence.Connection.CreateTable<Game>();
-        }
-
         [Test]
         public void DeleteGame()
         {
+            var repository = new TestRepository();
+
             // create games with players and used challenges
-            var game1 = CreateGameData();
-            var game2 = CreateGameData();
+            var game1 = CreateGameData(repository);
+            var game2 = CreateGameData(repository);
 
             // delete a game
             game1.Delete();
 
             // verify that the game is deleted
-            Assert.IsEmpty(Persistence.Connection.Table<Game>().Where(x => x.Id == game1.Id));
+            Assert.IsEmpty(repository.Find<Game>(x => x.Id == game1.Id));
 
             // verify that players are deleted
-            Assert.IsEmpty(Persistence.Connection.Table<Player>().Where(x => x.GameId == game1.Id));
+            Assert.IsEmpty(repository.Find<Player>(x => x.GameId == game1.Id));
 
             // verify that challenges are not marked as used
-            Assert.IsEmpty(Persistence.Connection.Table<UsedChallenge>().Where(x => x.GameId == game1.Id));
+            Assert.IsEmpty(repository.Find<UsedChallenge>(x => x.GameId == game1.Id));
 
             // verify that data from other game is not deleted
-            Assert.IsNotEmpty(Persistence.Connection.Table<Game>().Where(x => x.Id == game2.Id));
-            Assert.IsNotEmpty(Persistence.Connection.Table<Player>().Where(x => x.GameId == game2.Id));
-            Assert.IsNotEmpty(Persistence.Connection.Table<UsedChallenge>().Where(x => x.GameId == game2.Id));
+            Assert.IsNotEmpty(repository.Find<Game>(x => x.Id == game2.Id));
+            Assert.IsNotEmpty(repository.Find<Player>(x => x.GameId == game2.Id));
+            Assert.IsNotEmpty(repository.Find<UsedChallenge>(x => x.GameId == game2.Id));
         }
 
         [Test]
         public void DeleteEmptyGame()
         {
+            var repository = new TestRepository();
+
             // create a game without players or used challenges
             var game = new Game();
-            Persistence.Connection.Insert(game);
+            repository.Add(game);
 
             // delete the game
             game.Delete();
 
             // verify that deletion works
-            Assert.IsEmpty(Persistence.Connection.Table<Game>().Where(x => x.Id == game.Id));
+            Assert.IsEmpty(repository.Find<Game>(x => x.Id == game.Id));
         }
 
         [Test]
         public void GetNextChallengeBoardCategory()
         {
+            var repository = new TestRepository();
+
             // create a game with some challenges
             var board = new Board();
-            Persistence.Connection.Insert(board);
+            repository.Add(board);
             var game = new Game() { BoardId = board.Id };
-            Persistence.Connection.Insert(game);
+            repository.Add(game);
             var category = new ChallengeCategory();
-            Persistence.Connection.Insert(category);
+            repository.Add(category);
             var challenge1 = new Challenge() { ChallengeCategoryId = category.Id };
             var challenge2 = new Challenge() { ChallengeCategoryId = category.Id };
             var challenge3 = new Challenge() { ChallengeCategoryId = category.Id };
             var challenges = new Challenge[] { challenge1, challenge2, challenge3 };
-            Persistence.Connection.InsertAll(challenges);
-            Persistence.Connection.Insert(new BoardChallengeCategory() { BoardId = board.Id, ChallengeCategoryId = category.Id });
+            repository.AddAll(challenges);
+            repository.Add(new BoardChallengeCategory() { BoardId = board.Id, ChallengeCategoryId = category.Id });
 
             // keep getting the next challenge until all challenges should have been used
             var usedChallenges = new List<Challenge>();
@@ -101,24 +87,26 @@ namespace HavenUnitTest
         [Test]
         public void GetNextChallengeMultipleBoardCategories()
         {
+            var repository = new TestRepository();
+
             // create a game with some challenges
             var board = new Board();
-            Persistence.Connection.Insert(board);
+            repository.Add(board);
             var game = new Game() { BoardId = board.Id };
-            Persistence.Connection.Insert(game);
+            repository.Add(game);
             var category1 = new ChallengeCategory();
             var category2 = new ChallengeCategory();
-            Persistence.Connection.Insert(category1);
-            Persistence.Connection.Insert(category2);
+            repository.Add(category1);
+            repository.Add(category2);
             var challenge1 = new Challenge() { ChallengeCategoryId = category1.Id };
             var challenge2 = new Challenge() { ChallengeCategoryId = category1.Id };
             var challenge3 = new Challenge() { ChallengeCategoryId = category2.Id };
             var challenge4 = new Challenge() { ChallengeCategoryId = category2.Id };
             var challenge5 = new Challenge() { ChallengeCategoryId = category2.Id };
             var challenges = new Challenge[] { challenge1, challenge2, challenge3, challenge4, challenge5 };
-            Persistence.Connection.InsertAll(challenges);
-            Persistence.Connection.Insert(new BoardChallengeCategory() { BoardId = board.Id, ChallengeCategoryId = category1.Id });
-            Persistence.Connection.Insert(new BoardChallengeCategory() { BoardId = board.Id, ChallengeCategoryId = category2.Id });
+            repository.AddAll(challenges);
+            repository.Add(new BoardChallengeCategory() { BoardId = board.Id, ChallengeCategoryId = category1.Id });
+            repository.Add(new BoardChallengeCategory() { BoardId = board.Id, ChallengeCategoryId = category2.Id });
 
             // get some challenges (which ones will be used is indeterminate)
             for (int i = 0; i < 10; i++)
@@ -130,21 +118,23 @@ namespace HavenUnitTest
         [Test]
         public void GetNextChallengeSpaceCategory()
         {
+            var repository = new TestRepository();
+
             // create a game with some challenges
             var board = new Board();
-            Persistence.Connection.Insert(board);
+            repository.Add(board);
             var game = new Game() { BoardId = board.Id };
-            Persistence.Connection.Insert(game);
+            repository.Add(game);
             var category = new ChallengeCategory();
-            Persistence.Connection.Insert(category);
+            repository.Add(category);
             var challenge1 = new Challenge() { ChallengeCategoryId = category.Id };
             var challenge2 = new Challenge() { ChallengeCategoryId = category.Id };
             var challenge3 = new Challenge() { ChallengeCategoryId = category.Id };
             var challenges = new Challenge[] { challenge1, challenge2, challenge3 };
-            Persistence.Connection.InsertAll(challenges);
+            repository.AddAll(challenges);
             var space = new Space() { BoardId = board.Id };
-            Persistence.Connection.Insert(space);
-            Persistence.Connection.Insert(new SpaceChallengeCategory() { SpaceId=space.Id, ChallengeCategoryId = category.Id });
+            repository.Add(space);
+            repository.Add(new SpaceChallengeCategory() { SpaceId=space.Id, ChallengeCategoryId = category.Id });
 
             // keep getting the next challenge until all challenges should have been used
             var usedChallenges = new List<Challenge>();
@@ -163,26 +153,28 @@ namespace HavenUnitTest
         [Test]
         public void GetNextChallengeMultipleSpaceCategories()
         {
+            var repository = new TestRepository();
+
             // create a game with some challenges
             var board = new Board();
-            Persistence.Connection.Insert(board);
+            repository.Add(board);
             var game = new Game() { BoardId = board.Id };
-            Persistence.Connection.Insert(game);
+            repository.Add(game);
             var category1 = new ChallengeCategory();
             var category2 = new ChallengeCategory();
-            Persistence.Connection.Insert(category1);
-            Persistence.Connection.Insert(category2);
+            repository.Add(category1);
+            repository.Add(category2);
             var challenge1 = new Challenge() { ChallengeCategoryId = category1.Id };
             var challenge2 = new Challenge() { ChallengeCategoryId = category1.Id };
             var challenge3 = new Challenge() { ChallengeCategoryId = category2.Id };
             var challenge4 = new Challenge() { ChallengeCategoryId = category2.Id };
             var challenge5 = new Challenge() { ChallengeCategoryId = category2.Id };
             var challenges = new Challenge[] { challenge1, challenge2, challenge3, challenge4, challenge5 };
-            Persistence.Connection.InsertAll(challenges);
+            repository.AddAll(challenges);
             var space = new Space() { BoardId = board.Id };
-            Persistence.Connection.Insert(space);
-            Persistence.Connection.Insert(new SpaceChallengeCategory() { SpaceId = space.Id, ChallengeCategoryId = category1.Id });
-            Persistence.Connection.Insert(new SpaceChallengeCategory() { SpaceId = space.Id, ChallengeCategoryId = category2.Id });
+            repository.Add(space);
+            repository.Add(new SpaceChallengeCategory() { SpaceId = space.Id, ChallengeCategoryId = category1.Id });
+            repository.Add(new SpaceChallengeCategory() { SpaceId = space.Id, ChallengeCategoryId = category2.Id });
 
             // get some challenges (which ones will be used is indeterminate)
             for (int i = 0; i < 10; i++)
@@ -192,25 +184,25 @@ namespace HavenUnitTest
         }
 
 
-        private Game CreateGameData()
+        private Game CreateGameData(TestRepository repository)
         {
             // create game
             var board = new Board();
-            Persistence.Connection.Insert(board);
-            Persistence.Connection.Insert(new Space() { BoardId = board.Id });
+            repository.Add(board);
+            repository.Add(new Space() { BoardId = board.Id });
             var game = new Game() { BoardId = board.Id };
-            Persistence.Connection.Insert(game);
+            repository.Add(game);
 
             // add challenges
             var challenge1 = new Challenge();
             var challenge2 = new Challenge();
             var challenge3 = new Challenge();
             var challenge4 = new Challenge();
-            Persistence.Connection.InsertAll(new Challenge[] { challenge1, challenge2, challenge3, challenge4 });
+            repository.AddAll(new Challenge[] { challenge1, challenge2, challenge3, challenge4 });
             
             // mark some challenges as used
-            Persistence.Connection.Insert(new UsedChallenge() { GameId = game.Id, ChallengeId = challenge1.Id });
-            Persistence.Connection.Insert(new UsedChallenge() { GameId = game.Id, ChallengeId = challenge2.Id });
+            repository.Add(new UsedChallenge() { GameId = game.Id, ChallengeId = challenge1.Id });
+            repository.Add(new UsedChallenge() { GameId = game.Id, ChallengeId = challenge2.Id });
 
             // add players
             game.AddPlayer();

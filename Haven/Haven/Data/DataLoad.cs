@@ -324,8 +324,7 @@ namespace Haven.Data
         public void LoadUser()
         {
             this.Connection.CreateTable<User>();
-            var testUser = new User() { Id = 1, Username = "test", Guid = Guid.NewGuid().ToString() };
-            testUser.SetPassword("password");
+            var testUser = new User() { Id = 1, Username = "test", Guid = Guid.NewGuid().ToString(), Password = "iJahIbXk+C1Rh1cTsEFJZRBAoL+XVIcrXVOIgzToC9stvzdg" };
             this.Connection.Insert(testUser);
         }
     }

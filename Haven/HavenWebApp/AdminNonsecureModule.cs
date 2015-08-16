@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using Haven;
 using Nancy;
-using Nancy.Security;
 using Nancy.Authentication.Forms;
+using Nancy.TinyIoc;
 
 namespace HavenWebApp
 {
     public class AdminNonsecureModule : NancyModule
     {
-        public AdminNonsecureModule()
+        public AdminNonsecureModule(TinyIoCContainer container)
         {
             Get["/Login"] = parameters =>
             {
@@ -19,15 +16,18 @@ namespace HavenWebApp
 
             Post["/Login"] = parameters =>
             {
-                var userGuid = UserMapper.ValidateUser((string)this.Request.Form.Username, (string)this.Request.Form.Password);
+                using (var repository = container.Resolve<IRepository>())
+                {
+                    var userGuid = UserMapper.ValidateUser(repository, (string)this.Request.Form.Username, (string)this.Request.Form.Password);
 
-                if (userGuid == null)
-                {
-                    return null;
-                }
-                else
-                {
-                    return this.LoginAndRedirect(userGuid.Value);
+                    if (userGuid == null)
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        return this.LoginAndRedirect(userGuid.Value);
+                    }
                 }
             };
 

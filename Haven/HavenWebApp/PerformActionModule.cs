@@ -2,6 +2,7 @@
 using Nancy;
 using Nancy.Authentication.Stateless;
 using Nancy.Security;
+using Nancy.TinyIoc;
 using Newtonsoft.Json;
 using System.Linq;
 
@@ -9,14 +10,14 @@ namespace HavenWebApp
 {
     public class PerformActionModule : NancyModule
     {
-        public PerformActionModule()
+        public PerformActionModule(TinyIoCContainer container)
         {
             var performActionConfiguration =
                 new StatelessAuthenticationConfiguration(context =>
                 {
                     var actionId = (int)this.Request.Form.Id;
                     var password = (string)context.Request.Form.Password;
-                    var player = Persistence.Connection.Query<Player>("select Player.* from Player join Action on Player.Id=Action.OwnerId where Action.Id=?", actionId).First();
+                    var player = container.Resolve<IRepository>().Get<Action>(actionId).Player;
 
                     if (player.Password == null || player.VerifyPassword(password))
                     {
@@ -34,11 +35,14 @@ namespace HavenWebApp
 
             Post["/PerformAction"] = parameters =>
             {
-                var action = Persistence.Connection.Get<Haven.Action>((int)this.Request.Form.Id);
-                int gameId = Persistence.Connection.Table<Player>().Where(x => x.Id == action.OwnerId).First().GameId;
-                action.PerformAction((string)this.Request.Form.Input);
-                var players = Persistence.Connection.Table<Player>().Where(x => x.GameId == gameId);
-                return JsonConvert.SerializeObject(players);
+                using (var repository = container.Resolve<IRepository>())
+                {
+                    var action = repository.Get<Haven.Action>((int)this.Request.Form.Id);
+                    int gameId = repository.Find<Player>(x => x.Id == action.OwnerId).First().GameId;
+                    action.PerformAction((string)this.Request.Form.Input);
+                    var players = repository.Find<Player>(x => x.GameId == gameId);
+                    return JsonConvert.SerializeObject(players);
+                }
             };
         }
     }

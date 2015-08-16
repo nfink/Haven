@@ -2,6 +2,7 @@
 using Haven.Data;
 using Nancy;
 using Newtonsoft.Json;
+using Nancy.TinyIoc;
 
 namespace HavenWebApp
 {
@@ -9,37 +10,43 @@ namespace HavenWebApp
     {
         public static DataLoad DataLoad;
 
-        public MenuModule(IRootPathProvider pathProvider)
+        public MenuModule(TinyIoCContainer container, IRootPathProvider pathProvider)
         {
             if (DataLoad == null)
             {
-                try
-                {
-                    var test = Persistence.Connection.Table<User>().Count();
-                }
-                catch
-                {
-                    DataLoad = new DataLoad();
-                    DataLoad.LoadTables();
-                }
+                //try
+                //{
+                //    var test = repository.Find<User>(x => true);
+                //}
+                //catch
+                //{
+                DataLoad = new DataLoad();
+                DataLoad.LoadTables();
+                //}
             }
 
             Get["/Pieces"] = parameters =>
             {
-                return JsonConvert.SerializeObject(Piece.Pieces);
+                using (var repository = container.Resolve<IRepository>())
+                {
+                    return JsonConvert.SerializeObject(repository.FindAll<Piece>());
+                }
             };
 
             Get["/Colors"] = parameters =>
             {
-                return JsonConvert.SerializeObject(Color.Colors);
+                using (var repository = container.Resolve<IRepository>())
+                {
+                    return JsonConvert.SerializeObject(repository.FindAll<Color>());
+                }
             };
 
-            #if DEBUG
+#if DEBUG
             Get["/RecompileJSX"] = parameters =>
             {
                 return View["Views/RecompileJSX.cshtml", Bootstrapper.TransformJSX(pathProvider)];
             };
-            #endif
+#endif
         }
     }
 }

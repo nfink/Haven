@@ -6,12 +6,12 @@ namespace Haven
     {
         private void EnterPasswordAction(Object input)
         {
-            Persistence.Connection.Delete(this);
+            this.Repository.Remove(this);
             var player = this.Owner;
             player.SetPassword((string)input);
-            var game = Persistence.Connection.Get<Game>(player.GameId);
+            var game = this.Repository.Get<Game>(player.GameId);
             game.StartGame();
-            Persistence.Connection.Insert(new Message() { PlayerId = player.Id, Text = "Password saved." });
+            this.Repository.Add(new Message() { PlayerId = player.Id, Text = "Password saved." });
         }
     }
 }

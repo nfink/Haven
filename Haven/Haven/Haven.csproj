@@ -65,11 +65,12 @@
     <Compile Include="ChallengeCategory.cs" />
     <Compile Include="Color.cs" />
     <Compile Include="Data\DataLoad.cs" />
-    <Compile Include="Data\Persistence.cs" />
     <Compile Include="GameWinner.cs" />
     <Compile Include="ICloneable.cs" />
     <Compile Include="IDeletable.cs" />
+    <Compile Include="IEntity.cs" />
     <Compile Include="Image.cs" />
+    <Compile Include="IRepository.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="Board.cs" />
     <Compile Include="Dice.cs" />
@@ -80,8 +81,10 @@
     <Compile Include="Player.cs" />
     <Compile Include="PlayerNameCard.cs" />
     <Compile Include="PlayerSafeHavenCard.cs" />
+    <Compile Include="Repository.cs" />
     <Compile Include="SafeHavenCard.cs" />
     <Compile Include="SpaceChallengeCategory.cs" />
+    <Compile Include="SpaceRepository.cs" />
     <Compile Include="Spaces\ChallengeSpace.cs" />
     <Compile Include="Spaces\ExchangePlacesSpace.cs" />
     <Compile Include="Spaces\OptionalTurnAroundSpace.cs" />

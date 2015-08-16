@@ -1,27 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SQLite;
+﻿using SQLite;
 
 namespace Haven
 {
-    public class Piece
+    public class Piece : IEntity
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
+        [Ignore]
+        public IRepository Repository { private get; set; }
+
         public string Name { get; set; }
 
         public string Image { get; set; }
-
-        public static IEnumerable<Piece> Pieces
-        {
-            get
-            {
-                return Persistence.Connection.Table<Piece>();
-            }
-        }
     }
 }

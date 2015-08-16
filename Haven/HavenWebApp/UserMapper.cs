@@ -11,17 +11,29 @@ namespace HavenWebApp
 {
     public class UserMapper : IUserMapper
     {
+        private IRepository Repository;
+
+        public UserMapper(IRepository repository)
+        {
+            this.Repository = repository;
+        }
+
         public IUserIdentity GetUserFromIdentifier(Guid identifier, NancyContext context)
         {
             string userGuid = identifier.ToString();
-            var user = Persistence.Connection.Table<User>().Where(x => x.Guid == userGuid).FirstOrDefault();
+            var user = this.Repository.Find<User>(x => x.Guid == userGuid).SingleOrDefault();
 
             return user == null ? null : new PlayerIdentity() { UserName = user.Id.ToString() };
         }
 
-        public static Guid? ValidateUser(string username, string password)
+        public static Guid? ValidateUser(IRepository repository, string username, string password)
         {
-            var user = Persistence.Connection.Table<User>().Where(x => x.Username == username).FirstOrDefault();
+            var user = repository.Find<User>(x => x.Username == username).SingleOrDefault();
+
+            if (user == null)
+            {
+                return null;
+            }
 
             if (user.VerifyPassword(password))
             {

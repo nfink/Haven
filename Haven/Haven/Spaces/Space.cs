@@ -1,13 +1,17 @@
 ﻿using SQLite;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Haven
 {
-    public partial class Space : IDeletable, ICloneable<Space>
+    public partial class Space : IEntity, IDeletable, ICloneable<Space>
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
+
+        [Ignore]
+        public IRepository Repository { private get; set; }
 
         public int BoardId { get; set; }
 
@@ -21,7 +25,7 @@ namespace Haven
         {
             get
             {
-                return (this.NameCardId != 0 ? Persistence.Connection.Get<NameCard>(this.NameCardId) : null);
+                return this.NameCardId == 0 ? null : this.Repository.Get<NameCard>(this.NameCardId);
             }
         }
 
@@ -31,7 +35,7 @@ namespace Haven
         {
             get
             {
-                return (this.SafeHavenCardId != 0 ? Persistence.Connection.Get<SafeHavenCard>(this.SafeHavenCardId) : null);
+                return this.SafeHavenCardId == 0 ? null : this.Repository.Get<SafeHavenCard>(this.SafeHavenCardId);
             }
         }
 
@@ -96,7 +100,7 @@ namespace Haven
                 }
                 else
                 {
-                    return Persistence.Connection.Get<Image>(this.ImageId).Filepath;
+                    return this.Repository.Get<Image>(this.ImageId).Filepath;
                 }
             }
         }
@@ -107,7 +111,7 @@ namespace Haven
             {
                 if (this.IconId != 0)
                 {
-                    return Persistence.Connection.Get<Piece>(this.IconId);
+                    return this.Repository.Get<Piece>(this.IconId);
                 }
                 else
                 {
@@ -120,7 +124,7 @@ namespace Haven
         {
             get
             {
-                return this.BackgroundColorId != 0 ? Persistence.Connection.Get<Color>(this.BackgroundColorId) : null;
+                return this.BackgroundColorId == 0 ? null : this.Repository.Get<Color>(this.BackgroundColorId);
             }
         }
 
@@ -128,7 +132,7 @@ namespace Haven
         {
             get
             {
-                return this.TextColorId != 0 ? Persistence.Connection.Get<Color>(this.TextColorId) : null;
+                return this.TextColorId == 0 ? null : this.Repository.Get<Color>(this.TextColorId);
             }
         }
 
@@ -136,7 +140,7 @@ namespace Haven
         {
             get
             {
-                return Persistence.Connection.Table<SpaceChallengeCategory>().Where(x => x.SpaceId == this.Id);
+                return this.Repository.Find<SpaceChallengeCategory>(x => x.SpaceId == this.Id);
             }
         }
 
@@ -181,17 +185,21 @@ namespace Haven
             // delete any dependent records
             if (this.NameCardId != 0)
             {
-                Persistence.Connection.Execute("delete from NameCard where Id=?", this.NameCardId);
+                this.Repository.Remove(this.NameCard);
             }
+
             if (this.SafeHavenCardId != 0)
             {
-                Persistence.Connection.Execute("delete from SafeHavenCard where Id=?", this.SafeHavenCardId);
+                this.Repository.Remove(this.SafeHavenCard);
             }
 
-            Persistence.Connection.Execute("delete from SpaceChallengeCategory where SpaceId=?", this.Id);
+            foreach (SpaceChallengeCategory category in this.ChallengeCategories.ToList())
+            {
+                this.Repository.Remove(category);
+            }
 
             // delete space
-            Persistence.Connection.Delete(this);
+            this.Repository.Remove(this);
         }
 
         public Space Clone()
@@ -211,12 +219,12 @@ namespace Haven
                 space.SafeHavenCardId = this.SafeHavenCard.Clone().Id;
             }
 
-            Persistence.Connection.Insert(space);
+            this.Repository.Add(space);
             
             // add categories
-            foreach (SpaceChallengeCategory category in this.ChallengeCategories)
+            foreach (SpaceChallengeCategory category in this.ChallengeCategories.ToList())
             {
-                Persistence.Connection.Insert(new SpaceChallengeCategory() { SpaceId = space.Id, ChallengeCategoryId = category.ChallengeCategoryId });
+                this.Repository.Add(new SpaceChallengeCategory() { SpaceId = space.Id, ChallengeCategoryId = category.ChallengeCategoryId });
             }
 
             return space;

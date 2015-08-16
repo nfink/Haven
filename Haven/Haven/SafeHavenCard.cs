@@ -2,10 +2,13 @@
 
 namespace Haven
 {
-    public class SafeHavenCard : ICloneable<SafeHavenCard>
+    public class SafeHavenCard : ICloneable<SafeHavenCard>, IEntity
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
+
+        [Ignore]
+        public IRepository Repository { private get; set; }
 
         public string Name { get; set; }
 
@@ -17,7 +20,7 @@ namespace Haven
         {
             get
             {
-                return this.ImageId == 0 ? null : Persistence.Connection.Get<Image>(this.ImageId);
+                return this.ImageId == 0 ? null : this.Repository.Get<Image>(this.ImageId);
             }
         }
 
@@ -30,7 +33,7 @@ namespace Haven
             }
 
             var safeHavenCard = new SafeHavenCard() { Name = this.Name, Details = this.Details, ImageId = imageId };
-            Persistence.Connection.Insert(safeHavenCard);
+            this.Repository.Add<SafeHavenCard>(safeHavenCard);
             return safeHavenCard;
         }
     }

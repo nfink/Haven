@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using SQLite;
 using System;
+using System.Linq;
 
 namespace Haven
 {
@@ -21,10 +22,13 @@ namespace Haven
         TurnAround,
     }
 
-    public partial class Action
+    public partial class Action : IEntity
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
+
+        [Ignore]
+        public IRepository Repository { private get; set; }
 
         public int OwnerId { get; set; }
 
@@ -63,7 +67,7 @@ namespace Haven
         {
             get
             {
-                return this.OwnerId == 0 ? null : Persistence.Connection.Get<Player>(this.OwnerId);
+                return this.OwnerId == 0 ? null : this.Repository.Get<Player>(this.OwnerId);
             }
         }
 
@@ -71,7 +75,7 @@ namespace Haven
         {
             get
             {
-                return this.ChallengeId == 0 ? null : Persistence.Connection.Get<Challenge>(this.ChallengeId);
+                return this.ChallengeId == 0 ? null : this.Repository.Get<Challenge>(this.ChallengeId);
             }
         }
 
@@ -80,7 +84,7 @@ namespace Haven
         {
             get
             {
-                return this.NameCardId == 0 ? null : Persistence.Connection.Get<NameCard>(this.NameCardId);
+                return this.NameCardId == 0 ? null : this.Repository.Get<NameCard>(this.NameCardId);
             }
         }
 
@@ -89,7 +93,7 @@ namespace Haven
         {
             get
             {
-                return this.PlayerId == 0 ? null : Persistence.Connection.Get<Player>(this.PlayerId);
+                return this.PlayerId == 0 ? null : this.Repository.Get<Player>(this.PlayerId);
             }
         }
 
@@ -177,50 +181,55 @@ namespace Haven
 
         public void PerformAction(Object input)
         {
-            Persistence.Connection.RunInTransaction(() =>
+            switch (this.Type)
             {
-                switch (this.Type)
-                {
-                    case (ActionType.AnswerChallenge):
-                        AnswerChallengeAction(input);
-                        break;
-                    case (ActionType.AnswerWarChallenge):
-                        AnswerWarChallengeAction(input);
-                        break;
-                    case (ActionType.DeclareWar):
-                        DeclareWarAction(input);
-                        break;
-                    case (ActionType.DeclineWar):
-                        DeclineWarAction(input);
-                        break;
-                    case (ActionType.EndTurn):
-                        EndTurnAction(input);
-                        break;
-                    case (ActionType.EnterName):
-                        EnterNameAction(input);
-                        break;
-                    case (ActionType.EnterPassword):
-                        EnterPasswordAction(input);
-                        break;
-                    case (ActionType.ExchangePlaces):
-                        ExchangePlacesAction(input);
-                        break;
-                    case (ActionType.Roll):
-                        RollAction(input);
-                        break;
-                    case (ActionType.RollToGo):
-                        RollToGoAction(input);
-                        break;
-                    case (ActionType.SelectPiece):
-                        SelectPieceAction(input);
-                        break;
-                    case (ActionType.TurnAround):
-                        TurnAroundAction(input);
-                        break;
-                    default:
-                        throw new Exception("Action has no Type");
-                }
-            });
+                case (ActionType.AnswerChallenge):
+                    AnswerChallengeAction(input);
+                    break;
+                case (ActionType.AnswerWarChallenge):
+                    AnswerWarChallengeAction(input);
+                    break;
+                case (ActionType.DeclareWar):
+                    DeclareWarAction(input);
+                    break;
+                case (ActionType.DeclineWar):
+                    DeclineWarAction(input);
+                    break;
+                case (ActionType.EndTurn):
+                    EndTurnAction(input);
+                    break;
+                case (ActionType.EnterName):
+                    EnterNameAction(input);
+                    break;
+                case (ActionType.EnterPassword):
+                    EnterPasswordAction(input);
+                    break;
+                case (ActionType.ExchangePlaces):
+                    ExchangePlacesAction(input);
+                    break;
+                case (ActionType.Roll):
+                    RollAction(input);
+                    break;
+                case (ActionType.RollToGo):
+                    RollToGoAction(input);
+                    break;
+                case (ActionType.SelectPiece):
+                    SelectPieceAction(input);
+                    break;
+                case (ActionType.TurnAround):
+                    TurnAroundAction(input);
+                    break;
+                default:
+                    throw new Exception("Action has no Type");
+            }
+        }
+
+        public void RemoveActions(ActionType type)
+        {
+            foreach (Action action in this.Owner.Actions.Where(x => x.Type == type))
+            {
+                this.Repository.Remove(action);
+            }
         }
 
         public override string ToString()

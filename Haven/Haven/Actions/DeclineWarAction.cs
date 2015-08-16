@@ -7,11 +7,12 @@ namespace Haven
         private void DeclineWarAction(Object input)
         {
             // remove all war actions
-            Persistence.Connection.Execute("delete from Action where (Type=? or Type=?) and OwnerId=?", ActionType.DeclareWar, ActionType.DeclineWar, this.OwnerId);
+            this.RemoveActions(ActionType.DeclareWar);
+            this.RemoveActions(ActionType.DeclineWar);
 
-            Game.GetGame(this.OwnerId).EndTurn(this.OwnerId);
+            this.Owner.Game.EndTurn(this.OwnerId);
 
-            Persistence.Connection.Insert(new Message() { PlayerId = this.OwnerId, Text = "Declined to declare war." });
+            this.Repository.Add(new Message() { PlayerId = this.OwnerId, Text = "Declined to declare war." });
         }
     }
 }

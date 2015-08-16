@@ -7,54 +7,49 @@ namespace HavenUnitTest
     [TestFixture]
     public class ChallengeTests
     {
-        [TestFixtureSetUp]
-        public void Setup()
-        {
-            // create tables
-            Persistence.Connection.CreateTable<Challenge>();
-            Persistence.Connection.CreateTable<ChallengeAnswer>();
-            Persistence.Connection.CreateTable<BoardChallengeCategory>();
-        }
-
         [Test]
         public void DeleteChallenge()
         {
+            var repository = new TestRepository();
+
             // add test challenges
             var challenge1 = new Challenge() { Question = "Test Question 1" };
             var challenge2 = new Challenge() { Question = "Test Question 2" };
-            Persistence.Connection.Insert(challenge1);
-            Persistence.Connection.Insert(challenge2);
+            repository.Add(challenge1);
+            repository.Add(challenge2);
 
             // add answers
             var answer1a = new ChallengeAnswer() { Answer = "Test Answer 1a", Correct = true, ChallengeId = challenge1.Id };
             var answer1b = new ChallengeAnswer() { Answer = "Test Answer 1b", Correct = false, ChallengeId = challenge1.Id };
             var answer2a = new ChallengeAnswer() { Answer = "Test Answer 2a", Correct = true, ChallengeId = challenge2.Id };
             var answer2b = new ChallengeAnswer() { Answer = "Test Answer 2b", Correct = false, ChallengeId = challenge2.Id };
-            Persistence.Connection.InsertAll(new ChallengeAnswer[] { answer1a, answer1b, answer2a, answer2b });
+            repository.AddAll(new ChallengeAnswer[] { answer1a, answer1b, answer2a, answer2b });
 
             // delete one challenge
             challenge1.Delete();
 
             // verify challenge and answers are deleted
-            Assert.IsEmpty(Persistence.Connection.Table<Challenge>().Where(x => x.Id == challenge1.Id));
-            Assert.IsEmpty(Persistence.Connection.Table<ChallengeAnswer>().Where(x => x.Id == answer1a.Id));
-            Assert.IsEmpty(Persistence.Connection.Table<ChallengeAnswer>().Where(x => x.Id == answer1b.Id));
+            Assert.IsEmpty(repository.Find<Challenge>(x => x.Id == challenge1.Id));
+            Assert.IsEmpty(repository.Find<ChallengeAnswer>(x => x.Id == answer1a.Id));
+            Assert.IsEmpty(repository.Find<ChallengeAnswer>(x => x.Id == answer1b.Id));
 
             // verify other challenge is not deleted
-            Assert.IsNotEmpty(Persistence.Connection.Table<Challenge>().Where(x => x.Id == challenge2.Id));
-            Assert.IsNotEmpty(Persistence.Connection.Table<ChallengeAnswer>().Where(x => x.Id == answer2a.Id));
-            Assert.IsNotEmpty(Persistence.Connection.Table<ChallengeAnswer>().Where(x => x.Id == answer2b.Id));
+            Assert.IsNotEmpty(repository.Find<Challenge>(x => x.Id == challenge2.Id));
+            Assert.IsNotEmpty(repository.Find<ChallengeAnswer>(x => x.Id == answer2a.Id));
+            Assert.IsNotEmpty(repository.Find<ChallengeAnswer>(x => x.Id == answer2b.Id));
         }
 
         [Test]
         public void CloneChallenge()
         {
+            var repository = new TestRepository();
+
             // create a challenge
             var challenge = new Challenge() { Question = "Test Question 1", ChallengeCategoryId = 2, OwnerId = 3, OpenEnded = true };
-            Persistence.Connection.Insert(challenge);
+            repository.Add(challenge);
             var answer1 = new ChallengeAnswer() { Answer = "Test Answer 1", Correct = true, ChallengeId = challenge.Id };
             var answer2 = new ChallengeAnswer() { Answer = "Test Answer 2", Correct = false, ChallengeId = challenge.Id };
-            Persistence.Connection.InsertAll(new ChallengeAnswer[] { answer1, answer2 });
+            repository.AddAll(new ChallengeAnswer[] { answer1, answer2 });
 
             // clone the challenge
             var clonedChallenge = challenge.Clone();
@@ -73,12 +68,14 @@ namespace HavenUnitTest
         [Test]
         public void MultipleChoiceAnswer()
         {
+            var repository = new TestRepository();
+
             // create a multiple choice challenge
             var challenge = new Challenge() { Question = "Test Question 1", ChallengeCategoryId = 2, OwnerId = 3 };
-            Persistence.Connection.Insert(challenge);
+            repository.Add(challenge);
             var answer1 = new ChallengeAnswer() { Answer = "Test Answer 1", Correct = true, ChallengeId = challenge.Id };
             var answer2 = new ChallengeAnswer() { Answer = "Test Answer 2", Correct = false, ChallengeId = challenge.Id };
-            Persistence.Connection.InsertAll(new ChallengeAnswer[] { answer1, answer2 });
+            repository.AddAll(new ChallengeAnswer[] { answer1, answer2 });
 
             // verify that correct answer is acknowledged as correct
             Assert.True(challenge.CorrectAnswer(answer1.Id));
@@ -88,12 +85,14 @@ namespace HavenUnitTest
         [Test]
         public void OpenEndedAnswer()
         {
+            var repository = new TestRepository();
+
             // create an open ended challenge
             var challenge = new Challenge() { Question = "Test Question 1", ChallengeCategoryId = 2, OwnerId = 3, OpenEnded = true };
-            Persistence.Connection.Insert(challenge);
+            repository.Add(challenge);
             var answer1 = new ChallengeAnswer() { Answer = "Test Answer 1", Correct = true, ChallengeId = challenge.Id };
             var answer2 = new ChallengeAnswer() { Answer = "Test Answer 2", Correct = false, ChallengeId = challenge.Id };
-            Persistence.Connection.InsertAll(new ChallengeAnswer[] { answer1, answer2 });
+            repository.AddAll(new ChallengeAnswer[] { answer1, answer2 });
 
             // verify that correct answer is acknowledged as correct
             Assert.True(challenge.CorrectAnswer(answer1.Answer));

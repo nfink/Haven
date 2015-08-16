@@ -1,12 +1,17 @@
 ﻿using SQLite;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Haven
 {
-    public class Challenge : IDeletable, ICloneable<Challenge>
+    public class Challenge : IEntity, IDeletable, ICloneable<Challenge>
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
+
+        [Ignore]
+        public IRepository Repository { private get; set; }
 
         public int OwnerId { get; set; }
 
@@ -20,18 +25,18 @@ namespace Haven
         {
             get
             {
-                return Persistence.Connection.Table<ChallengeAnswer>().Where(x => x.ChallengeId == this.Id);
+                return this.Repository.Find<ChallengeAnswer>(x => x.ChallengeId == this.Id);
             }
         }
 
         public bool CorrectAnswer(int answerId)
         {
-            return Persistence.Connection.Get<ChallengeAnswer>(answerId).Correct;
+            return this.Repository.Get<ChallengeAnswer>(answerId).Correct;
         }
 
         public bool CorrectAnswer(string answer)
         {
-            return Persistence.Connection.Query<ChallengeAnswer>("select ChallengeAnswer.* from ChallengeAnswer where ChallengeAnswer.ChallengeId=? and ChallengeAnswer.Correct<>0 and ChallengeAnswer.Answer like ?", this.Id, answer).Count > 0;
+            return this.Answers.Where(x => x.Correct && string.Equals(answer, x.Answer, StringComparison.CurrentCultureIgnoreCase)).Count() > 0;
         }
 
         public bool CorrectAnswer(object answer)
@@ -48,22 +53,24 @@ namespace Haven
 
         public void Delete()
         {
-            // delete challenge
-            Persistence.Connection.Delete<Challenge>(this.Id);
+            foreach (ChallengeAnswer answer in this.Answers.ToList())
+            {
+                this.Repository.Remove(answer);
+            }
 
-            // delete any answers
-            Persistence.Connection.Execute("delete from ChallengeAnswer where ChallengeId=?", this.Id);
+            // delete challenge
+            this.Repository.Remove(this);
         }
 
         public Challenge Clone()
         {
             var challenge = new Challenge() { OwnerId = this.OwnerId, ChallengeCategoryId = this.ChallengeCategoryId, Question = this.Question, OpenEnded = this.OpenEnded };
-            Persistence.Connection.Insert(challenge);
+            this.Repository.Add(challenge);
 
             // clone answers
-            foreach (ChallengeAnswer answer in this.Answers)
+            foreach (ChallengeAnswer answer in this.Answers.ToList())
             {
-                Persistence.Connection.Insert(new ChallengeAnswer() { ChallengeId = challenge.Id, Answer = answer.Answer, Correct = answer.Correct });
+                this.Repository.Add(new ChallengeAnswer() { ChallengeId = challenge.Id, Answer = answer.Answer, Correct = answer.Correct });
             }
 
             return challenge;

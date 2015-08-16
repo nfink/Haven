@@ -1,14 +1,14 @@
 ﻿using SQLite;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Haven
 {
-    public class GameWinner
+    public class GameWinner : IEntity
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
+
+        [Ignore]
+        public IRepository Repository { private get; set; }
 
         public int GameId { get; set; }
 
