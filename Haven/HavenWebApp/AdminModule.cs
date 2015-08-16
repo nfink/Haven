@@ -76,7 +76,7 @@ namespace HavenWebApp
                 using (var repository = container.Resolve<IRepository>())
                 {
                     var userId = int.Parse(this.Context.CurrentUser.UserName);
-                    return JsonConvert.SerializeObject(repository.Find<Game>(x => x.OwnerId == userId).Where(x => x.Ended));
+                    return JsonConvert.SerializeObject(repository.Find<Game>(x => x.OwnerId == userId).Where(x => !x.Ended));
                 }
             };
 
@@ -85,7 +85,7 @@ namespace HavenWebApp
                 using (var repository = container.Resolve<IRepository>())
                 {
                     var userId = int.Parse(this.Context.CurrentUser.UserName);
-                    return JsonConvert.SerializeObject(repository.Find<Game>(x => x.OwnerId == userId).Where(x => !x.Ended));
+                    return JsonConvert.SerializeObject(repository.Find<Game>(x => x.OwnerId == userId).Where(x => x.Ended));
                 }
             };
 
