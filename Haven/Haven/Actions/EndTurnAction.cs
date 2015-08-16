@@ -12,7 +12,7 @@ namespace Haven
                 this.Repository.Remove(action);
             }
 
-            Game.GetGame(this.OwnerId).EndTurn(this.OwnerId);
+            this.Owner.Game.EndTurn(this.OwnerId);
 
             this.Repository.Add(new Message() { PlayerId = this.OwnerId, Text = "Ended turn." });
         }

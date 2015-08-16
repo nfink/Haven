@@ -14,7 +14,7 @@ namespace Haven
             var player = this.Owner;
             player.MovementDirection = !player.MovementDirection;
             this.Repository.Update(player);
-            Game.GetGame(this.OwnerId).EndTurn(this.OwnerId);
+            player.Game.EndTurn(this.OwnerId);
             this.Repository.Add(new Message() { PlayerId = this.OwnerId, Text = "Turned around." });
         }
     }

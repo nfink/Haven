@@ -35,7 +35,7 @@ namespace HavenWebApp
             // As this is now per-request we could inject a request scoped
             // database "context" or other request scoped services.
             container.Register<IUserMapper, UserMapper>();
-            container.Register<IRepository, Repository>().AsMultiInstance();
+            container.Register<IRepository, Repository>();
         }
 
         protected override void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)

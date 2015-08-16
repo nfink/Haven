@@ -122,10 +122,14 @@ namespace HavenUnitTest
             repository.Add(player);
             repository.Add(new Haven.Action() { OwnerId = player.Id });
             repository.Add(new Haven.Action() { OwnerId = player.Id });
-            repository.Add(new PlayerNameCard() { PlayerId = player.Id });
-            repository.Add(new PlayerNameCard() { PlayerId = player.Id });
-            repository.Add(new PlayerSafeHavenCard() { PlayerId = player.Id });
-            repository.Add(new PlayerSafeHavenCard() { PlayerId = player.Id });
+            repository.Add(new NameCard() { Id = 1 });
+            repository.Add(new NameCard() { Id = 2 });
+            repository.Add(new PlayerNameCard() { PlayerId = player.Id, NameCardId = 1 });
+            repository.Add(new PlayerNameCard() { PlayerId = player.Id, NameCardId = 2 });
+            repository.Add(new SafeHavenCard() { Id = 1 });
+            repository.Add(new SafeHavenCard() { Id = 2 });
+            repository.Add(new PlayerSafeHavenCard() { PlayerId = player.Id, SafeHavenCardId = 1 });
+            repository.Add(new PlayerSafeHavenCard() { PlayerId = player.Id, SafeHavenCardId = 2 });
             repository.Add(new Message() { PlayerId = player.Id });
             repository.Add(new Message() { PlayerId = player.Id });
             return player;

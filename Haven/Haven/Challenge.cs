@@ -1,4 +1,5 @@
 ﻿using SQLite;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,6 +10,7 @@ namespace Haven
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
+        [Ignore]
         public IRepository Repository { private get; set; }
 
         public int OwnerId { get; set; }
@@ -34,7 +36,7 @@ namespace Haven
 
         public bool CorrectAnswer(string answer)
         {
-            return Persistence.Connection.Query<ChallengeAnswer>("select ChallengeAnswer.* from ChallengeAnswer where ChallengeAnswer.ChallengeId=? and ChallengeAnswer.Correct<>0 and ChallengeAnswer.Answer like ?", this.Id, answer).Count > 0;
+            return this.Answers.Where(x => x.Correct && string.Equals(answer, x.Answer, StringComparison.CurrentCultureIgnoreCase)).Count() > 0;
         }
 
         public bool CorrectAnswer(object answer)

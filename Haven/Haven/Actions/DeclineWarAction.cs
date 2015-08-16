@@ -10,7 +10,7 @@ namespace Haven
             this.RemoveActions(ActionType.DeclareWar);
             this.RemoveActions(ActionType.DeclineWar);
 
-            Game.GetGame(this.OwnerId).EndTurn(this.OwnerId);
+            this.Owner.Game.EndTurn(this.OwnerId);
 
             this.Repository.Add(new Message() { PlayerId = this.OwnerId, Text = "Declined to declare war." });
         }

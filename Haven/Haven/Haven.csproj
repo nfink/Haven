@@ -65,7 +65,6 @@
     <Compile Include="ChallengeCategory.cs" />
     <Compile Include="Color.cs" />
     <Compile Include="Data\DataLoad.cs" />
-    <Compile Include="Data\Persistence.cs" />
     <Compile Include="GameWinner.cs" />
     <Compile Include="ICloneable.cs" />
     <Compile Include="IDeletable.cs" />

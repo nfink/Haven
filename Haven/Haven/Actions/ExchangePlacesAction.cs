@@ -18,7 +18,7 @@ namespace Haven
             this.Repository.Update(player);
             this.Repository.Update(playerToExchangeWith);
 
-            Game.GetGame(this.OwnerId).EndTurn(this.OwnerId);
+            player.Game.EndTurn(this.OwnerId);
             this.Repository.Add(new Message() { PlayerId = this.OwnerId, Text = string.Format("Exchanged places with {0}.", playerToExchangeWith.Name) });
         }
     }

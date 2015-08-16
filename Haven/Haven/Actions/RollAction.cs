@@ -14,8 +14,7 @@ namespace Haven
 
             // move player to next space
             var player = this.Owner;
-            var board = Game.GetGame(player.Id).Board;
-            var newSpace = board.GetNewSpace(player.SpaceId, roll.Sum, player.MovementDirection);
+            var newSpace = player.Game.Board.GetNewSpace(player.SpaceId, roll.Sum, player.MovementDirection);
             player.Move(newSpace.Id);
         }
     }

@@ -10,6 +10,7 @@ namespace Haven
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
+        [Ignore]
         public IRepository Repository { private get; set; }
 
         public int OwnerId { get; set; }
@@ -62,11 +63,6 @@ namespace Haven
             {
                 this.AddPlayer();
             }
-        }
-
-        public static Game GetGame(int playerId)
-        {
-            return Persistence.Connection.Query<Game>("select Game.* from Game join Player on Player.GameId=Game.Id where Player.Id=?", playerId).SingleOrDefault();
         }
 
         public Player AddPlayer()
@@ -161,7 +157,7 @@ namespace Haven
         public void StartGame()
         {
             // if all players have selected a piece and entered a name and password,  start game
-            if (Persistence.Connection.Query<Player>("select Player.* from Player where GameId=? and (PieceId=0 or Name is null or Password is null)", this.Id).Count < 1)
+            if (this.Players.Select(x => x.PieceId == 0 || x.Name == null || x.Password == null).Count() < 1)
             {
                 var firstPlayer = this.Players.OrderBy(x => x.TurnOrder).First();
                 this.Repository.Add(new Action() { Type = ActionType.Roll, OwnerId = firstPlayer.Id });
@@ -198,68 +194,29 @@ namespace Haven
             var spaceCategories = this.Repository.Find<SpaceChallengeCategory>(x => x.SpaceId == spaceId);
             if (spaceCategories.Count() > 0)
             {
-                categories = Persistence.Connection.Query<ChallengeCategory>("select ChallengeCategory.* from ChallengeCategory join SpaceChallengeCategory on ChallengeCategory.Id=SpaceChallengeCategory.ChallengeCategoryId where SpaceChallengeCategory.SpaceId=?", spaceId).Select(x => x.Id);
+                categories = spaceCategories.Select(x => x.ChallengeCategoryId);
             }
             else
             {
-                categories = Persistence.Connection.Query<ChallengeCategory>("select ChallengeCategory.* from ChallengeCategory join BoardChallengeCategory on ChallengeCategory.Id=BoardChallengeCategory.ChallengeCategoryId where BoardChallengeCategory.BoardId=?", this.BoardId).Select(x => x.Id);
+                categories = this.Board.ChallengeCategories.Select(x => x.ChallengeCategoryId);
             }
 
             // get unused challenges from each category, and if a category has no unused challenges, mark all as unused
             foreach (int categoryId in categories)
             {
-                var unusedCategoryChallenges = Persistence.Connection.Query<Challenge>(
-                    @"select Challenge.* from 
-                        (select Challenge.* from Challenge
-                            join ChallengeCategory on Challenge.ChallengeCategoryId=ChallengeCategory.Id
-                            where ChallengeCategory.Id=?) as Challenge
-                        left join UsedChallenge on Challenge.Id=UsedChallenge.ChallengeId
-                        where (UsedChallenge.ChallengeId is null or UsedChallenge.GameId<>?)",
-                      categoryId, this.Id);
+                var unusedCategoryChallenges = this.Repository.Find<Challenge>(x => x.ChallengeCategoryId == categoryId).SelectMany(x => this.Repository.Find<UsedChallenge>(y => y.ChallengeId != x.Id));
 
                 if (unusedCategoryChallenges.Count() < 1)
                 {
-                    Persistence.Connection.Execute(
-                        @"delete from UsedChallenge where Id in (
-                            select UsedChallenge.Id from UsedChallenge
-                            join Challenge on UsedChallenge.ChallengeId=Challenge.Id
-                            join ChallengeCategory on Challenge.ChallengeCategoryId=ChallengeCategory.Id
-                            where ChallengeCategory.Id=? and UsedChallenge.GameId=?)",
-                        categoryId, this.Id);
+                    foreach (UsedChallenge usedChallenge in this.Repository.Find<Challenge>(x => x.ChallengeCategoryId == categoryId).SelectMany(x => this.Repository.Find<UsedChallenge>(y => x.Id == y.ChallengeId)).ToList())
+                    {
+                        this.Repository.Remove(usedChallenge);
+                    }
                 }
             }
 
             // get unused challenges from all categories
-            IEnumerable<Challenge> unusedChallenges;
-            if (spaceCategories.Count() > 0)
-            {
-                unusedChallenges = Persistence.Connection.Query<Challenge>(
-                    @"select Challenge.* from 
-                        (select Challenge.* from Challenge
-                            join ChallengeCategory on Challenge.ChallengeCategoryId=ChallengeCategory.Id
-                            where ChallengeCategory.Id in (
-                                select ChallengeCategory.Id from ChallengeCategory
-                                join SpaceChallengeCategory on ChallengeCategory.Id=SpaceChallengeCategory.ChallengeCategoryId
-                                where SpaceChallengeCategory.SpaceId=?)) as Challenge
-                        left join UsedChallenge on Challenge.Id=UsedChallenge.ChallengeId
-                        where (UsedChallenge.ChallengeId is null or UsedChallenge.GameId<>?)",
-                        spaceId, this.Id);
-
-            }
-            else
-            {
-                unusedChallenges = Persistence.Connection.Query<Challenge>(
-                    @"select Challenge.* from 
-                        (select Challenge.* from Challenge
-                            join ChallengeCategory on Challenge.ChallengeCategoryId=ChallengeCategory.Id
-                            where ChallengeCategory.Id in (
-                                select ChallengeCategory.Id from ChallengeCategory
-                                join BoardChallengeCategory on ChallengeCategory.Id=BoardChallengeCategory.ChallengeCategoryId
-                                where BoardChallengeCategory.BoardId=?)) as Challenge
-                        left join UsedChallenge on Challenge.Id=UsedChallenge.ChallengeId
-                        where (UsedChallenge.ChallengeId is null or UsedChallenge.GameId<>?)",
-                        this.BoardId, this.Id);
-            }
+            var unusedChallenges = categories.SelectMany(x => this.Repository.Find<Challenge>(y => x == y.ChallengeCategoryId).Where(y => this.Repository.Find<UsedChallenge>(z => z.ChallengeId == y.Id).Count() < 1));
 
             // select a random challenge to use and mark as used
             var nextChallenge = unusedChallenges.OrderBy(x => Rand.Next()).First();
@@ -270,13 +227,13 @@ namespace Haven
         public void Delete()
         {
             // delete players
-            foreach (Player player in this.Players)
+            foreach (Player player in this.Players.ToList())
             {
                 player.Delete();
             }
 
             // delete record of used challenges
-            foreach (UsedChallenge usedChallenge in this.Repository.Find<UsedChallenge>(x => x.GameId == this.Id))
+            foreach (UsedChallenge usedChallenge in this.Repository.Find<UsedChallenge>(x => x.GameId == this.Id).ToList())
             {
                 this.Repository.Remove(usedChallenge);
             }

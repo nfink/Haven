@@ -14,8 +14,7 @@ namespace Haven
 
             // move player forward if even, backward if odd
             var player = this.Owner;
-            var board = Game.GetGame(player.Id).Board;
-            var newSpace = board.GetNewSpace(player.SpaceId, roll.Sum, (roll.Sum % 2 == 0));
+            var newSpace = player.Game.Board.GetNewSpace(player.SpaceId, roll.Sum, (roll.Sum % 2 == 0));
             player.Move(newSpace.Id);
         }
     }

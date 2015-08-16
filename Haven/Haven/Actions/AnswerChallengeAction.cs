@@ -10,10 +10,11 @@ namespace Haven
             // remove all answer challenge actions
             this.RemoveActions(ActionType.AnswerChallenge);
 
+            var game = Player.Game;
+
             if (this.Challenge.CorrectAnswer((string)input))
             {
                 // add the card for the space if the player doesn't have it, otherwise add a random card they don't have
-                var game = Game.GetGame(this.OwnerId);
                 var missingNameCards = game.Board.NameCards.Except(this.Owner.NameCards);
 
                 if (missingNameCards.Where(x => x.Id == this.NameCardId).Count() > 0)
@@ -39,7 +40,7 @@ namespace Haven
             else
             {
                 this.Repository.Add(new Message() { PlayerId = this.OwnerId, Text = "Incorrect!" });
-                Game.GetGame(this.OwnerId).EndTurn(this.OwnerId);
+                game.EndTurn(this.OwnerId);
             }
         }
     }

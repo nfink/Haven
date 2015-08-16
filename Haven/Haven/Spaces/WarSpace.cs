@@ -6,7 +6,7 @@ namespace Haven
     {
         private void OnLandWar(Player player)
         {
-            var game = Game.GetGame(player.Id);
+            var game = player.Game;
             var playersOnWarSpace = game.Players.Where(x => x.SpaceId == player.SpaceId);
 
             if (playersOnWarSpace.Count() < 2)

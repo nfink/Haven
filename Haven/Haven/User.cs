@@ -8,6 +8,7 @@ namespace Haven
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
+        [Ignore]
         public IRepository Repository { private get; set; }
 
         [JsonIgnore]
@@ -22,7 +23,7 @@ namespace Haven
         {
             string savedPasswordHash = Haven.Password.HashPassword(password);
             this.Password = savedPasswordHash;
-            this.Repository.Update<User>(this);
+            this.Repository.Update(this);
         }
 
         public bool VerifyPassword(string password)

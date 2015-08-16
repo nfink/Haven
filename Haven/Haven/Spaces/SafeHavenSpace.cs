@@ -8,7 +8,7 @@ namespace Haven
         {
             // add the safe haven card if the player has all name cards
             var safeHaven = this.Repository.Get<SafeHavenCard>(this.SafeHavenCardId);
-            var game = Game.GetGame(player.Id);
+            var game = player.Game;
             if ((player.NameCards.Count() >= game.Board.NameCards.Count()) && (!player.SafeHavenCards.Select(x => x.Id).Contains(safeHaven.Id)))
             {
                 this.Repository.Add(new PlayerSafeHavenCard() { PlayerId = player.Id, SafeHavenCardId = this.SafeHavenCardId });

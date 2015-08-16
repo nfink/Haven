@@ -3,16 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Haven
 {
     public class TestRepository : IRepository
     {
-        private Dictionary<Type, IList> Tables;
+        private Dictionary<Type, IEnumerable> Tables;
 
         public TestRepository()
         {
-            this.Tables = new Dictionary<Type, IList>();
+            this.Tables = new Dictionary<Type, IEnumerable>();
         }
 
         public void Add<T>(T entity) where T : class, IEntity, new()
@@ -36,17 +37,17 @@ namespace Haven
             //    prop.SetValue(entity, id, null);
             //}
 
-            var table = this.Tables[typeof(T)];
-            entity.Id = table.Count < 1 ? 1 : table.Cast<T>().Select(x => x.Id).Max() + 1;
+            var table = this.Tables[typeof(T)].Cast<T>();
+            entity.Id = table.Count() < 1 ? 1 : table.Cast<T>().Select(x => x.Id).Max() + 1;
             entity.Repository = this;
-            table.Add(entity);
+            this.Tables[typeof(T)] = table.Concat(new T[] { entity });
         }
 
         public void Remove<T>(T entity) where T : class, IEntity, new()
         {
             if (this.Tables.ContainsKey(typeof(T)))
             {
-                this.Tables[typeof(T)].Remove(entity);
+                this.Tables[typeof(T)] = this.Tables[typeof(T)].Cast<T>().Where(x => x.Id != entity.Id);
             }
         }
 
@@ -58,15 +59,24 @@ namespace Haven
         public T Get<T>(int id) where T : class, IEntity, new()
         {
             var entity = this.Find<T>(x => x.Id == id).SingleOrDefault();
-            entity.Repository = this;
-            return entity;
+            
+            MethodInfo dynMethod = entity.GetType().GetMethod("MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance);
+            var copiedEntity = (T)dynMethod.Invoke(entity, new object[] { });
+            copiedEntity.Repository = this;
+            return copiedEntity;
         }
 
         public IEnumerable<T> Find<T>(Expression<Func<T, bool>> predicate) where T : class, IEntity, new()
         {
             if (this.Tables.ContainsKey(typeof(T)))
             {
-                return this.Tables[typeof(T)].Cast<T>().AsQueryable<T>().Where(predicate).AsEnumerable<T>().Select(x => { x.Repository = this; return x; });
+                return this.Tables[typeof(T)].Cast<T>().AsQueryable<T>().Where(predicate).AsEnumerable<T>().Select(x =>
+                    {
+                        MethodInfo dynMethod = x.GetType().GetMethod("MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance);
+                        var copiedEntity = (T)dynMethod.Invoke(x, new object[] { });
+                        copiedEntity.Repository = this;
+                        return copiedEntity;
+                    });
             }
             else
             {
@@ -78,7 +88,13 @@ namespace Haven
         {
             if (this.Tables.ContainsKey(typeof(T)))
             {
-                return this.Tables[typeof(T)].Cast<T>().Select(x => { x.Repository = this; return x; });
+                return this.Tables[typeof(T)].Cast<T>().Select(x =>
+                {
+                    MethodInfo dynMethod = x.GetType().GetMethod("MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance);
+                    var copiedEntity = (T)dynMethod.Invoke(x, new object[] { });
+                    copiedEntity.Repository = this;
+                    return copiedEntity;
+                });
             }
             else
             {

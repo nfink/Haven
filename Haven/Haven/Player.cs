@@ -11,6 +11,7 @@ namespace Haven
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
+        [Ignore]
         public IRepository Repository { private get; set; }
 
         public string Guid { get; set; }
@@ -95,7 +96,7 @@ namespace Haven
         {
             get
             {
-                return Persistence.Connection.Query<NameCard>("select NameCard.* from NameCard join PlayerNameCard on NameCard.Id=PlayerNameCard.NameCardId join Player on PlayerNameCard.PlayerId=Player.Id where Player.Id=?", this.Id);
+                return this.Repository.Find<PlayerNameCard>(x => x.PlayerId == this.Id).Select(x => this.Repository.Get<NameCard>(x.NameCardId));
             }
         }
 
@@ -103,7 +104,16 @@ namespace Haven
         {
             get
             {
-                return Persistence.Connection.Query<SafeHavenCard>("select SafeHavenCard.* from SafeHavenCard join PlayerSafeHavenCard on SafeHavenCard.Id=PlayerSafeHavenCard.SafeHavenCardId join Player on PlayerSafeHavenCard.PlayerId=Player.Id where Player.Id=?", this.Id);
+                return this.Repository.Find<PlayerSafeHavenCard>(x => x.PlayerId == this.Id).Select(x => this.Repository.Get<SafeHavenCard>(x.SafeHavenCardId));
+            }
+        }
+
+        [JsonIgnore]
+        public Game Game
+        {
+            get
+            {
+                return this.GameId == 0 ? null : this.Repository.Get<Game>(this.GameId);
             }
         }
 
@@ -134,7 +144,7 @@ namespace Haven
 
         public IEnumerable<Message> RecentMessages(int number)
         {
-            return this.Repository.Find<Message>(x => x.PlayerId == this.Id).OrderByDescending(x => x.Id).Take(number).OrderBy(x => x.Id);
+            return this.Repository.Find<Message>(x => x.PlayerId == this.Id).OrderByDescending(x => x.Id).Take(number).OrderByDescending(x => x.Id);
         }
 
         public void Delete()
@@ -146,17 +156,17 @@ namespace Haven
             }
 
             // delete cards
-            foreach (NameCard nameCard in this.NameCards.ToList())
+            foreach (PlayerNameCard nameCard in this.Repository.Find<PlayerNameCard>(x => x.PlayerId == this.Id).ToList())
             {
                 this.Repository.Remove(nameCard);
             }
-            foreach (SafeHavenCard safeHavenCard in this.SafeHavenCards.ToList())
+            foreach (PlayerSafeHavenCard safeHavenCard in this.Repository.Find<PlayerSafeHavenCard>(x => x.PlayerId == this.Id).ToList())
             {
                 this.Repository.Remove(safeHavenCard);
             }
 
             // delete messages
-            foreach (Message message in this.Repository.Find<Message>(x => x.PlayerId == this.Id))
+            foreach (Message message in this.Repository.Find<Message>(x => x.PlayerId == this.Id).ToList())
             {
                 this.Repository.Remove(message);
             }

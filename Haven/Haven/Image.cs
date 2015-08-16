@@ -9,6 +9,7 @@ namespace Haven
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
+        [Ignore]
         public IRepository Repository { private get; set; }
 
         public string Filepath { get; set; }

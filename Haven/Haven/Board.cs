@@ -11,6 +11,7 @@ namespace Haven
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
+        [Ignore]
         public IRepository Repository { private get; set; }
 
         public int OwnerId { get; set; }
@@ -58,11 +59,7 @@ namespace Haven
         {
             get
             {
-                return Persistence.Connection.Query<NameCard>(
-                @"select NameCard.* from Board
-                  join Space on Board.Id=Space.BoardId
-                  join NameCard on Space.NameCardId=NameCard.Id
-                  where Board.Id=?", this.Id);
+                return this.Spaces.Where(x => x.NameCardId != 0).Select(x => x.NameCard);
             }
         }
 
@@ -71,11 +68,7 @@ namespace Haven
         {
             get
             {
-                return Persistence.Connection.Query<SafeHavenCard>(
-                @"select SafeHavenCard.* from Board
-                  join Space on Board.Id=Space.BoardId
-                  join SafeHavenCard on Space.SafeHavenCardId=SafeHavenCard.Id
-                  where Board.Id=?", this.Id);
+                return this.Spaces.Where(x => x.SafeHavenCardId != 0).Select(x => x.SafeHavenCard);
             }
         }
 
@@ -84,7 +77,7 @@ namespace Haven
         {
             get
             {
-                return Persistence.Connection.Query<Challenge>("select Challenge.* from Challenge join BoardChallengeCategory on Challenge.ChallengeCategoryId=BoardChallengeCategory.ChallengeCategoryId where BoardChallengeCategory.BoardId=?", this.Id);
+                return this.ChallengeCategories.SelectMany(x => this.Repository.Find<Challenge>(y => y.ChallengeCategoryId == x.ChallengeCategoryId));
             }
         }
 
@@ -93,7 +86,6 @@ namespace Haven
             get
             {
                 return this.Repository.Find<BoardChallengeCategory>(x => x.BoardId == this.Id);
-                //return Persistence.Connection.Query<ChallengeCategory>("select ChallengeCategory.* from ChallengeCategory join BoardChallengeCategory on ChallengeCategory.Id=BoardChallengeCategory.ChallengeCategoryId where BoardChallengeCategory.BoardId=?", this.Id);
             }
         }
 
@@ -116,7 +108,7 @@ namespace Haven
         {
             get
             {
-                return Persistence.Connection.Query<Space>("select [Id] from [Space] where [Order]=(select min([Order]) from [Space] where BoardId=?) and BoardId=?", this.Id, this.Id).FirstOrDefault();
+                return this.Spaces.Aggregate((x, y) => y.Order < x.Order ? y : x);
             }
         }
 
@@ -339,13 +331,13 @@ namespace Haven
             }
 
             // clone board category links
-            foreach (int categoryId in boardCategories.Distinct())
+            foreach (int categoryId in boardCategories.Distinct().ToList())
             {
                 this.Repository.Add(new BoardChallengeCategory() { BoardId = board.Id, ChallengeCategoryId = categoryIdMap[categoryId] });
             }
 
             // clone spaces
-            foreach (Space space in this.Spaces)
+            foreach (Space space in this.Spaces.ToList())
             {
                 space.BoardId = board.Id;
                 var clonedSpace = space.Clone();
@@ -359,7 +351,7 @@ namespace Haven
             // clone challenges
             foreach (int categoryId in categories.Distinct())
             {
-                foreach (Challenge challenge in this.Repository.Find<Challenge>(x => x.ChallengeCategoryId == categoryId))
+                foreach (Challenge challenge in this.Repository.Find<Challenge>(x => x.ChallengeCategoryId == categoryId).ToList())
                 {
                     challenge.OwnerId = 0;
                     challenge.ChallengeCategoryId = categoryIdMap[challenge.ChallengeCategoryId];
