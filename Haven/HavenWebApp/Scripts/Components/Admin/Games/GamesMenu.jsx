@@ -35,7 +35,7 @@ var GamesMenu = React.createClass({
 GamesMenu.Tile = React.createClass({
     render: function () {
         return (
-            <SubMenuTile title={this.props.game.Name} description={this.props.game.Players.map(function (player, index) { return <div key={index}>{player.Name === null ? "(New Player)" : player.Name}<br /></div>})} image={this.props.game.Board.Image.Filepath} onClick={this.openGame} />
+            <SubMenuTile title={this.props.game.Name} description={this.props.game.Players.map(function (player, index) { return <div key={index}>{player.Name === null ? "(New Player)" : player.Name}<br /></div>})} image={this.props.game.Board ? this.props.game.Board.Image.Filepath : null} onClick={this.openGame} />
         );
     },
     openGame: function () {
