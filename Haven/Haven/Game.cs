@@ -202,26 +202,32 @@ namespace Haven
             }
 
             // get unused challenges from each category, and if a category has no unused challenges, mark all as unused
+            var unusedChallenges = new List<int>();
             foreach (int categoryId in categories)
             {
-                var unusedCategoryChallenges = this.Repository.Find<Challenge>(x => x.ChallengeCategoryId == categoryId).SelectMany(x => this.Repository.Find<UsedChallenge>(y => y.ChallengeId != x.Id));
+                var categoryChallenges = this.Repository.Find<Challenge>(x => x.ChallengeCategoryId == categoryId);
+                var usedCategoryChallenges = this.Repository.Find<UsedChallenge>(x => x.GameId == this.Id);
+                var unusedCategoryChallenges = categoryChallenges.Select(x => x.Id).Except(usedCategoryChallenges.Select(x => x.ChallengeId));
 
                 if (unusedCategoryChallenges.Count() < 1)
                 {
-                    foreach (UsedChallenge usedChallenge in this.Repository.Find<Challenge>(x => x.ChallengeCategoryId == categoryId).SelectMany(x => this.Repository.Find<UsedChallenge>(y => x.Id == y.ChallengeId)).ToList())
+                    foreach (UsedChallenge usedChallenge in categoryChallenges.SelectMany(x => this.Repository.Find<UsedChallenge>(y => x.Id == y.ChallengeId)).ToList())
                     {
                         this.Repository.Remove(usedChallenge);
                     }
+
+                    unusedChallenges.AddRange(categoryChallenges.Select(x => x.Id));
+                }
+                else
+                {
+                    unusedChallenges.AddRange(unusedCategoryChallenges);
                 }
             }
 
-            // get unused challenges from all categories
-            var unusedChallenges = categories.SelectMany(x => this.Repository.Find<Challenge>(y => x == y.ChallengeCategoryId).Where(y => this.Repository.Find<UsedChallenge>(z => z.ChallengeId == y.Id).Count() < 1));
-
             // select a random challenge to use and mark as used
             var nextChallenge = unusedChallenges.OrderBy(x => Rand.Next()).First();
-            this.Repository.Add(new UsedChallenge() { ChallengeId = nextChallenge.Id, GameId = this.Id });
-            return nextChallenge;
+            this.Repository.Add(new UsedChallenge() { ChallengeId = nextChallenge, GameId = this.Id });
+            return this.Repository.Get<Challenge>(nextChallenge);
         }
 
         public void Delete()

@@ -53,7 +53,14 @@ namespace Haven
 
         public void Update<T>(T entity) where T : class, IEntity, new()
         {
-            // intentionally left blank
+            if (this.Tables.ContainsKey(typeof(T)))
+            {
+                if (this.Tables[typeof(T)].Cast<T>().Select(x => x.Id).Contains(entity.Id))
+                {
+                    this.Remove(entity);
+                    this.Add(entity);
+                }
+            }
         }
 
         public T Get<T>(int id) where T : class, IEntity, new()
@@ -121,48 +128,3 @@ namespace Haven
         }
     }
 }
-
-
-//using System;
-//using System.Collections;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Linq.Expressions;
-
-//namespace Haven
-//{
-//    public class TestRepository<T> : IRepository<T> where T : class, new()
-//    {
-//        private List<T> Table;
-
-//        public TestRepository()
-//        {
-//            this.Table = new List<T>();
-//        }
-
-//        public void Add(T entity)
-//        {
-//            this.Table.Add(entity);
-//        }
-
-//        public void Remove(T entity)
-//        {
-//            this.Table.Remove(entity);
-//        }
-
-//        public void Update(T entity)
-//        {
-//            // intentionally left blank
-//        }
-
-//        public IQueryable<T> Find(Expression<Func<T, bool>> predicate)
-//        {
-//            return this.Table.AsQueryable<T>().Where(predicate);
-//        }
-
-//        public IQueryable<T> FindAll()
-//        {
-//            return this.Table.AsQueryable<T>();
-//        }
-//    }
-//}

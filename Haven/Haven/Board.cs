@@ -314,12 +314,7 @@ namespace Haven
             var categories = new List<int>();
             var boardCategories = this.Challenges.Select(x => x.ChallengeCategoryId);
             categories.AddRange(boardCategories);
-            var spaceCategories = new List<int>();
-            foreach (Space space in this.Spaces)
-            {
-                spaceCategories.AddRange(space.ChallengeCategories.Select(x => x.ChallengeCategoryId));
-            }
-            categories.AddRange(spaceCategories);
+            categories.AddRange(this.Spaces.SelectMany(x => x.ChallengeCategories.Select(y => y.ChallengeCategoryId)));
 
             var categoryIdMap = new Dictionary<int, int>();
             foreach (int categoryId in categories.Distinct())
