@@ -17,7 +17,7 @@ namespace HavenWebApp
                 {
                     var actionId = (int)this.Request.Form.Id;
                     var password = (string)context.Request.Form.Password;
-                    var player = container.Resolve<IRepository>().Get<Action>(actionId).Player;
+                    var player = container.Resolve<IRepository>().Get<Action>(actionId).Owner;
 
                     if (player.Password == null || player.VerifyPassword(password))
                     {
