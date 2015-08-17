@@ -15,7 +15,7 @@ namespace Haven
             // make sure no other player in the game has the same piece
             var player = this.Owner;
             var game = this.Repository.Get<Game>(player.GameId);
-            var samePiece = game.Players.Where(x => x.PieceId == player.PieceId && x.ColorId == player.ColorId);
+            var samePiece = game.Players.Where(x => x.PieceId == pieceId && x.ColorId == colorId);
             if (samePiece.Count() > 0)
             {
                 this.Repository.Add(new Message() { PlayerId = this.OwnerId, Text = "Another player has the same piece. Please choose another picture and/or color." });

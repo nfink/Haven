@@ -74,6 +74,7 @@
     <Compile Include="PlayerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SafeHavenCardTests.cs" />
+    <Compile Include="SelectionPieceActionTests.cs" />
     <Compile Include="SpaceTests.cs" />
     <Compile Include="TestRepository.cs" />
   </ItemGroup>

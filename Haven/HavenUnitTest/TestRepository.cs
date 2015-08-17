@@ -58,7 +58,7 @@ namespace Haven
                 if (this.Tables[typeof(T)].Cast<T>().Select(x => x.Id).Contains(entity.Id))
                 {
                     this.Remove(entity);
-                    this.Add(entity);
+                    this.Tables[typeof(T)] = this.Tables[typeof(T)].Cast<T>().Concat(new T[] { entity });
                 }
             }
         }

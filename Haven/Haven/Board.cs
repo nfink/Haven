@@ -102,7 +102,15 @@ namespace Haven
         {
             get
             {
-                return this.Spaces.Aggregate((x, y) => y.Order < x.Order ? y : x);
+                var spaces = this.Spaces;
+                if (spaces.Count() < 1)
+                {
+                    return null;
+                }
+                else
+                {
+                    return spaces.Aggregate((x, y) => y.Order < x.Order ? y : x);
+                }
             }
         }
 
