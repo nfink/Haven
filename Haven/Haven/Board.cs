@@ -97,19 +97,20 @@ namespace Haven
             }
         }
 
-        public Board()
-        {
-            this.TurnsToEnd = -1;
-            this.NameCardsToEnd = -1;
-            this.SafeHavenCardsToEnd = -1;
-        }
-
+        [JsonIgnore]
         public Space StartingSpace
         {
             get
             {
                 return this.Spaces.Aggregate((x, y) => y.Order < x.Order ? y : x);
             }
+        }
+
+        public Board()
+        {
+            this.TurnsToEnd = -1;
+            this.NameCardsToEnd = -1;
+            this.SafeHavenCardsToEnd = -1;
         }
 
         public Space GetNewSpace(int startSpaceId, int spacesToMove, bool direction)

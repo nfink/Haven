@@ -58,6 +58,7 @@ namespace HavenWebApp
                     var user = repository.Get<User>(userId);
                     user.Username = (string)this.Request.Form.Username;
                     repository.Update(user);
+                    repository.Commit();
                     return JsonConvert.SerializeObject(user);
                 }
             };
@@ -96,6 +97,7 @@ namespace HavenWebApp
                     var game = new Game { Name = (string)this.Request.Form.Name };
                     game.Repository = repository;
                     game.Create((int)this.Request.Form.BoardId, (int)this.Request.Form.NumberOfPlayers);
+                    repository.Commit();
                     return JsonConvert.SerializeObject(game);
                 }
             };
@@ -117,6 +119,7 @@ namespace HavenWebApp
                     var userId = int.Parse(this.Context.CurrentUser.UserName);
                     board.OwnerId = userId;
                     repository.Add(board);
+                    repository.Commit();
                     return JsonConvert.SerializeObject(board);
                 }
             };
@@ -160,7 +163,7 @@ namespace HavenWebApp
                             board.ImageId = image.Id;
                         }
                         repository.Update(board);
-
+                        repository.Commit();
                         return JsonConvert.SerializeObject(board);
                     }
                     else
@@ -180,6 +183,7 @@ namespace HavenWebApp
                     if (board != null)
                     {
                         board.Delete();
+                        repository.Commit();
                         return new HtmlResponse(HttpStatusCode.OK);
                     }
                     else
@@ -210,6 +214,7 @@ namespace HavenWebApp
                             repository.Add(new BoardChallengeCategory() { BoardId = board.Id, ChallengeCategoryId = categoryId });
                         }
 
+                        repository.Commit();
                         return JsonConvert.SerializeObject(board.Challenges);
                     }
                     else
@@ -235,6 +240,7 @@ namespace HavenWebApp
                             board.Active = valid;
                             repository.Update(board);
                         }
+                        repository.Commit();
                         return JsonConvert.SerializeObject(validations);
                     }
                     else
@@ -255,6 +261,7 @@ namespace HavenWebApp
                     {
                         board.Name = board.Name + " (copy)";
                         var copiedBoard = board.Copy();
+                        repository.Commit();
                         return JsonConvert.SerializeObject(copiedBoard);
                     }
                     else
@@ -288,6 +295,7 @@ namespace HavenWebApp
                         repository.Add(new ChallengeAnswer() { ChallengeId = challenge.Id, Answer = answer.Answer, Correct = answer.Correct });
                     }
 
+                    repository.Commit();
                     return JsonConvert.SerializeObject(challenge);
                 }
             };
@@ -318,6 +326,7 @@ namespace HavenWebApp
                             repository.Add(new ChallengeAnswer() { ChallengeId = challenge.Id, Answer = answer.Answer, Correct = answer.Correct });
                         }
 
+                        repository.Commit();
                         return JsonConvert.SerializeObject(challenge);
                     }
                     else
@@ -337,6 +346,7 @@ namespace HavenWebApp
                     if (challenge != null)
                     {
                         challenge.Delete();
+                        repository.Commit();
                         return new HtmlResponse(HttpStatusCode.OK);
                     }
                     else
@@ -362,6 +372,7 @@ namespace HavenWebApp
                     var challengeCategory = this.Bind<ChallengeCategory>();
                     challengeCategory.OwnerId = int.Parse(this.Context.CurrentUser.UserName);
                     repository.Add(challengeCategory);
+                    repository.Commit();
                     return JsonConvert.SerializeObject(challengeCategory);
                 }
             };
@@ -377,6 +388,7 @@ namespace HavenWebApp
                     {
                         challengeCategory.Name = (string)this.Request.Form.Name;
                         repository.Update(challengeCategory);
+                        repository.Commit();
                         return JsonConvert.SerializeObject(challengeCategory);
                     }
                     else
@@ -396,6 +408,7 @@ namespace HavenWebApp
                     if (challengeCategory != null)
                     {
                         challengeCategory.Delete();
+                        repository.Commit();
                         return new HtmlResponse(HttpStatusCode.OK);
                     }
                     else
@@ -451,6 +464,7 @@ namespace HavenWebApp
                         }
                     }
 
+                    repository.Commit();
                     return JsonConvert.SerializeObject(space);
                 }
             };
@@ -577,7 +591,7 @@ namespace HavenWebApp
                         }
 
                         repository.Update(space);
-
+                        repository.Commit();
                         return JsonConvert.SerializeObject(space);
                     }
                     else
@@ -597,6 +611,7 @@ namespace HavenWebApp
                     if (space != null)
                     {
                         space.Delete();
+                        repository.Commit();
                         return new HtmlResponse(HttpStatusCode.OK);
                     }
                     else

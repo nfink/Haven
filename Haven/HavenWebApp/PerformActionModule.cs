@@ -41,6 +41,7 @@ namespace HavenWebApp
                     int gameId = repository.Find<Player>(x => x.Id == action.OwnerId).First().GameId;
                     action.PerformAction((string)this.Request.Form.Input);
                     var players = repository.Find<Player>(x => x.GameId == gameId);
+                    repository.Commit();
                     return JsonConvert.SerializeObject(players);
                 }
             };
