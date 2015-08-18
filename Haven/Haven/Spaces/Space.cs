@@ -207,7 +207,7 @@ namespace Haven
             // use same attributes and Image record
             var space = new Space() { BoardId = this.BoardId, Order = this.Order, Type = this.Type, Width = this.Width,
                 Height = this.Height, X = this.X, Y = this.Y, BackgroundColorId = this.BackgroundColorId,
-                TextColorId = this.TextColorId, ImageId = this.ImageId };
+                TextColorId = this.TextColorId, ImageId = this.ImageId, IconId = this.IconId };
 
             // copy any subrecords
             if (this.NameCardId != 0)

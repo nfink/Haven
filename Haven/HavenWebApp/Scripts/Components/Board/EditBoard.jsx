@@ -524,7 +524,9 @@ EditBoard.EditSpace = React.createClass({
     handleTypeChange: function (event) {
         this.state.space.Type = event.target.value;
         var spaceType = this.state.spaceTypes[this.state.space.Type]
-        this.state.space.Icon = spaceType.Icon;
+        if (this.state.space.IconId == 0) {
+            this.state.space.Icon = { Image: spaceType.Icon };
+        }
         if (spaceType.Name === "Challenge") {
             this.state.space.Name = this.state.space.NameCard.Name;
             this.state.space.Image = (this.state.space.NameCard.Image ? this.state.space.NameCard.Image.Filepath : null);

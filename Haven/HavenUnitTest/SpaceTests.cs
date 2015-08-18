@@ -108,7 +108,7 @@ namespace HavenUnitTest
             var repository = new TestRepository();
 
             // create a space
-            var space = new Space() { BackgroundColorId = 1, BoardId = 2, Height = 3, ImageId = 4, Order = 5, TextColorId = 6, Type = SpaceType.TurnAround, Width = 7, X = 8, Y = 9 };
+            var space = new Space() { BackgroundColorId = 1, BoardId = 2, Height = 3, ImageId = 4, Order = 5, TextColorId = 6, Type = SpaceType.TurnAround, Width = 7, X = 8, Y = 9, IconId = 11 };
             repository.Add(space);
 
             // clone the space
@@ -127,6 +127,7 @@ namespace HavenUnitTest
             Assert.AreEqual(clonedSpace.Width, space.Width);
             Assert.AreEqual(clonedSpace.X, space.X);
             Assert.AreEqual(clonedSpace.Y, space.Y);
+            Assert.AreEqual(clonedSpace.IconId, space.IconId);
         }
 
         [Test]

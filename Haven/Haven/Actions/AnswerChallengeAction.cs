@@ -10,7 +10,7 @@ namespace Haven
             // remove all answer challenge actions
             this.RemoveActions(ActionType.AnswerChallenge);
 
-            var game = Player.Game;
+            var game = this.Owner.Game;
 
             if (this.Challenge.CorrectAnswer((string)input))
             {

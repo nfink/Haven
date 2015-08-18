@@ -157,7 +157,7 @@ namespace Haven
         public void StartGame()
         {
             // if all players have selected a piece and entered a name and password,  start game
-            if (this.Players.Select(x => x.PieceId == 0 || x.Name == null || x.Password == null).Count() < 1)
+            if (this.Players.Where(x => x.PieceId == 0 || x.Name == null || x.Password == null).Count() < 1)
             {
                 var firstPlayer = this.Players.OrderBy(x => x.TurnOrder).First();
                 this.Repository.Add(new Action() { Type = ActionType.Roll, OwnerId = firstPlayer.Id });
