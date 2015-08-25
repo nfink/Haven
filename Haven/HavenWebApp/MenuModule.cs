@@ -14,15 +14,18 @@ namespace HavenWebApp
         {
             if (DataLoad == null)
             {
-                //try
-                //{
-                //    var test = repository.Find<User>(x => true);
-                //}
-                //catch
-                //{
-                DataLoad = new DataLoad();
-                DataLoad.LoadTables();
-                //}
+                using (var repository = container.Resolve<IRepository>())
+                {
+                    try
+                    {
+                        var test = repository.Find<User>(x => true);
+                    }
+                    catch
+                    {
+                        DataLoad = new DataLoad();
+                        DataLoad.LoadTables();
+                    }
+                }
             }
 
             Get["/Pieces"] = parameters =>
