@@ -6,6 +6,7 @@
         {
             // change player movement direction
             player.MovementDirection = !player.MovementDirection;
+            this.Repository.Update(player);
 
             player.Game.EndTurn(player.Id);
 
