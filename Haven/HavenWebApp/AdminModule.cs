@@ -102,6 +102,26 @@ namespace HavenWebApp
                 }
             };
 
+            Delete["/Games/{id}"] = parameters =>
+            {
+                using (var repository = container.Resolve<IRepository>())
+                {
+                    var gameId = (int)parameters.id;
+                    var userId = int.Parse(this.Context.CurrentUser.UserName);
+                    var game = repository.Find<Game>(x => (x.Id == gameId) && (x.OwnerId == userId)).FirstOrDefault();
+                    if (game != null)
+                    {
+                        game.Delete();
+                        repository.Commit();
+                        return new HtmlResponse(HttpStatusCode.OK);
+                    }
+                    else
+                    {
+                        return new HtmlResponse(HttpStatusCode.NotFound);
+                    }
+                }
+            };
+
             Get["/Boards"] = parameters =>
             {
                 using (var repository = container.Resolve<IRepository>())

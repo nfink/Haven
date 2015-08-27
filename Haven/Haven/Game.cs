@@ -98,17 +98,20 @@ namespace Haven
             var winners = new List<Player>();
             var totalNameCards = board.NameCards.Count();
             var totalSafeHavenCards = board.SafeHavenCards.Count();
-            foreach (Player player in players)
+            if (totalNameCards > 0)
             {
-                var playerNameCards = player.NameCards.Count();
-                if (((board.NameCardsToEnd >= 0) && (playerNameCards >= board.NameCardsToEnd)) ||
-                    (playerNameCards >= totalNameCards))
+                foreach (Player player in players)
                 {
-                    var playerSafeHavenCards = player.SafeHavenCards.Count();
-                    if (((board.SafeHavenCardsToEnd >= 0) && (playerSafeHavenCards >= board.SafeHavenCardsToEnd)) ||
-                        (playerSafeHavenCards >= totalSafeHavenCards))
+                    var playerNameCards = player.NameCards.Count();
+                    if (((board.NameCardsToEnd >= 0) && (playerNameCards >= board.NameCardsToEnd)) ||
+                        (playerNameCards >= totalNameCards))
                     {
-                        winners.Add(player);
+                        var playerSafeHavenCards = player.SafeHavenCards.Count();
+                        if (((board.SafeHavenCardsToEnd >= 0) && (playerSafeHavenCards >= board.SafeHavenCardsToEnd)) ||
+                            (playerSafeHavenCards >= totalSafeHavenCards))
+                        {
+                            winners.Add(player);
+                        }
                     }
                 }
             }
@@ -242,6 +245,12 @@ namespace Haven
             foreach (UsedChallenge usedChallenge in this.Repository.Find<UsedChallenge>(x => x.GameId == this.Id).ToList())
             {
                 this.Repository.Remove(usedChallenge);
+            }
+
+            // delete cloned board
+            if (this.BoardId != 0)
+            {
+                this.Board.Delete();
             }
 
             // delete game

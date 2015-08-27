@@ -77,6 +77,7 @@
     <Compile Include="SelectionPieceActionTests.cs" />
     <Compile Include="SpaceTests.cs" />
     <Compile Include="TestRepository.cs" />
+    <Compile Include="TurnAroundSpaceTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
